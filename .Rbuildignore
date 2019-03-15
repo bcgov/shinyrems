@@ -1,0 +1,6 @@
+^CODE_OF_CONDUCT\.md$
+^LICENSE\.md$
+^README\.Rmd$
+^shinyrems\.Rproj$
+^\.Rproj\.user$
+^build\.R$
