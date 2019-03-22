@@ -9,7 +9,10 @@ LazyData: true
 Imports: 
     shiny,
     golem,
-    htmltools
+    htmltools,
+    rems,
+    dplyr,
+    ggplot2
 Remotes: 
     Thinkr-open/golem
 RoxygenNote: 6.1.0
