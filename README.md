@@ -13,11 +13,11 @@ package and ems database.
 #### To run the app, paste the following into an R console
 
 ``` r
-# install the rems package
+# install rems R package
 install_github("bcgov/rems")
-# download the EMS SQLite database from BC Data Catalogue
+# download the ems SQLite database from BC Data Catalogue
 rems::download_historic_data(ask = FALSE)
-# install package to run app
+# install shinyrems R package
 install_github("poissonconsulting/shinyrems")
 # run app
 shinyrems::run_app()
