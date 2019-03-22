@@ -1,24 +1,24 @@
 # Building a Prod-Ready, Robust Shiny Application.
-# 
-# Each step is optional. 
-# 
+#
+# Each step is optional.
+#
 # 1 - On init
-# 
+#
 ## 1.1 - Fill the descripion
-## 
+##
 ## Add information about the package that will contain your app
 
 golem::fill_desc(
-  pkg_name = "shinyrems", # The Name of the package containing the App 
-  pkg_title = , # The Title of the package containing the App 
-  pkg_description = , # The Description of the package containing the App 
-  author_first_name = , # Your First Name
-  author_last_name = ,  # Your Last Name
-  author_email = ,      # Your Email
-  repo_url = NULL)      # The (optional) URL of the GitHub Repo
+  pkg_name = "shinyrems", # The Name of the package containing the App
+  pkg_title = "An R package to run Shiny app interface to rems R package", # The Title of the package containing the App
+  pkg_description = "An R package to run 'shinyrems' app, an interface to the 'rems' R package to visualize and download data from BC Data Catalogue ems database.", # The Description of the package containing the App
+  author_first_name = "Seb", # Your First Name
+  author_last_name = "Dalgarno",  # Your Last Name
+  author_email = "seb@poissonconsulting.ca",      # Your Email
+  repo_url = "https://github.com/poissonconsulting/shinyrems")      # The (optional) URL of the GitHub Repo
 
-## 1.2 - Set common Files 
-## 
+## 1.2 - Set common Files
+##
 ## If you want to use the MIT licence, README, code of conduct, lifecycle badge, and news
 
 usethis::use_mit_license(name = "Your Name")  # You can set another licence here
@@ -28,12 +28,12 @@ usethis::use_lifecycle_badge("Experimental")
 usethis::use_news_md()
 
 ## 1.3 - Add a data-raw folder
-## 
+##
 ## If you have data in your package
 usethis::use_data_raw()
 
 ## 1.4 - Init Tests
-## 
+##
 ## Create a template for tests
 
 golem::use_recommended_tests()
@@ -52,10 +52,10 @@ golem::use_favicon( path = "path/to/favicon")
 
 
 ## 1.6 : Create your first module
-## 
+##
 ## Add a module file in your R folder with the recommended structure
 
-golem::add_module(name = "my_first_module") #
+golem::add_module(name = "about") #
 
 ## 1.7: Add a browser button
 
