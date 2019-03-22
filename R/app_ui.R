@@ -1,27 +1,23 @@
 #' @import shiny
 app_ui <- function() {
   tagList(
-    # Leave this function for adding external resources
-    # from inst/app/www
+    shinyjs::useShinyjs(),
     golem_add_external_resources(),
     golem::js(),
     golem::favicon(),
-    # List the first level UI elements here 
-    fluidPage(
-      h1("shinyrems")
-    )
+    navbarPage(title =  "EMS Database", selected = 'EMS',
+               tabPanel(title = 'EMS',
+                        br(),
+                        mod_ems_ui("ems_ui_1")),
+               tabPanel(title = 'About',
+                        br(),
+                        mod_about_ui("about_ui_1")
+                        ))
   )
 }
 
 golem_add_external_resources <- function(){
-  
-  addResourcePath(
-    'www', system.file('app/www', package = 'shinyrems')
-  )
- 
-  tagList(
-    # Add here all the external resources
-    # If you have a custom.css in the inst/app/www
-    #tags$link(rel="stylesheet", type="text/css", href="www/custom.css")
-  )
+
+  addResourcePath( 'www', system.file('app/www', package = 'shinyrems'))
+  tagList(tags$link(rel="stylesheet", type="text/css", href="www/style.css"))
 }

@@ -12,9 +12,10 @@ Imports:
     htmltools,
     rems,
     dplyr,
-    ggplot2
+    ggplot2,
+    shinyjs
 Remotes: 
     Thinkr-open/golem
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 URL: https://github.com/poissonconsulting/shinyrems
 BugReports: https://github.com/poissonconsulting/shinyrems/issues
