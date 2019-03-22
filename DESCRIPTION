@@ -1,14 +1,14 @@
 Package: shinyrems
-Title: What the Package Does (One Line, Title Case)
+Title: An Amazing Shiny App
 Version: 0.0.0.9000
-Authors@R: 
-    person(given = "First",
-           family = "Last",
-           role = c("aut", "cre"),
-           email = "first.last@example.com")
+Authors@R: person("Vincent", "Guyader", email = "vincent@thinkr.fr", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
-License: MIT + file LICENSE
+License: What license is it under?
 Encoding: UTF-8
 LazyData: true
-Suggests: 
-    testthat
+Imports: 
+    shiny, 
+    golem
+Remotes: 
+    Thinkr-open/golem
+RoxygenNote: 6.1.0
