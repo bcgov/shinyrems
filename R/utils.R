@@ -16,9 +16,7 @@ max_db_date <- function(){
   db_path <- rems:::write_db_path()
   con <- DBI::dbConnect(RSQLite::SQLite(), dbname = db_path)
   on.exit(DBI::dbDisconnect(con))
-  DBI::dbGetQuery(con, "SELECT MAX(COLLECTION_START) FROM historic") %>%
-    rems::ems_posix_numeric() %>%
-    as.Date()
+  as.Date(rems::ems_posix_numeric(DBI::dbGetQuery(con, "SELECT MAX(COLLECTION_START) FROM historic")))
 }
 
 min_db_date <- function(){

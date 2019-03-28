@@ -15,12 +15,13 @@
 #' @importFrom shiny NS tagList
 mod_site_ui <- function(id){
   ns <- NS(id)
-
   fluidPage(
     fluidRow(
       tabsetPanel(
-        tabPanel(title = "Site Map"),
-        tabPanel(title = "Site Table")
+        tabPanel(title = "Site Map",
+                 leaflet::leafletOutput(ns("leafletSites"))),
+        tabPanel(title = "Site Table",
+                 dataTableOutput(ns("tableSites")))
       )
     )
   )
@@ -34,6 +35,28 @@ mod_site_ui <- function(id){
 
 mod_site_server <- function(input, output, session){
   ns <- session$ns
+
+  output$leafletSites <- leaflet::renderLeaflet({
+    leaflet::leaflet(data = ems_site_lookup) %>%
+      leaflet::addProviderTiles("Esri.WorldImagery",
+                                options = leaflet::providerTileOptions(opacity = 1),
+                                group = "Satelite") %>%
+      leaflet::addProviderTiles("Stamen.Terrain",
+                                options = leaflet::providerTileOptions(opacity = 1),
+                                group = "Terrain") %>%
+      leaflet::addLayersControl(
+        baseGroups = c("Satelite", "Terrain"),
+        overlayGroups = c("Sites"),
+        options = leaflet::layersControlOptions(collapsed = TRUE),
+        position = "topright") %>%
+      leaflet::addMapPane("paneSites", 410) %>%
+      leaflet::addMarkers(lng = ~LONGITUDE,
+                          lat  = ~LATITUDE,
+                          group = 'Sites',
+                          options = leaflet::pathOptions(pane = "paneSites"))
+      # setView(lng = centroid_lng, lat = centroid_lat, zoom = zoom) %>%
+
+  })
 }
 
 ## To be copied in the UI

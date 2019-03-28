@@ -22,10 +22,7 @@ mod_ems_ui <- function(id, min_date = min_db_date(), max_date = max_db_date()){
                               label = "Select parameter:",
                               choices = unique(rems::ems_parameters$PARAMETER),
                               selected = unique(rems::ems_parameters$PARAMETER)[4]),
-                 selectInputX(ns("selectSite"),
-                              label = "Get any available data from sites:",
-                              choices = ems_site_lookup$MONITORING_LOCATION,
-                             selected = ems_site_lookup$MONITORING_LOCATION[1]),
+                 uiOutput(ns("uiSites")),
                  dateRangeInput(ns("dateRange"),
                                 label = "Get any available data between dates:",
                                 start = min_date, end = max_date,
@@ -68,5 +65,12 @@ mod_ems_server <- function(input, output, session){
     plot_ems(get_data())
   })
 
+  output$uiSites <- renderUI({
+    sites <- parameter_to_sites(input$selectParameter)
+    selectInputX(ns("selectSite"),
+                 label = "Select sites:",
+                 choices = sites,
+                 selected = sites[1])
+  })
 }
 

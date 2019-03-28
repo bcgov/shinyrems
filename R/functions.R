@@ -1,11 +1,21 @@
 site_to_emsid <- function(sites){
-  x <- shinyrems::ems_site_lookup
+  x <- ems_sites
   x$EMS_ID[x$MONITORING_LOCATION %in% sites]
 }
 
 parameter_to_paramcode <- function(parameter){
   x <- rems::ems_parameters
   x$PARAMETER_CODE[x$PARAMETER == parameter]
+}
+
+parameter_to_sites <- function(parameter){
+  x <- ems_site_parameters
+  x$MONITORING_LOCATION[which(x$PARAMETER == parameter)]
+}
+
+parameter_to_location <- function(parameter){
+  x <- ems_site_parameters
+  x[which(x$PARAMETER == parameter), ]
 }
 
 plot_ems <- function(data = ems_data){
@@ -20,10 +30,6 @@ plot_ems <- function(data = ems_data){
 # this is copied from rems::read_historic_data, but missing code asking to update/download db
 filter_historic_db <- function(emsid, parameter = NULL, param_code, from_date, to_date, cols = NULL){
   db_path <- rems:::write_db_path()
-  print(emsid)
-  print(param_code)
-  print(from_date)
-  print(to_date)
   qry <- rems:::construct_historic_sql(emsid = emsid, parameter = parameter,
                                 param_code = param_code, from_date = from_date, to_date = to_date,
                                 cols = cols)

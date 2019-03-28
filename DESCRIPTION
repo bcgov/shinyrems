@@ -16,7 +16,8 @@ Imports:
     shinyjs,
     DBI,
     tibble,
-    leaflet
+    leaflet,
+    magrittr
 Remotes: 
     Thinkr-open/golem
 RoxygenNote: 6.1.1
