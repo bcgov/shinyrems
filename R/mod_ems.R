@@ -39,9 +39,14 @@ mod_ems_ui <- function(id, min_date = min_db_date(), max_date = max_db_date()){
                                    plotOutput(ns('plotEms'))),
                           tabPanel("Table",
                                    br(),
-                                   wellPanel(dataTableOutput(ns('tableEms')), class = "wellpanel")
-                                   )))
-    )
+                                   emsTableOutput(ns('tableEms'))
+                                   ),
+                          tabPanel("Site Map",
+                                   br(),
+                                   leaflet::leafletOutput(ns("leafletSites"))),
+                          tabPanel("Site Table",
+                                   emsTableOutput(ns("tableSites"))))
+    ))
 }
 
 # Module Server
@@ -60,17 +65,31 @@ mod_ems_server <- function(input, output, session){
     filter_historic_db(emsid = ems, param_code = param, from_date = dates[1], to_date = dates[2])
   })
 
+  get_sites <- reactive({
+    parameter_to_sites(input$selectParameter)
+  })
+
+  get_locations <- reactive({
+    parameter_to_location(input$selectParameter)
+  })
+
   output$tableEms <- renderDataTable({get_data()})
   output$plotEms <- renderPlot({
-    plot_ems(get_data())
+    ems_plot(data = get_data())
   })
 
   output$uiSites <- renderUI({
-    sites <- parameter_to_sites(input$selectParameter)
+    sites <- get_sites()
     selectInputX(ns("selectSite"),
                  label = "Select sites:",
                  choices = sites,
                  selected = sites[1])
   })
+
+  output$leafletSites <- leaflet::renderLeaflet({
+    ems_leaflet(data = get_locations())
+  })
+
+  output$tableSites <- renderDataTable({get_locations()})
 }
 

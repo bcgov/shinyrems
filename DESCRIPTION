@@ -17,7 +17,8 @@ Imports:
     DBI,
     tibble,
     leaflet,
-    magrittr
+    magrittr,
+    readr
 Remotes: 
     Thinkr-open/golem
 RoxygenNote: 6.1.1

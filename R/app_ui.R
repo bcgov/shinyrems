@@ -11,9 +11,9 @@ app_ui <- function() {
                tabPanel(title = 'EMS',
                         br(),
                         mod_ems_ui("ems_ui_1")),
-               tabPanel(title = 'Site Reference',
+               tabPanel(title = 'Reference Tables',
                         br(),
-                        mod_site_ui("site_ui_1")),
+                        mod_reference_ui("reference_ui_1")),
                tabPanel(title = 'About',
                         br(),
                         mod_about_ui("about_ui_1")

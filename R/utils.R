@@ -5,6 +5,29 @@ selectInputX <- function(...) {
     'persist' = FALSE))
 }
 
+emsTableOutput <- function(...){
+  wellPanel(dataTableOutput(...), class = "wellpanel")
+}
+
+emsDownload <- function(..., label = "Download Data (csv)"){
+  tagList(
+    br(),
+    downloadButton(..., class = 'small-dl',
+                   label = label),
+    br(), br()
+  )
+}
+
+# referenceUI <- function(..., title, id, table_id, dl_id){
+#   tabPanel(title = title,
+#            emsTableOutput(table_id),
+#            emsDownload(dl_id))
+# }
+#
+# referenceServer <- function(id, data, output){
+#   output[[id]] <- renderDataTable({data})
+# }
+
 check_historic_db <- function(){
   db_path <- rems:::write_db_path()
   if (!file.exists(db_path)){

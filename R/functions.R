@@ -18,13 +18,34 @@ parameter_to_location <- function(parameter){
   x[which(x$PARAMETER == parameter), ]
 }
 
-plot_ems <- function(data = ems_data){
+ems_plot <- function(data = ems_data){
   ggplot2::ggplot(data = data) +
     ggplot2::geom_line(ggplot2::aes(x = COLLECTION_START, y = RESULT,
                                     group = MONITORING_LOCATION,
                                     color = MONITORING_LOCATION)) +
     ggplot2::theme(legend.position = "bottom",
                    legend.direction = 'vertical')
+}
+
+ems_leaflet <- function(data){
+  leaflet::leaflet(data = data) %>%
+    leaflet::addProviderTiles("Esri.WorldImagery",
+                              options = leaflet::providerTileOptions(opacity = 1),
+                              group = "Satelite") %>%
+    leaflet::addProviderTiles("Stamen.Terrain",
+                              options = leaflet::providerTileOptions(opacity = 1),
+                              group = "Terrain") %>%
+    leaflet::addLayersControl(
+      baseGroups = c("Satelite", "Terrain"),
+      overlayGroups = c("Sites"),
+      options = leaflet::layersControlOptions(collapsed = TRUE),
+      position = "topright") %>%
+    leaflet::addMapPane("paneSites", 410) %>%
+    leaflet::addMarkers(lng = ~LONGITUDE,
+                        lat  = ~LATITUDE,
+                        group = 'Sites',
+                        options = leaflet::pathOptions(pane = "paneSites"))
+
 }
 
 # this is copied from rems::read_historic_data, but missing code asking to update/download db
