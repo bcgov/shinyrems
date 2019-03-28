@@ -14,4 +14,4 @@ check_key(ems_site_lookup, "EMS_ID")
 check_key(ems_site_lookup, "MONITORING_LOCATION")
 
 library(usethis)
-use_data(ems_site_lookup)
+use_data(ems_site_lookup, overwrite = TRUE)

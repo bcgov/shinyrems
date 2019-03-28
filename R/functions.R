@@ -1,0 +1,39 @@
+site_to_emsid <- function(sites){
+  x <- shinyrems::ems_site_lookup
+  x$EMS_ID[x$MONITORING_LOCATION %in% sites]
+}
+
+parameter_to_paramcode <- function(parameter){
+  x <- rems::ems_parameters
+  x$PARAMETER_CODE[x$PARAMETER == parameter]
+}
+
+plot_ems <- function(data = ems_data){
+  ggplot2::ggplot(data = data) +
+    ggplot2::geom_line(ggplot2::aes(x = COLLECTION_START, y = RESULT,
+                                    group = MONITORING_LOCATION,
+                                    color = MONITORING_LOCATION)) +
+    ggplot2::theme(legend.position = "bottom",
+                   legend.direction = 'vertical')
+}
+
+# this is copied from rems::read_historic_data, but missing code asking to update/download db
+filter_historic_db <- function(emsid, parameter = NULL, param_code, from_date, to_date, cols = NULL){
+  db_path <- rems:::write_db_path()
+  print(emsid)
+  print(param_code)
+  print(from_date)
+  print(to_date)
+  qry <- rems:::construct_historic_sql(emsid = emsid, parameter = parameter,
+                                param_code = param_code, from_date = from_date, to_date = to_date,
+                                cols = cols)
+  con <- DBI::dbConnect(RSQLite::SQLite(), dbname = db_path)
+  on.exit(DBI::dbDisconnect(con))
+  res <- DBI::dbGetQuery(con, qry)
+  if (!is.null(res$COLLECTION_START))
+    res$COLLECTION_START <- rems:::ems_posix_numeric(res$COLLECTION_START)
+  if (!is.null(res$COLLECTION_END))
+    res$COLLECTION_END <- rems:::ems_posix_numeric(res$COLLECTION_END)
+  ret <- tibble::as_tibble(res)
+  rems:::add_rems_type(ret, "historic")
+}

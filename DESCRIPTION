@@ -13,7 +13,10 @@ Imports:
     rems,
     dplyr,
     ggplot2,
-    shinyjs
+    shinyjs,
+    DBI,
+    tibble,
+    leaflet
 Remotes: 
     Thinkr-open/golem
 RoxygenNote: 6.1.1

@@ -1,6 +1,8 @@
 #' @import shiny
 app_ui <- function() {
   tagList(
+    actionButton("browser", "browser"),
+    tags$script("$('#browser').hide();"),
     shinyjs::useShinyjs(),
     golem_add_external_resources(),
     golem::js(),
