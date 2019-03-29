@@ -61,7 +61,7 @@ mod_ems_server <- function(input, output, session){
   })
 
   get_data <- reactive({
-    build_data(data = ems_data(),
+    combine_data(data = ems_data(),
                emsid = site_to_emsid(input$selectSite),
                param_code = parameter_to_paramcode(input$selectParameter),
                dates = input$dateRange)
@@ -103,6 +103,7 @@ mod_ems_server <- function(input, output, session){
   })
 
   # always adjust selected site markers when site$site changes
+  marker_select <- ems_marker("red")
   observe({
     data <- get_locations()[which(get_locations()$MONITORING_LOCATION %in% sites$sites),]
     if(nrow(data) == 0) return()
@@ -130,9 +131,7 @@ mod_ems_server <- function(input, output, session){
     ems_plot(data = get_data(), parameter = input$selectParameter)
   })
 
-  marker_select = ems_marker("red")
-  marker_deselect = ems_marker("blue")
-
+  marker_deselect <- ems_marker("blue")
   output$leafletSites <- leaflet::renderLeaflet({
     ems_leaflet(data = get_locations(), icon = marker_deselect)
   })
