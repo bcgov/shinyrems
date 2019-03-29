@@ -19,9 +19,9 @@ mod_ems_ui <- function(id, min_date = min_db_date(), max_date = max_db_date()){
   sidebarLayout(
     sidebarPanel(width = 4, class = 'sidebar',
                  selectInput(ns("selectParameter"),
-                              label = "Select parameter:",
-                              choices = unique(rems::ems_parameters$PARAMETER),
-                              selected = unique(rems::ems_parameters$PARAMETER)[4]),
+                             label = "Select parameter:",
+                             choices = unique(rems::ems_parameters$PARAMETER),
+                             selected = unique(rems::ems_parameters$PARAMETER)[4]),
                  uiOutput(ns("uiSites")),
                  dateRangeInput(ns("dateRange"),
                                 label = "Get any available data between dates:",
@@ -38,7 +38,7 @@ mod_ems_ui <- function(id, min_date = min_db_date(), max_date = max_db_date()){
                           tabPanel("Table",
                                    br(),
                                    emsTableOutput(ns('tableEms'))
-                                   ),
+                          ),
                           tabPanel("Site Selection",
                                    tabsetPanel(
                                      tabPanel("Map",
@@ -50,7 +50,7 @@ mod_ems_ui <- function(id, min_date = min_db_date(), max_date = max_db_date()){
                                               htmlOutput(ns("htmlSiteTable")),
                                               wellPanel(DT::dataTableOutput(ns("tableSites")), class = "wellpanel"))
                                    ))
-    )))
+              )))
 }
 
 # Module Server
@@ -104,8 +104,19 @@ mod_ems_server <- function(input, output, session){
   sites <- reactiveValues(sites = list())
 
   observeEvent(input$leafletSites_marker_click, {
-    click <- input$leafletSites_marker_click
-    sites$sites <- c(sites$sites, click$id)
+    click_id <- input$leafletSites_marker_click$id
+    if(click_id %in% sites$sites){
+      return(sites$sites <- setdiff(sites$sites, click_id))
+    }
+    sites$sites <- c(sites$sites, click_id)
+  })
+
+  observe({
+    data <- get_locations()[which(get_locations()$MONITORING_LOCATION %in% sites$sites),]
+    if(nrow(data) == 0) return()
+    data$LeafLabel <- leaflet_labels(data)
+
+    ems_leaflet_update(data = data, icon = marker_select)
   })
 
   observeEvent(input$tableSites_rows_selected, {
@@ -113,66 +124,12 @@ mod_ems_server <- function(input, output, session){
     sites$sites <- get_locations()$MONITORING_LOCATION[click]
   })
 
-  marker_selected = leaflet::makeAwesomeIcon(icon = 'flag', markerColor = 'red', iconColor = 'white')
-
-
-#   # to keep track of previously selected row
-#   prev_row <- reactiveVal()
-#
-#   # new icon style
-#   my_icon = makeAwesomeIcon(icon = 'flag', markerColor = 'red', iconColor = 'white')
-#
-#   observeEvent(input$tableSite_rows_selected, {
-#     row_selected = qSub()[input$table01_rows_selected,]
-#     proxy <- leafletProxy('map01')
-#     print(row_selected)
-#     proxy %>%
-#       addAwesomeMarkers(popup=as.character(row_selected$mag),
-#                         layerId = as.character(row_selected$id),
-#                         lng=row_selected$long,
-#                         lat=row_selected$lat,
-#                         icon = my_icon)
-#
-#     # Reset previously selected marker
-#     if(!is.null(prev_row()))
-#     {
-#       proxy %>%
-#         addMarkers(popup=as.character(prev_row()$mag),
-#                    layerId = as.character(prev_row()$id),
-#                    lng=prev_row()$long,
-#                    lat=prev_row()$lat)
-#     }
-#     # set new value to reactiveVal
-#     prev_row(row_selected)
-#   })
-#
-#   # map
-#   output$map01 <- renderLeaflet({
-#     pal <- colorNumeric("YlOrRd", domain=c(min(quakes$mag), max(quakes$mag)))
-#     qMap <- leaflet(data = qSub()) %>%
-#       addTiles() %>%
-#       addMarkers(popup=~as.character(mag), layerId = as.character(qSub()$id)) %>%
-#       addLegend("bottomright", pal = pal, values = ~mag,
-#                 title = "Earthquake Magnitude",
-#                 opacity = 1)
-#     qMap
-#   })
-#
-#   observeEvent(input$map01_marker_click, {
-#     clickId <- input$map01_marker_click$id
-#     dataTableProxy("table01") %>%
-#       selectRows(which(qSub()$id == clickId)) %>%
-#       selectPage(which(input$table01_rows_all == clickId) %/% input$table01_state$length + 1)
-#   })
-# }
+  marker_select = ems_marker("red")
+  marker_deselect = ems_marker("blue")
 
   observe({
     sites$sites <- input$selectSite
-    })
-
-  # observe({print(sites$sites)})
-  # observe({print(get_pindex())})
-  # observe({print(param_index(sites$sites))})
+  })
 
   observe({
     updateSelectizeInput(session, 'selectSite', selected = sites$sites)
@@ -181,19 +138,15 @@ mod_ems_server <- function(input, output, session){
   ########## ---------- render Outputs ---------- ##########
   output$tableEms <- renderDataTable({
     get_data()
-    })
+  })
 
   output$plotEms <- renderPlot({
     ems_plot(data = get_data(), parameter = input$selectParameter)
-    })
-
-  output$leafletSites <- leaflet::renderLeaflet({
-    ems_leaflet(data = get_locations())
   })
 
-  # output$tableSites <- DT::renderDataTable({
-  #   DT::datatable(get_locations(), selection = "single", options = list(stateSave = TRUE))
-  # })
+  output$leafletSites <- leaflet::renderLeaflet({
+    ems_leaflet(data = get_locations(), icon = marker_deselect)
+  })
 
   output$tableSites <- DT::renderDataTable({
     DT::datatable(

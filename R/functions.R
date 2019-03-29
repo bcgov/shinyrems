@@ -58,30 +58,46 @@ ems_plot <- function(data = ems_data, parameter){
                    legend.direction = 'vertical')
 }
 
-ems_leaflet <- function(data){
+ems_leaflet <- function(data, icon){
   data$LeafLabel <- leaflet_labels(data)
   leaflet::leaflet(data = data) %>%
     leaflet::addProviderTiles("Esri.WorldImagery",
-                              options = leaflet::providerTileOptions(opacity = 1),
                               group = "Satelite") %>%
-    leaflet::addProviderTiles("Stamen.Terrain",
-                              options = leaflet::providerTileOptions(opacity = 1),
-                              group = "Terrain") %>%
+    leaflet::addProviderTiles("OpenStreetMap.Mapnik",
+                     group = "Street Map") %>%
     leaflet::addLayersControl(
-      baseGroups = c("Satelite", "Terrain"),
-      overlayGroups = c("Sites"),
-      options = leaflet::layersControlOptions(collapsed = TRUE),
+      baseGroups = c("Satelite", "Street Map"),
+      overlayGroups = c("All Sites", "Selected Sites"),
+      options = leaflet::layersControlOptions(collapsed = FALSE),
       position = "topright") %>%
     leaflet::addMapPane("paneSites", 410) %>%
-    leaflet::addMarkers(lng = ~LONGITUDE,
+    leaflet::addMapPane("paneSelectedSites", 420) %>%
+    leaflet::addAwesomeMarkers(lng = ~LONGITUDE,
                         lat  = ~LATITUDE,
-                        group = 'Sites',
+                        group = 'All Sites',
                         options = leaflet::pathOptions(pane = "paneSites"),
                         layerId = ~MONITORING_LOCATION,
                         label = ~lapply(LeafLabel, HTML),
                         clusterOptions = leaflet::markerClusterOptions(showCoverageOnHover = F,
-                                                              spiderfyOnMaxZoom = T))
+                                                              spiderfyOnMaxZoom = T),
+                        icon = icon)
 
+}
+
+ems_leaflet_update <- function(data, icon){
+  leaflet::leafletProxy('leafletSites', data = data) %>%
+    leaflet::clearMarkers() %>%
+    leaflet::addAwesomeMarkers(lng = ~LONGITUDE,
+                               lat  = ~LATITUDE,
+                               group = 'Selected Sites',
+                               options = leaflet::pathOptions(pane = "paneSelectedSites"),
+                               layerId = ~MONITORING_LOCATION,
+                               label = ~lapply(LeafLabel, HTML),
+                               icon = icon)
+}
+
+ems_marker <- function(colour){
+  leaflet::makeAwesomeIcon(icon = "flag", markerColor = colour, iconColor = 'white')
 }
 
 # this is copied from rems::read_historic_data, but missing code asking to update/download db
