@@ -29,29 +29,20 @@ leaflet_labels <- function(data){
   })
 }
 
+check_historic_data <- function(){
+  rems::download_historic_data(ask = FALSE)
+}
 
-# referenceUI <- function(..., title, id, table_id, dl_id){
-#   tabPanel(title = title,
-#            emsTableOutput(table_id),
-#            emsDownload(dl_id))
-# }
-#
-# referenceServer <- function(id, data, output){
-#   output[[id]] <- renderDataTable({data})
-# }
+check_2yr_data <- function(){
+ rems::get_ems_data("2yr", ask = FALSE)
+}
 
-check_historic_db <- function(){
-  db_path <- rems:::write_db_path()
-  if (!file.exists(db_path)){
-    stop("You have not downloaded the historic database. Please follow instructions at 'https://github.com/poissonconsulting/shinyrems'")
-  }
+check_bound_data <- function(){
+
 }
 
 max_db_date <- function(){
-  db_path <- rems:::write_db_path()
-  con <- DBI::dbConnect(RSQLite::SQLite(), dbname = db_path)
-  on.exit(DBI::dbDisconnect(con))
-  as.Date(rems::ems_posix_numeric(DBI::dbGetQuery(con, "SELECT MAX(COLLECTION_START) FROM historic")))
+  Sys.Date()
 }
 
 min_db_date <- function(){

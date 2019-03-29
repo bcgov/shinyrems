@@ -63,7 +63,6 @@ div.outer {
 }
 
 /****************************************** leaflets *********************************/
-.leaflet {height: calc(100vh - 150px) !important;}
 
 /*********************** navbar css ****************************/
 .navbar .navbar-nav {float: right}

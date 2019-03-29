@@ -34,18 +34,17 @@ mod_ems_ui <- function(id, min_date = min_db_date(), max_date = max_db_date()){
               tabsetPanel(selected = "Plot",
                           tabPanel("Plot",
                                    br(),
-                                   plotOutput(ns('plotEms'))),
+                                   shinycssloaders::withSpinner(plotOutput(ns('plotEms')))),
                           tabPanel("Table",
                                    br(),
                                    emsTableOutput(ns('tableEms'))
                                    ),
-                          tabPanel("Site Map",
+                          tabPanel("Site Selection",
                                    br(),
                                    htmlOutput(ns("htmlSites")),
-                                   leaflet::leafletOutput(ns("leafletSites"))),
-                          tabPanel("Site Table",
-                                   emsTableOutput(ns("tableSites"))))
-    ))
+                                   shinycssloaders::withSpinner(leaflet::leafletOutput(ns("leafletSites"))),
+                                   emsTableOutput(ns("tableSites")))
+    )))
 }
 
 # Module Server
@@ -58,11 +57,19 @@ mod_ems_server <- function(input, output, session){
   ns <- session$ns
 
   ########## ---------- reactives ---------- ##########
+  ems_data <- reactive({
+    rems::get_ems_data(ask = FALSE)
+  })
+
   get_data <- reactive({
     ems <- site_to_emsid(input$selectSite)
     param <- parameter_to_paramcode(input$selectParameter)
     dates <- input$dateRange
-    filter_historic_db(emsid = ems, param_code = param, from_date = dates[1], to_date = dates[2])
+    historic <- filter_historic_db(emsid = ems, param_code = param,
+                                   from_date = dates[1], to_date = dates[2])
+    yr2 <- rems::filter_ems_data(ems_data(), emsid = ems, param_code = param,
+                                 from_date = dates[1], to_date = dates[2])
+    rems::bind_ems_data(historic, yr2)
   })
 
   get_sites <- reactive({
@@ -95,6 +102,60 @@ mod_ems_server <- function(input, output, session){
     print(click$id)
     sites$sites <- c(sites$sites, click$id)
   })
+
+  observeEvent(input$tableSite_rows_selected, {
+    print(input$tableSite_rows_selected)
+  })
+
+#   # to keep track of previously selected row
+#   prev_row <- reactiveVal()
+#
+#   # new icon style
+#   my_icon = makeAwesomeIcon(icon = 'flag', markerColor = 'red', iconColor = 'white')
+#
+#   observeEvent(input$tableSite_rows_selected, {
+#     row_selected = qSub()[input$table01_rows_selected,]
+#     proxy <- leafletProxy('map01')
+#     print(row_selected)
+#     proxy %>%
+#       addAwesomeMarkers(popup=as.character(row_selected$mag),
+#                         layerId = as.character(row_selected$id),
+#                         lng=row_selected$long,
+#                         lat=row_selected$lat,
+#                         icon = my_icon)
+#
+#     # Reset previously selected marker
+#     if(!is.null(prev_row()))
+#     {
+#       proxy %>%
+#         addMarkers(popup=as.character(prev_row()$mag),
+#                    layerId = as.character(prev_row()$id),
+#                    lng=prev_row()$long,
+#                    lat=prev_row()$lat)
+#     }
+#     # set new value to reactiveVal
+#     prev_row(row_selected)
+#   })
+#
+#   # map
+#   output$map01 <- renderLeaflet({
+#     pal <- colorNumeric("YlOrRd", domain=c(min(quakes$mag), max(quakes$mag)))
+#     qMap <- leaflet(data = qSub()) %>%
+#       addTiles() %>%
+#       addMarkers(popup=~as.character(mag), layerId = as.character(qSub()$id)) %>%
+#       addLegend("bottomright", pal = pal, values = ~mag,
+#                 title = "Earthquake Magnitude",
+#                 opacity = 1)
+#     qMap
+#   })
+#
+#   observeEvent(input$map01_marker_click, {
+#     clickId <- input$map01_marker_click$id
+#     dataTableProxy("table01") %>%
+#       selectRows(which(qSub()$id == clickId)) %>%
+#       selectPage(which(input$table01_rows_all == clickId) %/% input$table01_state$length + 1)
+#   })
+# }
 
   observe({
     sites$sites <- input$selectSite

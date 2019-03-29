@@ -20,7 +20,7 @@ parameter_to_location <- function(parameter){
 
 site_parameter_html <- function(parameter){
   p(HTML("These sites have <strong>", parameter, "</strong>data available.
-                                        Click on a marker to add it to selected sites."))
+                                        Click on a marker or table row to add/remove from selected sites."))
 }
 
 ems_plot <- function(data = ems_data, parameter){
