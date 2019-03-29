@@ -13,20 +13,14 @@
 #' @keywords internal
 #' @export
 #' @importFrom shiny NS tagList
-mod_ems_ui <- function(id, min_date = min_db_date(), max_date = max_db_date()){
+mod_ems_ui <- function(id, dates = run_mode_date_range()){
   ns <- NS(id)
 
   sidebarLayout(
     sidebarPanel(width = 4, class = 'sidebar',
-                 selectInput(ns("selectParameter"),
-                             label = "Select parameter:",
-                             choices = unique(rems::ems_parameters$PARAMETER),
-                             selected = unique(rems::ems_parameters$PARAMETER)[4]),
+                 uiOutput(ns("uiParameter")),
                  uiOutput(ns("uiSites")),
-                 dateRangeInput(ns("dateRange"),
-                                label = "Get any available data between dates:",
-                                start = min_date, end = max_date,
-                                min = min_date, max = max_date),
+                 uiOutput(ns("uiDateRange")),
                  br(),
                  emsDownload(ns('dlEmsData'), br = FALSE),
                  emsDownload(ns('dlEmsPlot'), label = "Download Plot (png)", br = FALSE)),
@@ -54,6 +48,7 @@ mod_ems_ui <- function(id, min_date = min_db_date(), max_date = max_db_date()){
 
 mod_ems_server <- function(input, output, session){
   ns <- session$ns
+  run_mode <- getShinyOption("run_mode", "demo")
 
   ########## ---------- reactives ---------- ##########
   ems_data <- reactive({
@@ -61,18 +56,23 @@ mod_ems_server <- function(input, output, session){
   })
 
   get_data <- reactive({
-    combine_data(data = ems_data(),
-               emsid = site_to_emsid(input$selectSite),
-               param_code = parameter_to_paramcode(input$selectParameter),
-               dates = input$dateRange)
+    run_mode_data(run_mode = run_mode,
+                  data = ems_data(),
+                  emsid = site_to_emsid(input$selectSite),
+                  param_code = parameter_to_paramcode(input$selectParameter),
+                  dates = input$dateRange)
+  })
+
+  get_parameter <- reactive({
+    get_parameter_lookup(run_mode = run_mode)$PARAMETER %>% unique()
   })
 
   get_sites <- reactive({
-    parameter_to_sites(input$selectParameter)
+    parameter_to_sites(input$selectParameter, run_mode = run_mode)
   })
 
   get_locations <- reactive({
-    parameter_to_location(input$selectParameter)
+    parameter_to_location(input$selectParameter, run_mode = run_mode)
   })
 
   get_pindex <- reactive({
@@ -83,6 +83,21 @@ mod_ems_server <- function(input, output, session){
   output$uiSites <- renderUI({
     selectInputX(ns("selectSite"),
                  choices = get_sites())
+  })
+
+  output$uiParameter <- renderUI({
+    selectInput(ns("selectParameter"),
+                label = "Select parameter:",
+                choices = get_parameter(),
+                selected = get_parameter()[1])
+  })
+
+  output$uiDateRange <- renderUI({
+    dates <- run_mode_date_range(run_mode = run_mode)
+    dateRangeInput(ns("dateRange"),
+                   label = "Get any available data between dates:",
+                   start = dates[1], end = dates[2],
+                   min = dates[1], max = dates[2])
   })
 
   output$htmlSiteMap <- renderUI({

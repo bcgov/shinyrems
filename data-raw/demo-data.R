@@ -7,6 +7,7 @@ demo_parameters <- c("Temperature", "pH", "Phosphorous Total", "Turbidity")
 demo_data_historic <- rems::read_historic_data(parameter = demo_parameters)
 demo_data_2yr <- rems::get_ems_data() %>%
   rems::filter_ems_data(parameter = demo_parameters)
+
 ems_demo_data <- rems::bind_ems_data(demo_data_historic, demo_data_2yr)
 
 demo_sites <- ems_demo_data$EMS_ID[1:1000]
@@ -17,7 +18,7 @@ ems_demo_parameters <- ems_demo_data %>%
   summarise() %>%
   ungroup()
 
-ems_demo_sites <- ems_demo_parameter_lookup %>%
+ems_demo_sites <- ems_demo_parameters %>%
   group_by(EMS_ID, MONITORING_LOCATION, LATITUDE, LONGITUDE, LOCATION_TYPE) %>%
   summarise() %>%
   ungroup()

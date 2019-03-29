@@ -8,13 +8,26 @@ parameter_to_paramcode <- function(parameter){
   x$PARAMETER_CODE[x$PARAMETER == parameter]
 }
 
-parameter_to_sites <- function(parameter){
+get_parameter_lookup <- function(run_mode){
   x <- ems_site_parameters
+  if(run_mode == "demo"){
+    x <- ems_demo_parameters
+  }
+  if(run_mode == "2yr"){
+    x <- ems_site_parameters
+  }
+  if(run_mode == "historic"){
+    x <- ems_site_parameters
+  }
+  x
+}
+parameter_to_sites <- function(parameter, run_mode){
+  x <- get_parameter_lookup(run_mode = run_mode)
   x$MONITORING_LOCATION[which(x$PARAMETER == parameter)]
 }
 
-parameter_to_location <- function(parameter){
-  x <- ems_site_parameters
+parameter_to_location <- function(parameter, run_mode){
+  x <- get_parameter_lookup(run_mode = run_mode)
   x[which(x$PARAMETER == parameter), ]
 }
 
@@ -100,16 +113,46 @@ filter_2yr_data <- function(data, emsid, param_code, dates){
 }
 
 combine_data <- function(data, emsid, param_code, dates){
-  x <- filter_historic_data(emsid = emsid, param_code = param_code, dates = dates)
-  print("historic:")
-  print(x)
-  x <- filter_2yr_data(data = data, emsid = emsid, param_code = param_code, dates = dates)
-  print("new")
-  print(x)
-
   rems::bind_ems_data(
     filter_historic_data(emsid = emsid, param_code = param_code, dates = dates),
     filter_2yr_data(data = data, emsid = emsid, param_code = param_code, dates = dates)
   )
+}
+
+run_mode_data <- function(run_mode, data, emsid, param_code, dates){
+  if(run_mode == "demo"){
+    return(ems_demo_data %>%
+             filter_2yr_data(emsid = emsid,
+                             param_code = param_code,
+                             dates = dates))
+  }
+  if(run_mode == "2yr"){
+    return(filter_2yr_data(data = data,
+                           emsid = emsid,
+                           param_code = param_code,
+                           dates = dates))
+  }
+  if(run_mode == "historic"){
+    return(filter_historic_data(emsid = emsid,
+                                param_code = param_code,
+                                dates = dates))
+  }
+  combine_data(data = ems_data(),
+               emsid = emsid,
+               param_code = param_code,
+               dates = dates)
+}
+
+run_mode_date_range <- function(run_mode){
+  if(run_mode == "demo"){
+    return(as.Date(range(ems_demo_data$COLLECTION_START, na.rm = TRUE)))
+  }
+  if(run_mode == "2yr"){
+    return(as.Date(c("2018-01-01", Sys.Date())))
+  }
+  if(run_mode == "historic"){
+    return(as.Date(c("1964-01-01", "2018-01-01")))
+  }
+  as.Date(c("1964-01-01", Sys.Date()))
 }
 
