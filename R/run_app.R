@@ -3,6 +3,7 @@
 #' @export
 #' @importFrom shiny runApp
 run_app <- function(run_mode = "demo") {
+  if(run_mode != "demo") stop("Sorry the app only runs in demo mode at this time!")
   if(run_mode == "all"){
     message("checking for historic data...")
     rems::download_historic_data(ask = FALSE)
