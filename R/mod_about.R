@@ -22,16 +22,13 @@ mod_about_ui <- function(id){
            h4(paste("Welcome!")),
            br(),
            h5("This app is an interface to the rems R package. For more information about rems, see the ",
-              a("GitHub page.", href = "https://github.com/poissonconsulting/rems")),
+              a("GitHub page.", href = "https://github.com/bcgov/rems")),
            actionLink(ns('info_citation'), "Citation info"),
            shinyjs::hidden(div(id = ns("div_citation"),
-                      h6(HTML(paste("To cite package 'rems' in publications, use:<br><br>
-
-                                    Joe Thorley (2018). ypr: Yield Per Recruit. R package version",
-                                    packageVersion('ypr'),
-                                    "https://github.com/poissonconsulting/ypr <br><br>
-
-                                    To cite app: <br><br>
+                      h6(HTML(paste("To cite package ‘rems’ in publications use:<br><br>
+                                    Andy Teucher (NA). rems: Get Data From British Columbia's Environmental Monitoring System. R
+                                    package version 0.4.0.9999 <br><br>",
+                                    "To cite app: <br><br>
                                     Seb Dalgarno (2018). shinyrems: An app for download and visualization of ems data.
                                     https://poissonconsulting.shinyapps.io/ypr/<br><br>
                                     "
