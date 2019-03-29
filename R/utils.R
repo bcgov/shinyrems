@@ -9,13 +9,16 @@ emsTableOutput <- function(...){
   wellPanel(dataTableOutput(...), class = "wellpanel")
 }
 
-emsDownload <- function(..., label = "Download Data (csv)"){
-  tagList(
-    br(),
-    downloadButton(..., class = 'small-dl',
-                   label = label),
-    br(), br()
-  )
+emsDownload <- function(..., label = "Download Data (csv)", br = TRUE){
+  if(br){
+    return(tagList(
+      br(),
+      downloadButton(..., class = 'small-dl',
+                     label = label),
+      br(), br()
+    ))
+  }
+  downloadButton(..., class = 'small-dl',  label = label)
 }
 
 leaflet_labels <- function(data){

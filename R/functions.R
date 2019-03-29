@@ -28,7 +28,7 @@ ems_plot <- function(data = ems_data, parameter){
                                             group = MONITORING_LOCATION,
                                             color = MONITORING_LOCATION)) +
     ggplot2::geom_line() +
-    ggplot2::geom_point(size = 1) +
+    ggplot2::geom_point(size = 0.7) +
     ggplot2::scale_color_discrete("Sites") +
     ggplot2::xlab("Date") +
     ggplot2::ylab(parameter) +

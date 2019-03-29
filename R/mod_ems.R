@@ -28,10 +28,8 @@ mod_ems_ui <- function(id, min_date = min_db_date(), max_date = max_db_date()){
                                 start = min_date, end = max_date,
                                 min = min_date, max = max_date),
                  br(),
-                 downloadButton(ns('downloadDataEms'), class = 'small-dl',
-                                label = "Download Data (csv)"),
-                 downloadButton(ns('downloadPlotEms'), class = 'small-dl',
-                                label = "Download Plot (png)")),
+                 emsDownload(ns('dlEmsData'), br = FALSE),
+                 emsDownload(ns('dlEmsPlot'), label = "Download Plot (png)", br = FALSE)),
     mainPanel(width = 8,
               tabsetPanel(selected = "Plot",
                           tabPanel("Plot",
@@ -122,5 +120,19 @@ mod_ems_server <- function(input, output, session){
   output$tableSites <- renderDataTable({
     get_locations()
   })
+
+  ########## ---------- download handlers ---------- ##########
+  output$dlEmsData <- downloadHandler(
+    filename = function() "ems_data.csv",
+    content = function(file) {
+      readr::write_csv(get_data(), file)
+    })
+
+  output$dlEmsPlot <- downloadHandler(
+    filename = function() "ems_plot.png",
+    content = function(file) {
+      ggplot2::ggsave(file, plot = ems_plot(data = get_data(), parameter = input$selectParameter),
+                      width = 8, height = 6, device = "png")
+    })
 }
 
