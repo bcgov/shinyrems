@@ -84,12 +84,12 @@ ems_leaflet_update <- function(data, icon){
 }
 
 ems_marker <- function(colour){
-  leaflet::makeAwesomeIcon(icon = "flag", markerColor = colour, iconColor = 'white')
+  leaflet::makeAwesomeIcon(icon = "flag", markerColor = colour, iconColor = 'white', library = "ion")
 }
 
 # thin wrappers for rems filter functions to simplify arguments
 filter_historic_data <- function(emsid, param_code, dates){
-  rems::read_historic_data(emsid = emside, parameter = NULL, param_code = param_code,
+  rems::read_historic_data(emsid = emsid, parameter = NULL, param_code = param_code,
                            from_date = dates[1], to_date = dates[2],
                            cols = NULL, check_exists = FALSE)
 }
@@ -100,6 +100,13 @@ filter_2yr_data <- function(data, emsid, param_code, dates){
 }
 
 combine_data <- function(data, emsid, param_code, dates){
+  x <- filter_historic_data(emsid = emsid, param_code = param_code, dates = dates)
+  print("historic:")
+  print(x)
+  x <- filter_2yr_data(data = data, emsid = emsid, param_code = param_code, dates = dates)
+  print("new")
+  print(x)
+
   rems::bind_ems_data(
     filter_historic_data(emsid = emsid, param_code = param_code, dates = dates),
     filter_2yr_data(data = data, emsid = emsid, param_code = param_code, dates = dates)

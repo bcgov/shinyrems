@@ -57,7 +57,7 @@ mod_ems_server <- function(input, output, session){
 
   ########## ---------- reactives ---------- ##########
   ems_data <- reactive({
-    rems::get_ems_data(ask = FALSE)
+    rems::get_ems_data(ask = FALSE, dont_update = TRUE)
   })
 
   get_data <- reactive({
@@ -96,20 +96,20 @@ mod_ems_server <- function(input, output, session){
   # if marker clicked/unclicked adjust sites$sites
   observeEvent(input$leafletSites_marker_click, {
     click_id <- input$leafletSites_marker_click$id
-    if(click_id %in% sites$sites){
-      return(sites$sites <- setdiff(sites$sites, click_id))
-    }
+    # if(click_id %in% sites$sites){
+    #   return(sites$sites <- setdiff(sites$sites, click_id))
+    # }
     sites$sites <- c(sites$sites, click_id)
   })
 
   # always adjust selected site markers when site$site changes
-  marker_select <- ems_marker("red")
-  observe({
-    data <- get_locations()[which(get_locations()$MONITORING_LOCATION %in% sites$sites),]
-    if(nrow(data) == 0) return()
-    data$LeafLabel <- leaflet_labels(data)
-    ems_leaflet_update(data = data, icon = marker_select)
-  })
+  # marker_select <- ems_marker("red")
+  # observe({
+  #   data <- get_locations()[which(get_locations()$MONITORING_LOCATION %in% sites$sites),]
+  #   if(nrow(data) == 0) return()
+  #   data$LeafLabel <- leaflet_labels(data)
+  #   ems_leaflet_update(data = data, icon = marker_select)
+  # })
 
   ### --- dropdown
   # adjusting site selection at dropdown updates sites$sites
