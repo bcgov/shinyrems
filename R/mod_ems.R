@@ -43,6 +43,7 @@ mod_ems_ui <- function(id, min_date = min_db_date(), max_date = max_db_date()){
                                    ),
                           tabPanel("Site Map",
                                    br(),
+                                   htmlOutput(ns("htmlSites")),
                                    leaflet::leafletOutput(ns("leafletSites"))),
                           tabPanel("Site Table",
                                    emsTableOutput(ns("tableSites"))))
@@ -73,10 +74,29 @@ mod_ems_server <- function(input, output, session){
     parameter_to_location(input$selectParameter)
   })
 
-  output$tableEms <- renderDataTable({get_data()})
-  output$plotEms <- renderPlot({
-    ems_plot(data = get_data())
+  # update station choices with map clicks
+  sites <- reactiveValues(sites = list())
+
+  observeEvent(input$leafletSites_marker_click, {
+    click <- input$leafletSites_marker_click
+    print(click)
+    print(click$id)
+    sites$sites <- c(sites$sites, click$id)
   })
+
+  observe({
+    sites$sites <- input$selectSite
+    })
+
+  observe({
+    updateSelectizeInput(session, 'selectSite', selected = sites$sites)
+  })
+
+  output$htmlSites <- renderUI({site_parameter_html(input$selectParameter)})
+
+  output$tableEms <- renderDataTable({get_data()})
+
+  output$plotEms <- renderPlot({ ems_plot(data = get_data())})
 
   output$uiSites <- renderUI({
     sites <- get_sites()

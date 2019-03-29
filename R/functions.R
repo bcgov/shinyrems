@@ -18,6 +18,11 @@ parameter_to_location <- function(parameter){
   x[which(x$PARAMETER == parameter), ]
 }
 
+site_parameter_html <- function(parameter){
+  p(HTML("These sites have <strong>", parameter, "</strong>data available.
+                                        Click on a marker to add it to selected sites."))
+}
+
 ems_plot <- function(data = ems_data){
   ggplot2::ggplot(data = data) +
     ggplot2::geom_line(ggplot2::aes(x = COLLECTION_START, y = RESULT,
@@ -28,6 +33,7 @@ ems_plot <- function(data = ems_data){
 }
 
 ems_leaflet <- function(data){
+  data$LeafLabel <- leaflet_labels(data)
   leaflet::leaflet(data = data) %>%
     leaflet::addProviderTiles("Esri.WorldImagery",
                               options = leaflet::providerTileOptions(opacity = 1),
@@ -44,7 +50,11 @@ ems_leaflet <- function(data){
     leaflet::addMarkers(lng = ~LONGITUDE,
                         lat  = ~LATITUDE,
                         group = 'Sites',
-                        options = leaflet::pathOptions(pane = "paneSites"))
+                        options = leaflet::pathOptions(pane = "paneSites"),
+                        layerId = ~MONITORING_LOCATION,
+                        label = ~lapply(LeafLabel, HTML),
+                        clusterOptions = leaflet::markerClusterOptions(showCoverageOnHover = F,
+                                                              spiderfyOnMaxZoom = T))
 
 }
 

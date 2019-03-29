@@ -18,6 +18,15 @@ emsDownload <- function(..., label = "Download Data (csv)"){
   )
 }
 
+leaflet_labels <- function(data){
+  name <- names(data)
+  lapply(1:nrow(data), function(x){
+    data <- data[x,]
+    paste0("<strong>", name, ": </strong>", data[name], "<br>")
+  })
+}
+
+
 # referenceUI <- function(..., title, id, table_id, dl_id){
 #   tabPanel(title = title,
 #            emsTableOutput(table_id),
