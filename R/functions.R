@@ -23,11 +23,15 @@ site_parameter_html <- function(parameter){
                                         Click on a marker to add it to selected sites."))
 }
 
-ems_plot <- function(data = ems_data){
-  ggplot2::ggplot(data = data) +
-    ggplot2::geom_line(ggplot2::aes(x = COLLECTION_START, y = RESULT,
-                                    group = MONITORING_LOCATION,
-                                    color = MONITORING_LOCATION)) +
+ems_plot <- function(data = ems_data, parameter){
+  ggplot2::ggplot(data = data, ggplot2::aes(x = COLLECTION_START, y = RESULT,
+                                            group = MONITORING_LOCATION,
+                                            color = MONITORING_LOCATION)) +
+    ggplot2::geom_line() +
+    ggplot2::geom_point(size = 1) +
+    ggplot2::scale_color_discrete("Sites") +
+    ggplot2::xlab("Date") +
+    ggplot2::ylab(parameter) +
     ggplot2::theme(legend.position = "bottom",
                    legend.direction = 'vertical')
 }

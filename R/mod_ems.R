@@ -59,6 +59,7 @@ mod_ems_ui <- function(id, min_date = min_db_date(), max_date = max_db_date()){
 mod_ems_server <- function(input, output, session){
   ns <- session$ns
 
+  ########## ---------- reactives ---------- ##########
   get_data <- reactive({
     ems <- site_to_emsid(input$selectSite)
     param <- parameter_to_paramcode(input$selectParameter)
@@ -74,7 +75,20 @@ mod_ems_server <- function(input, output, session){
     parameter_to_location(input$selectParameter)
   })
 
-  # update station choices with map clicks
+  ########## ---------- render UI ---------- ##########
+  output$uiSites <- renderUI({
+    sites <- get_sites()
+    selectInputX(ns("selectSite"),
+                 label = "Select sites:",
+                 choices = sites,
+                 selected = sites[1])
+  })
+
+  output$htmlSites <- renderUI({
+    site_parameter_html(input$selectParameter)
+  })
+
+  ########## ---------- update site selection ---------- ##########
   sites <- reactiveValues(sites = list())
 
   observeEvent(input$leafletSites_marker_click, {
@@ -92,24 +106,21 @@ mod_ems_server <- function(input, output, session){
     updateSelectizeInput(session, 'selectSite', selected = sites$sites)
   })
 
-  output$htmlSites <- renderUI({site_parameter_html(input$selectParameter)})
+  ########## ---------- render Outputs ---------- ##########
+  output$tableEms <- renderDataTable({
+    get_data()
+    })
 
-  output$tableEms <- renderDataTable({get_data()})
-
-  output$plotEms <- renderPlot({ ems_plot(data = get_data())})
-
-  output$uiSites <- renderUI({
-    sites <- get_sites()
-    selectInputX(ns("selectSite"),
-                 label = "Select sites:",
-                 choices = sites,
-                 selected = sites[1])
-  })
+  output$plotEms <- renderPlot({
+    ems_plot(data = get_data(), parameter = input$selectParameter)
+    })
 
   output$leafletSites <- leaflet::renderLeaflet({
     ems_leaflet(data = get_locations())
   })
 
-  output$tableSites <- renderDataTable({get_locations()})
+  output$tableSites <- renderDataTable({
+    get_locations()
+  })
 }
 
