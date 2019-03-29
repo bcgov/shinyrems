@@ -40,10 +40,16 @@ mod_ems_ui <- function(id, min_date = min_db_date(), max_date = max_db_date()){
                                    emsTableOutput(ns('tableEms'))
                                    ),
                           tabPanel("Site Selection",
-                                   br(),
-                                   htmlOutput(ns("htmlSites")),
-                                   shinycssloaders::withSpinner(leaflet::leafletOutput(ns("leafletSites"))),
-                                   emsTableOutput(ns("tableSites")))
+                                   tabsetPanel(
+                                     tabPanel("Map",
+                                              br(),
+                                              htmlOutput(ns("htmlSiteMap")),
+                                              shinycssloaders::withSpinner(leaflet::leafletOutput(ns("leafletSites")))),
+                                     tabPanel("Table",
+                                              br(),
+                                              htmlOutput(ns("htmlSiteTable")),
+                                              wellPanel(DT::dataTableOutput(ns("tableSites")), class = "wellpanel"))
+                                   ))
     )))
 }
 
@@ -62,14 +68,10 @@ mod_ems_server <- function(input, output, session){
   })
 
   get_data <- reactive({
-    ems <- site_to_emsid(input$selectSite)
-    param <- parameter_to_paramcode(input$selectParameter)
-    dates <- input$dateRange
-    historic <- filter_historic_db(emsid = ems, param_code = param,
-                                   from_date = dates[1], to_date = dates[2])
-    yr2 <- rems::filter_ems_data(ems_data(), emsid = ems, param_code = param,
-                                 from_date = dates[1], to_date = dates[2])
-    rems::bind_ems_data(historic, yr2)
+    build_data(data = ems_data(),
+               emsid = site_to_emsid(input$selectSite),
+               param_code = parameter_to_paramcode(input$selectParameter),
+               dates = input$dateRange)
   })
 
   get_sites <- reactive({
@@ -80,17 +82,22 @@ mod_ems_server <- function(input, output, session){
     parameter_to_location(input$selectParameter)
   })
 
-  ########## ---------- render UI ---------- ##########
-  output$uiSites <- renderUI({
-    sites <- get_sites()
-    selectInputX(ns("selectSite"),
-                 label = "Select sites:",
-                 choices = sites,
-                 selected = sites[1])
+  get_pindex <- reactive({
+    p_index(get_locations(), sites$sites)
   })
 
-  output$htmlSites <- renderUI({
-    site_parameter_html(input$selectParameter)
+  ########## ---------- render UI ---------- ##########
+  output$uiSites <- renderUI({
+    selectInputX(ns("selectSite"),
+                 choices = get_sites())
+  })
+
+  output$htmlSiteMap <- renderUI({
+    html_site_map(input$selectParameter)
+  })
+
+  output$htmlSiteTable <- renderUI({
+    html_site_table(input$selectParameter)
   })
 
   ########## ---------- update site selection ---------- ##########
@@ -98,14 +105,16 @@ mod_ems_server <- function(input, output, session){
 
   observeEvent(input$leafletSites_marker_click, {
     click <- input$leafletSites_marker_click
-    print(click)
-    print(click$id)
     sites$sites <- c(sites$sites, click$id)
   })
 
-  observeEvent(input$tableSite_rows_selected, {
-    print(input$tableSite_rows_selected)
+  observeEvent(input$tableSites_rows_selected, {
+    click <- input$tableSites_rows_selected
+    sites$sites <- get_locations()$MONITORING_LOCATION[click]
   })
+
+  marker_selected = leaflet::makeAwesomeIcon(icon = 'flag', markerColor = 'red', iconColor = 'white')
+
 
 #   # to keep track of previously selected row
 #   prev_row <- reactiveVal()
@@ -161,6 +170,10 @@ mod_ems_server <- function(input, output, session){
     sites$sites <- input$selectSite
     })
 
+  # observe({print(sites$sites)})
+  # observe({print(get_pindex())})
+  # observe({print(param_index(sites$sites))})
+
   observe({
     updateSelectizeInput(session, 'selectSite', selected = sites$sites)
   })
@@ -178,8 +191,16 @@ mod_ems_server <- function(input, output, session){
     ems_leaflet(data = get_locations())
   })
 
-  output$tableSites <- renderDataTable({
-    get_locations()
+  # output$tableSites <- DT::renderDataTable({
+  #   DT::datatable(get_locations(), selection = "single", options = list(stateSave = TRUE))
+  # })
+
+  output$tableSites <- DT::renderDataTable({
+    DT::datatable(
+      get_locations(),
+      selection = list(mode = 'multiple',
+                       selected = get_pindex())
+    )
   })
 
   ########## ---------- download handlers ---------- ##########

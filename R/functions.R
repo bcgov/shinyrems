@@ -18,9 +18,31 @@ parameter_to_location <- function(parameter){
   x[which(x$PARAMETER == parameter), ]
 }
 
+p_index <- function(data, sites){
+  which(data$MONITORING_LOCATION %in% sites)
+}
+
+html_site_table <- function(parameter){
+  p(HTML("These sites have <strong>", parameter, "</strong>data available.
+                                        Click on table rows to add/remove from selected sites."))
+}
+
+html_site_map <- function(parameter){
+  p(HTML("These sites have <strong>", parameter, "</strong>data available.
+                                        Click on map markers to add/remove from selected sites."))
+}
+
 site_parameter_html <- function(parameter){
   p(HTML("These sites have <strong>", parameter, "</strong>data available.
-                                        Click on a marker or table row to add/remove from selected sites."))
+                                        Click on a map marker or table row to add/remove from selected sites."))
+}
+
+build_data <- function(data, emsid, param_code, dates){
+  historic <- filter_historic_db(emsid = emsid, param_code = param_code,
+                                 from_date = dates[1], to_date = dates[2])
+  yr2 <- rems::filter_ems_data(data, emsid = emsid, param_code = param_code,
+                               from_date = dates[1], to_date = dates[2])
+  rems::bind_ems_data(historic, yr2)
 }
 
 ems_plot <- function(data = ems_data, parameter){
@@ -28,7 +50,7 @@ ems_plot <- function(data = ems_data, parameter){
                                             group = MONITORING_LOCATION,
                                             color = MONITORING_LOCATION)) +
     ggplot2::geom_line() +
-    ggplot2::geom_point(size = 0.7) +
+    ggplot2::geom_point(size = 0.5) +
     ggplot2::scale_color_discrete("Sites") +
     ggplot2::xlab("Date") +
     ggplot2::ylab(parameter) +

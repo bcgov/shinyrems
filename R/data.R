@@ -1,6 +1,6 @@
-#' EMS demo data.
+#' EMS Site Paramters.
 #'
-#' EMS data from 2018-01-01 to 2019-03-12.
+#' EMS lookup table for which parameters each site has data for.
 #'
 #' @format A data frame with 907694 rows and 22 variables:
 #' \describe{
@@ -8,4 +8,16 @@
 #'   \item{carat}{weight of the diamond, in carats}
 #'   ...
 #' }
-"ems_demo_data"
+"ems_site_parameters"
+
+#' EMS Sites.
+#'
+#' EMS lookup table for sites and their location.
+#'
+#' @format A data frame with 907694 rows and 22 variables:
+#' \describe{
+#'   \item{price}{price, in US dollars}
+#'   \item{carat}{weight of the diamond, in carats}
+#'   ...
+#' }
+"ems_sites"

@@ -3,9 +3,9 @@
 #' @export
 #' @importFrom shiny runApp
 run_app <- function() {
-  message("Before loading the app, we'll check that you have the required datasets on your computer: 2yr and historic...If there are newer verions available you may choose to update them.")
-  check_historic_data()
-  # check_2yr_data()
-  # check_bound_data()
+  message("checking for historic data...")
+  # rems::download_historic_data(ask = FALSE)
+  message("checking for most recent 2 years of data...")
+  # rems::get_ems_data("2yr", ask = FALSE, dont_get = TRUE)
   shiny::runApp(system.file("app", package = "shinyrems"))
 }

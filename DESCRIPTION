@@ -19,7 +19,8 @@ Imports:
     leaflet,
     magrittr,
     readr,
-    shinycssloaders
+    shinycssloaders,
+    DT
 Remotes: 
     Thinkr-open/golem
 RoxygenNote: 6.1.1

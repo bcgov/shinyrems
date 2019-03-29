@@ -1,5 +1,8 @@
-selectInputX <- function(...) {
-  selectizeInput(..., multiple = TRUE, options = list(
+selectInputX <- function(..., label = "Select sites:", choices, selected = choices[1]) {
+  selectizeInput(..., multiple = TRUE, label = label,
+                 choices = choices,
+                 selected = selected,
+                 options = list(
     'plugins' = list('remove_button'),
     'create' = TRUE,
     'persist' = FALSE))
@@ -27,18 +30,6 @@ leaflet_labels <- function(data){
     data <- data[x,]
     paste0("<strong>", name, ": </strong>", data[name], "<br>")
   })
-}
-
-check_historic_data <- function(){
-  rems::download_historic_data(ask = FALSE)
-}
-
-check_2yr_data <- function(){
- rems::get_ems_data("2yr", ask = FALSE)
-}
-
-check_bound_data <- function(){
-
 }
 
 max_db_date <- function(){
