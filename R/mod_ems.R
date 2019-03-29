@@ -40,16 +40,9 @@ mod_ems_ui <- function(id, min_date = min_db_date(), max_date = max_db_date()){
                                    emsTableOutput(ns('tableEms'))
                           ),
                           tabPanel("Site Selection",
-                                   tabsetPanel(
-                                     tabPanel("Map",
-                                              br(),
-                                              htmlOutput(ns("htmlSiteMap")),
-                                              shinycssloaders::withSpinner(leaflet::leafletOutput(ns("leafletSites")))),
-                                     tabPanel("Table",
-                                              br(),
-                                              htmlOutput(ns("htmlSiteTable")),
-                                              wellPanel(DT::dataTableOutput(ns("tableSites")), class = "wellpanel"))
-                                   ))
+                                   br(),
+                                   htmlOutput(ns("htmlSiteMap")),
+                                   shinycssloaders::withSpinner(leaflet::leafletOutput(ns("leafletSites"))))
               )))
 }
 
@@ -96,13 +89,11 @@ mod_ems_server <- function(input, output, session){
     html_site_map(input$selectParameter)
   })
 
-  output$htmlSiteTable <- renderUI({
-    html_site_table(input$selectParameter)
-  })
-
   ########## ---------- update site selection ---------- ##########
   sites <- reactiveValues(sites = list())
 
+  ### --- map
+  # if marker clicked/unclicked adjust sites$sites
   observeEvent(input$leafletSites_marker_click, {
     click_id <- input$leafletSites_marker_click$id
     if(click_id %in% sites$sites){
@@ -111,26 +102,21 @@ mod_ems_server <- function(input, output, session){
     sites$sites <- c(sites$sites, click_id)
   })
 
+  # always adjust selected site markers when site$site changes
   observe({
     data <- get_locations()[which(get_locations()$MONITORING_LOCATION %in% sites$sites),]
     if(nrow(data) == 0) return()
     data$LeafLabel <- leaflet_labels(data)
-
     ems_leaflet_update(data = data, icon = marker_select)
   })
 
-  observeEvent(input$tableSites_rows_selected, {
-    click <- input$tableSites_rows_selected
-    sites$sites <- get_locations()$MONITORING_LOCATION[click]
-  })
-
-  marker_select = ems_marker("red")
-  marker_deselect = ems_marker("blue")
-
+  ### --- dropdown
+  # adjusting site selection at dropdown updates sites$sites
   observe({
     sites$sites <- input$selectSite
   })
 
+  # adjust dropdown selection when sites$sites changes
   observe({
     updateSelectizeInput(session, 'selectSite', selected = sites$sites)
   })
@@ -144,16 +130,11 @@ mod_ems_server <- function(input, output, session){
     ems_plot(data = get_data(), parameter = input$selectParameter)
   })
 
+  marker_select = ems_marker("red")
+  marker_deselect = ems_marker("blue")
+
   output$leafletSites <- leaflet::renderLeaflet({
     ems_leaflet(data = get_locations(), icon = marker_deselect)
-  })
-
-  output$tableSites <- DT::renderDataTable({
-    DT::datatable(
-      get_locations(),
-      selection = list(mode = 'multiple',
-                       selected = get_pindex())
-    )
   })
 
   ########## ---------- download handlers ---------- ##########

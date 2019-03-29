@@ -22,11 +22,6 @@ p_index <- function(data, sites){
   which(data$MONITORING_LOCATION %in% sites)
 }
 
-html_site_table <- function(parameter){
-  p(HTML("These sites have <strong>", parameter, "</strong>data available.
-                                        Click on table rows to add/remove from selected sites."))
-}
-
 html_site_map <- function(parameter){
   p(HTML("These sites have <strong>", parameter, "</strong>data available.
                                         Click on map markers to add/remove from selected sites."))
