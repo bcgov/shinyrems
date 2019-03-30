@@ -111,9 +111,9 @@ mod_ems_server <- function(input, output, session){
   # if marker clicked/unclicked adjust sites$sites
   observeEvent(input$leafletSites_marker_click, {
     click_id <- input$leafletSites_marker_click$id
-    # if(click_id %in% sites$sites){
-    #   return(sites$sites <- setdiff(sites$sites, click_id))
-    # }
+    if(click_id %in% sites$sites){
+      return(sites$sites <- setdiff(sites$sites, click_id))
+    }
     sites$sites <- c(sites$sites, click_id)
   })
 
