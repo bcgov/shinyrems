@@ -19,21 +19,36 @@ knitr::opts_chunk$set(
 
 `shinyrems` is an app that allows you to visualize and download data from the EMS database.
 
-#### To run the app, paste the following into an R console
+#### Follow these instructions to run the app:
 
+First let's install the package! Paste the following into the console:
 ``` r
-# First let's install the package!
 if(!"drat" %in% installed.packages()[,1]) install.packages("drat")
 drat::addRepo("poissonconsulting")
 install.packages("shinyrems")
-# Now we can run the app. To launch the app with a demo dataset simply run:
-shinyrems::run_app()
-# To run with actual datasets you will need to select the appropriate run_mode and follow prompts to download or update data. Note it is not neccessary to update the data although you might want to get the most recent data.
-# to access the '2 year' dataset (data from 2018-01-01 to present), use:
+```
+
+##### The app can be run in 4 modes: "demo", "2yr", "historic", and "all", which refer to the datasets used/required.
+To use a demo dataset:
+```
+shinyrems::run_app(run_mode = "demo")
+```
+
+##### For the other modes, you will be prompted to download/update the data, which is stored on your computer for later use. Note it is not necessary to update the data.
+
+For the '2yr' dataset (data from 2018-01-01 to present):
+```
 shinyrems::run_app(run_mode = "2yr")
-# to access the 'historic' dataset (data from 1964-01-01 to 2018-01-01), which requires download of a 4gb file, use:
+```
+
+For the 'historic' dataset (data from 1964-01-01 to 2018-01-01):  
+* note this requires download of a 4gb file!
+```
 shinyrems::run_app(run_mode = "historic")
-# to access all data (data from 1964-01-01 to present), use:
+```
+
+For all data:
+```
 shinyrems::run_app(run_mode = "all")
 ```
 
