@@ -5,8 +5,6 @@ app_ui <- function() {
     tags$script("$('#browser').hide();"),
     shinyjs::useShinyjs(),
     golem_add_external_resources(),
-    golem::js(),
-    golem::favicon(),
     navbarPage(title =  "EMS Database", selected = 'EMS',
                tabPanel(title = 'EMS',
                         br(),
