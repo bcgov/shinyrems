@@ -45,7 +45,7 @@ site_parameter_html <- function(parameter){
                                         Click on a map marker or table row to add/remove from selected sites."))
 }
 
-ems_plot <- function(data = ems_data, parameter){
+ems_plot <- function(data, parameter){
   ggplot2::ggplot(data = data, ggplot2::aes(x = COLLECTION_START, y = RESULT,
                                             group = MONITORING_LOCATION,
                                             color = MONITORING_LOCATION)) +

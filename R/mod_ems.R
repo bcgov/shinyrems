@@ -118,13 +118,13 @@ mod_ems_server <- function(input, output, session){
   })
 
   # always adjust selected site markers when site$site changes
-  # marker_select <- ems_marker("red")
-  # observe({
-  #   data <- get_locations()[which(get_locations()$MONITORING_LOCATION %in% sites$sites),]
-  #   if(nrow(data) == 0) return()
-  #   data$LeafLabel <- leaflet_labels(data)
-  #   ems_leaflet_update(data = data, icon = marker_select)
-  # })
+  marker_select <- ems_marker("red")
+  observe({
+    data <- get_locations()[which(get_locations()$MONITORING_LOCATION %in% sites$sites),]
+    if(nrow(data) == 0) return()
+    data$LeafLabel <- leaflet_labels(data)
+    ems_leaflet_update(data = data, icon = marker_select)
+  })
 
   ### --- dropdown
   # adjusting site selection at dropdown updates sites$sites

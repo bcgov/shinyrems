@@ -13,14 +13,18 @@ package and ems database.
 #### To run the app, paste the following into an R console
 
 ``` r
-# install rems R package
-install_github("bcgov/rems")
-# download the ems SQLite database from BC Data Catalogue
-rems::download_historic_data(ask = FALSE)
-# install shinyrems R package
-install_github("poissonconsulting/shinyrems")
-# run app
+# install.packages("drat")
+drat::addRepo("poissonconsulting")
+devtools::install_github("poissonconsulting/shinyrems")
+# you can now run the app with.
 shinyrems::run_app()
+# by default the above runs the app in 'demo' mode using a small dataset that doesn't require downloading.
+# to access the '2 year' dataset (data from 2018-01-01 to present), use:
+shinyrems::run_app(run_mode = "2yr")
+# to access the 'historic' dataset (data from 1964-01-01 to 2018-01-01), use:
+shinyrems::run_app(run_mode = "historic")
+# to access all data (data from 2018-01-01 to present), use:
+shinyrems::run_app(run_mode = "2yr")
 ```
 
 ## Contribution

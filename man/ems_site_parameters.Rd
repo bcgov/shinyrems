@@ -3,7 +3,7 @@
 \docType{data}
 \name{ems_site_parameters}
 \alias{ems_site_parameters}
-\title{EMS Site Paramters.}
+\title{EMS parameters.}
 \format{A data frame with 907694 rows and 22 variables:
 \describe{
   \item{price}{price, in US dollars}
@@ -14,6 +14,6 @@
 ems_site_parameters
 }
 \description{
-EMS lookup table for which parameters each site has data for.
+EMS lookup table for which sites have data for each parameter.
 }
 \keyword{datasets}
