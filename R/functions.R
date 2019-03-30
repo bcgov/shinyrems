@@ -120,39 +120,35 @@ combine_data <- function(data, emsid, param_code, dates){
 }
 
 run_mode_data <- function(run_mode, data, emsid, param_code, dates){
-  if(run_mode == "demo"){
-    return(ems_demo_data %>%
-             filter_2yr_data(emsid = emsid,
-                             param_code = param_code,
-                             dates = dates))
-  }
-  if(run_mode == "2yr"){
-    return(filter_2yr_data(data = data,
-                           emsid = emsid,
-                           param_code = param_code,
-                           dates = dates))
-  }
-  if(run_mode == "historic"){
-    return(filter_historic_data(emsid = emsid,
+  switch(run_mode,
+         "demo" = filter_2yr_data(data = ems_demo_data,
+                                  emsid = emsid,
+                                  param_code = param_code,
+                                  dates = dates),
+         "2yr" = filter_2yr_data(data = data,
+                                emsid = emsid,
                                 param_code = param_code,
-                                dates = dates))
-  }
-  combine_data(data = ems_data(),
-               emsid = emsid,
-               param_code = param_code,
-               dates = dates)
+                                dates = dates),
+         "historic" = filter_historic_data(emsid = emsid,
+                                           param_code = param_code,
+                                           dates = dates),
+         combine_data(data = ems_data(),
+                      emsid = emsid,
+                      param_code = param_code,
+                      dates = dates))
 }
 
 run_mode_date_range <- function(run_mode){
-  if(run_mode == "demo"){
-    return(as.Date(range(ems_demo_data$COLLECTION_START, na.rm = TRUE)))
-  }
-  if(run_mode == "2yr"){
-    return(as.Date(c("2018-01-01", Sys.Date())))
-  }
-  if(run_mode == "historic"){
-    return(as.Date(c("1964-01-01", "2018-01-01")))
-  }
-  as.Date(c("1964-01-01", Sys.Date()))
+  switch(run_mode,
+         "demo" = as.Date(range(ems_demo_data$COLLECTION_START, na.rm = TRUE)),
+         "2yr" = as.Date(c("2018-01-01", Sys.Date())),
+         "historic" = as.Date(c("1964-01-01", "2018-01-01")),
+         c(as.Date("1964-01-01"), Sys.Date()))
+}
+
+run_mode_parameter <- function(run_mode){
+  switch(run_mode,
+         "demo" = c("Temperature", "pH", "Turbidity"),
+         unique(rems::ems_parameters$PARAMETER))
 }
 

@@ -88,8 +88,8 @@ mod_ems_server <- function(input, output, session){
   output$uiParameter <- renderUI({
     selectInput(ns("selectParameter"),
                 label = "Select parameter:",
-                choices = get_parameter(),
-                selected = get_parameter()[1])
+                choices = run_mode_parameter(run_mode),
+                selected = run_mode_parameter(run_mode)[1])
   })
 
   output$uiDateRange <- renderUI({
