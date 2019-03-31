@@ -8,8 +8,8 @@ leaflet_labels <- function(data){
 
 html_site_map <- function(parameter){
   p(HTML("These sites have <strong>", parameter, "</strong>data available.
-         Selected sites are shown in red. Hover over marker for more information.
-         MONITORING_LOCATION indicates site, which can be searched in the sidebar."))
+          Click on a marker to add/remove from site selection.
+         "))
 }
 
 ems_plot <- function(data, parameter){
