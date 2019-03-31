@@ -28,16 +28,16 @@ mod_ems_ui <- function(id, dates = run_mode_date_range()){
               tabsetPanel(selected = "Plot",
                           tabPanel("Plot",
                                    br(),
-                                   shinycssloaders::withSpinner(plotOutput(ns('plotEms')))),
+                                   plotOutput(ns('plotEms'))),
                           tabPanel("Table",
                                    br(),
-                                   emsTableOutput(ns('tableEms'))
-                          ),
-                          tabPanel("Site Selection",
+                                   emsTableOutput(ns('tableEms'))),
+                          tabPanel("Site Map",
                                    br(),
                                    htmlOutput(ns("htmlSiteMap")),
-                                   shinycssloaders::withSpinner(leaflet::leafletOutput(ns("leafletSites"))))
-              )))
+                                   leaflet::leafletOutput(ns("leafletSites")),
+                                   plotOutput(ns("leafletSitesUpdate")))
+                          )))
 }
 
 # Module Server
@@ -51,32 +51,27 @@ mod_ems_server <- function(input, output, session){
   run_mode <- getShinyOption("run_mode", "demo")
 
   ########## ---------- reactives ---------- ##########
-  ems_data <- reactive({
-    rems::get_ems_data(ask = FALSE, dont_update = TRUE)
-  })
+
+  get_parameter_data <- reactive({
+    req(input$selectParameter)
+    get_run_mode_data(input$selectParameter, run_mode)
+    })
 
   get_data <- reactive({
-    run_mode_data(run_mode = run_mode,
-                  data = ems_data(),
-                  emsid = site_to_emsid(input$selectSite),
-                  param_code = parameter_to_paramcode(input$selectParameter),
-                  dates = input$dateRange)
-  })
-
-  get_parameter <- reactive({
-    get_parameter_lookup(run_mode = run_mode)$PARAMETER %>% unique()
+    data <- get_parameter_data()
+    emsid <- site_to_emsid(input$selectSite)
+    filter_2yr_data(x = data,
+                    emsid = emsid,
+                    from_date = input$dateRange[1],
+                    to_date = input$dateRange[2])
   })
 
   get_sites <- reactive({
-    parameter_to_sites(input$selectParameter, run_mode = run_mode)
+    parameter_to_site(get_parameter_data())
   })
 
   get_locations <- reactive({
-    parameter_to_location(input$selectParameter, run_mode = run_mode)
-  })
-
-  get_pindex <- reactive({
-    p_index(get_locations(), sites$sites)
+    parameter_to_location(get_parameter_data())
   })
 
   ########## ---------- render UI ---------- ##########
@@ -88,11 +83,12 @@ mod_ems_server <- function(input, output, session){
   output$uiParameter <- renderUI({
     selectInput(ns("selectParameter"),
                 label = "Select parameter:",
-                choices = run_mode_parameter(run_mode),
-                selected = run_mode_parameter(run_mode)[1])
+                choices = c(run_mode_parameter(run_mode), ""),
+                selected = "")
   })
 
   output$uiDateRange <- renderUI({
+    req(input$selectParameter)
     dates <- run_mode_date_range(run_mode = run_mode)
     dateRangeInput(ns("dateRange"),
                    label = "Get any available data between dates:",
@@ -101,40 +97,8 @@ mod_ems_server <- function(input, output, session){
   })
 
   output$htmlSiteMap <- renderUI({
+    req(input$selectParameter)
     html_site_map(input$selectParameter)
-  })
-
-  ########## ---------- update site selection ---------- ##########
-  sites <- reactiveValues(sites = list())
-
-  ### --- map
-  # if marker clicked/unclicked adjust sites$sites
-  observeEvent(input$leafletSites_marker_click, {
-    click_id <- input$leafletSites_marker_click$id
-    if(click_id %in% sites$sites){
-      return(sites$sites <- setdiff(sites$sites, click_id))
-    }
-    sites$sites <- c(sites$sites, click_id)
-  })
-
-  # always adjust selected site markers when site$site changes
-  marker_select <- ems_marker("red")
-  observe({
-    data <- get_locations()[which(get_locations()$MONITORING_LOCATION %in% sites$sites),]
-    if(nrow(data) == 0) return()
-    data$LeafLabel <- leaflet_labels(data)
-    ems_leaflet_update(data = data, icon = marker_select)
-  })
-
-  ### --- dropdown
-  # adjusting site selection at dropdown updates sites$sites
-  observe({
-    sites$sites <- input$selectSite
-  })
-
-  # adjust dropdown selection when sites$sites changes
-  observe({
-    updateSelectizeInput(session, 'selectSite', selected = sites$sites)
   })
 
   ########## ---------- render Outputs ---------- ##########
@@ -143,12 +107,22 @@ mod_ems_server <- function(input, output, session){
   })
 
   output$plotEms <- renderPlot({
+    req(input$selectParameter)
+    # req(sites$sites)
     ems_plot(data = get_data(), parameter = input$selectParameter)
   })
 
   marker_deselect <- ems_marker("blue")
   output$leafletSites <- leaflet::renderLeaflet({
     ems_leaflet(data = get_locations(), icon = marker_deselect)
+  })
+
+  marker_select <- ems_marker("red")
+  output$leafletSitesUpdate <- renderPlot({
+    data <- get_locations()[which(get_locations()$MONITORING_LOCATION %in% input$selectSite),]
+    if(nrow(data) == 0) return()
+    data$LeafLabel <- leaflet_labels(data)
+    ems_leaflet_update(data = data, icon = marker_select)
   })
 
   ########## ---------- download handlers ---------- ##########
