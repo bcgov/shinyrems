@@ -21,7 +21,7 @@ parameter_to_location <- function(data){
 
 # thin wrappers for rems filter functions to simplify arguments
 filter_historic_data <- function(..., check_exists = FALSE){
-  rems::read_historic_data(...)
+  rems::read_historic_data(..., check_exists = FALSE)
 }
 
 filter_2yr_data <- function(...){
@@ -36,7 +36,8 @@ combine_data <- function(...){
 }
 
 ems_data <- function(){
-  rems::get_ems_data(ask = FALSE, dont_update = TRUE)
+  ret <- rems:::._remsCache_$get("2yr")[, rems:::wq_cols()]
+  rems:::add_rems_type(ret, "2yr")
 }
 
 run_mode_data <- function(run_mode, ...){
@@ -50,7 +51,7 @@ run_mode_data <- function(run_mode, ...){
 run_mode_date_range <- function(run_mode){
   switch(run_mode,
          "demo" = as.Date(range(ems_demo_data$COLLECTION_START, na.rm = TRUE)),
-         "2yr" = as.Date(c("2018-01-01", Sys.Date())),
+         "2yr" = c(as.Date("2018-01-01"), Sys.Date()),
          "historic" = as.Date(c("1964-01-01", "2018-01-01")),
          c(as.Date("1964-01-01"), Sys.Date()))
 }
@@ -58,6 +59,7 @@ run_mode_date_range <- function(run_mode){
 run_mode_parameter <- function(run_mode){
   switch(run_mode,
          "demo" = c("Temperature", "pH", "Turbidity"),
+         "2yr" = unique(ems_data()$PARAMETER),
          unique(rems::ems_parameters$PARAMETER))
 }
 
