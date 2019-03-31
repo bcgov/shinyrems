@@ -56,10 +56,19 @@ run_mode_date_range <- function(run_mode){
          c(as.Date("1964-01-01"), Sys.Date()))
 }
 
+historic_parameter <- function(){
+  con <- rems::attach_historic_data()
+  con %>%
+    dplyr::select(PARAMETER) %>%
+    dplyr::distinct() %>%
+    dplyr::collect()
+}
+
 run_mode_parameter <- function(run_mode){
   switch(run_mode,
          "demo" = c("Temperature", "pH", "Turbidity"),
          "2yr" = unique(ems_data()$PARAMETER),
+         "historic" = historic_parameter()$PARAMETER,
          unique(rems::ems_parameters$PARAMETER))
 }
 
