@@ -74,6 +74,25 @@ mod_ems_server <- function(input, output, session){
     parameter_to_location(get_parameter_data())
   })
 
+  # update station choices with map clicks
+  reactive.sites <- reactiveValues(sites = list())
+
+  observeEvent(input$leafletSites_marker_click, {
+    click <- input$leafletSites_marker_click
+    if(click$id %in% reactive.sites$sites){
+      return(reactive.sites$sites <- setdiff(reactive.sites$sites, click$id))
+    }
+    reactive.sites$sites <- c(reactive.sites$sites, click$id)
+  })
+
+  observe({
+    reactive.sites$sites <- input$selectSite
+  })
+
+  observe({
+    updateSelectizeInput(session, 'selectSite', selected = reactive.sites$sites)
+  })
+
   ########## ---------- render UI ---------- ##########
   output$uiSites <- renderUI({
     selectInputX(ns("selectSite"),
@@ -109,7 +128,7 @@ mod_ems_server <- function(input, output, session){
   output$plotEms <- renderPlot({
     req(input$selectParameter)
     # req(sites$sites)
-    ems_plot(data = get_data(), parameter = input$selectParameter)
+    ems_plot(data = get_data(), parameter = reactive.sites$sites)
   })
 
   marker_deselect <- ems_marker("blue")
