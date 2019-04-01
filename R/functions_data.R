@@ -61,23 +61,42 @@ historic_parameter <- function(){
   con %>%
     dplyr::select(PARAMETER) %>%
     dplyr::distinct() %>%
-    dplyr::collect()
+    dplyr::filter(!is.na(PARAMETER), PARAMETER != "...") %>%
+    dplyr::collect() %>%
+    dplyr::pull(PARAMETER) %>%
+    unique()
+}
+
+con <- rems::attach_historic_data()
+tmp <- con %>%
+  dplyr::filter(PARAMETER == "4Cl2BenFuran-2;3;7;8") %>%
+  dplyr::collect()
+
+yr2_parameter <- function(){
+  ems_data() %>%
+    dplyr::filter(!is.na(PARAMETER), PARAMETER != "...") %>%
+    dplyr::pull(PARAMETER) %>%
+    unique()
+}
+
+demo_parameter <- function(){
+  c("Temperature", "pH", "Turbidity")
 }
 
 run_mode_parameter <- function(run_mode){
   switch(run_mode,
-         "demo" = c("Temperature", "pH", "Turbidity"),
-         "2yr" = unique(ems_data()$PARAMETER),
-         "historic" = historic_parameter()$PARAMETER,
+         "demo" = demo_parameter(),
+         "2yr" = yr2_parameter(),
+         "historic" = historic_parameter(),
          unique(rems::ems_parameters$PARAMETER))
 }
 
 get_run_mode_data <- function(parameter, run_mode){
   switch(run_mode,
          "demo" = run_mode_data(run_mode = run_mode,
-                                param_code = parameter_to_paramcode(parameter)),
+                                parameter = parameter),
          shiny::withProgress(message = paste("Retrieving data and available sites for parameter:", parameter),
                              value = 0.5, {
                                run_mode_data(run_mode = run_mode,
-                                             param_code = parameter_to_paramcode(parameter))}))}
+                                             parameter = parameter)}))}
 
