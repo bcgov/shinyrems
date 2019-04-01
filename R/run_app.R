@@ -10,19 +10,12 @@
 #' @export
 #' @importFrom shiny runApp
 run_app <- function(run_mode = "demo") {
-  checkr::check_vector(run_mode, c("demo", "2yr", "historic"))
-  # if(run_mode != "demo") stop("Sorry the app only runs in demo mode at this time!")
-  if(run_mode == "historic"){
-    message("checking for historic data...")
-    rems::download_historic_data(ask = FALSE)
-    # message("checking for most recent 2 years of data...")
-    # rems::get_ems_data("2yr", ask = FALSE, dont_get = TRUE)
-  }
+  checkr::check_vector(run_mode, c("demo", "2yr", "historic", "all"))
 
-  if(run_mode == "2yr"){
-    message("checking for most recent 2 years of data...")
-    rems::get_ems_data("2yr", ask = FALSE, dont_get = TRUE)
-  }
+  switch(run_mode,
+         "2yr" = check_2yr_data(),
+         "historic" = check_historic_data(),
+         "all" = check_all_data())
 
   shinyOptions(run_mode = run_mode)
   shiny::runApp(system.file("app", package = "shinyrems"))
