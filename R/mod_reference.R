@@ -18,12 +18,6 @@ mod_reference_ui <- function(id){
   fluidPage(
     fluidRow(
       tabsetPanel(
-        tabPanel(title = "Sites and Parameters",
-                 emsDownload(ns("dlSiteParameters")),
-                 emsTableOutput(ns("tableSiteParameters"))),
-        tabPanel(title = "Sites",
-                 emsDownload(ns("dlSites")),
-                 emsTableOutput(ns("tableSites"))),
         tabPanel(title = "Parameters",
                  emsDownload(ns("dlParameters")),
                  emsTableOutput(ns("tableParameters"))),
@@ -55,20 +49,6 @@ mod_reference_ui <- function(id){
 
 mod_reference_server <- function(input, output, session){
   ns <- session$ns
-
-  output$tableSiteParameters <- renderDataTable({ems_site_parameters})
-  output$dlSiteParameters <- downloadHandler(
-    filename = function() "ems_site_parameters.csv",
-    content = function(file) {
-      readr::write_csv(ems_site_parameters, file)
-    })
-
-  output$tableSites <- renderDataTable({ems_sites})
-  output$dlSites <- downloadHandler(
-    filename = function() "ems_sites.csv",
-    content = function(file) {
-      readr::write_csv(ems_sites, file)
-    })
 
   output$tableParameters <- renderDataTable({rems::ems_parameters})
   output$dlParameters <- downloadHandler(
