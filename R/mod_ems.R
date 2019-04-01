@@ -110,7 +110,8 @@ mod_ems_server <- function(input, output, session){
 
   output$uiDateRange <- renderUI({
     req(input$selectParameter)
-    dates <- run_mode_date_range(run_mode = run_mode)
+    data <- get_parameter_data()
+    dates <- parameter_to_date(data)
     dateRangeInput(ns("dateRange"),
                    label = "Get any available data between dates:",
                    start = dates[1], end = dates[2],
