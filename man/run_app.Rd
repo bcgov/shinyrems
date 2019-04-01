@@ -4,7 +4,7 @@
 \alias{run_app}
 \title{Run the Shiny Application}
 \usage{
-run_app(run_mode = "demo")
+run_app(run_mode = "2yr")
 }
 \arguments{
 \item{run_mode}{A string indicating which dataset the app should use.
