@@ -1,7 +1,6 @@
 ########## ---------- lookups ---------- ##########
-site_to_emsid <- function(sites){
-  x <- ems_sites
-  x$EMS_ID[x$MONITORING_LOCATION %in% sites]
+site_to_emsid <- function(data, sites){
+  data$EMS_ID[data$MONITORING_LOCATION %in% sites]
 }
 
 parameter_to_site <- function(data){
@@ -20,8 +19,8 @@ parameter_to_date <- function(data){
 }
 
 ########## ---------- fetching data ---------- ##########
-filter_historic_data <- function(..., check_exists = FALSE){
-  rems::read_historic_data(..., check_exists = FALSE)
+filter_historic_data <- function(..., check_db = FALSE){
+  rems::read_historic_data(..., check_db = FALSE)
 }
 
 filter_2yr_data <- function(...){

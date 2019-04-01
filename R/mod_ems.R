@@ -60,7 +60,7 @@ mod_ems_server <- function(input, output, session){
   get_data <- reactive({
     req(input$selectSite)
     data <- get_parameter_data()
-    emsid <- site_to_emsid(input$selectSite)
+    emsid <- site_to_emsid(data, input$selectSite)
     filter_2yr_data(x = data,
                     emsid = emsid,
                     from_date = input$dateRange[1],
