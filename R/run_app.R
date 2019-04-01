@@ -9,7 +9,7 @@
 #'
 #' @export
 #' @importFrom shiny runApp
-run_app <- function(run_mode = "demo") {
+run_app <- function(run_mode = "2yr") {
   checkr::check_vector(run_mode, c("demo", "2yr", "historic", "all"))
 
   switch(run_mode,
