@@ -4,16 +4,11 @@
 \name{ems_demo_data}
 \alias{ems_demo_data}
 \title{EMS demo data.}
-\format{A data frame with 907694 rows and 22 variables:
-\describe{
-  \item{price}{price, in US dollars}
-  \item{carat}{weight of the diamond, in carats}
-  ...
-}}
+\format{A data frame with 250241 rows and 22 variables:}
 \usage{
 ems_demo_data
 }
 \description{
-EMS data including a subset of parameters and sites.
+EMS data for three paramters ("Temperature", "pH", "Turbidity") and 1000 sites.
 }
 \keyword{datasets}
