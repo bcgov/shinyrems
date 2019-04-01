@@ -61,10 +61,13 @@ mod_ems_server <- function(input, output, session){
     req(input$selectSite)
     data <- get_parameter_data()
     emsid <- site_to_emsid(data, input$selectSite)
-    filter_2yr_data(x = data,
+    data <- filter_2yr_data(x = data,
                     emsid = emsid,
                     from_date = input$dateRange[1],
                     to_date = input$dateRange[2])
+    ### currently hiding all error messages
+    # validate(need(nrow(data) > 0, message = "No data available."))
+    data
   })
 
   get_sites <- reactive({
@@ -128,13 +131,10 @@ mod_ems_server <- function(input, output, session){
     get_data()
   })
 
-  get_plot <- reactive({
-    req(input$selectSite)
-    ems_plot(data = get_data(), parameter = input$selectParameter)
-  })
-
   output$plotEms <- renderPlot({
-    get_plot()
+    req(input$selectSite)
+    data <- get_data()
+    ems_plot(data = data, parameter = input$selectParameter)
   })
 
   marker_deselect <- ems_marker("blue")

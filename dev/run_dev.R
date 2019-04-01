@@ -6,5 +6,5 @@ golem::detach_all_attached()
 rm(list=ls(all.names = TRUE))
 golem::document_and_reload()
 
-shinyrems::run_app()
+shinyrems::run_app(run_mode = "historic")
 
