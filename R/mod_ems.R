@@ -54,9 +54,7 @@ mod_ems_server <- function(input, output, session){
 
   get_parameter_data <- reactive({
     req(input$selectParameter)
-    x <- get_run_mode_data(input$selectParameter, run_mode)
-    print(x)
-    x
+    get_run_mode_data(input$selectParameter, run_mode)
     })
 
   get_data <- reactive({
@@ -130,6 +128,7 @@ mod_ems_server <- function(input, output, session){
   })
 
   get_plot <- reactive({
+    req(input$selectSite)
     ems_plot(data = get_data(), parameter = input$selectParameter)
   })
 

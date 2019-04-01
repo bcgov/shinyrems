@@ -57,8 +57,7 @@ run_mode_date_range <- function(run_mode){
 }
 
 historic_parameter <- function(){
-  con <- rems::attach_historic_data()
-  con %>%
+  rems::attach_historic_data() %>%
     dplyr::select(PARAMETER) %>%
     dplyr::distinct() %>%
     dplyr::filter(!is.na(PARAMETER), PARAMETER != "...") %>%
@@ -67,16 +66,24 @@ historic_parameter <- function(){
     unique()
 }
 
-con <- rems::attach_historic_data()
-tmp <- con %>%
-  dplyr::filter(PARAMETER == "4Cl2BenFuran-2;3;7;8") %>%
-  dplyr::collect()
-
-yr2_parameter <- function(){
+yr2_parameter <- function(run_mode){
   ems_data() %>%
     dplyr::filter(!is.na(PARAMETER), PARAMETER != "...") %>%
     dplyr::pull(PARAMETER) %>%
     unique()
+}
+
+all_parameter <- function(run_mode){
+  c(historic_parameter(), yr2_parameter()) %>%
+    unique() %>%
+    sort()
+}
+
+parameter_message <- function(run_mode, fun){
+  shiny::withProgress(message = paste("Fetching available parameters for run mode:", run_mode),
+                      value = 0.5, {
+                        fun
+                      })
 }
 
 demo_parameter <- function(){
@@ -86,9 +93,9 @@ demo_parameter <- function(){
 run_mode_parameter <- function(run_mode){
   switch(run_mode,
          "demo" = demo_parameter(),
-         "2yr" = yr2_parameter(),
-         "historic" = historic_parameter(),
-         unique(rems::ems_parameters$PARAMETER))
+         "2yr" = parameter_message("2yr", yr2_parameter()),
+         "historic" = parameter_message("historic", historic_parameter()),
+         "all" = parameter_message("all", all_parameter()))
 }
 
 get_run_mode_data <- function(parameter, run_mode){
