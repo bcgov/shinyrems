@@ -54,10 +54,13 @@ mod_ems_server <- function(input, output, session){
 
   get_parameter_data <- reactive({
     req(input$selectParameter)
-    get_run_mode_data(input$selectParameter, run_mode)
+    x <- get_run_mode_data(input$selectParameter, run_mode)
+    print(x)
+    x
     })
 
   get_data <- reactive({
+    req(input$selectSite)
     data <- get_parameter_data()
     emsid <- site_to_emsid(input$selectSite)
     filter_2yr_data(x = data,
@@ -74,29 +77,30 @@ mod_ems_server <- function(input, output, session){
     parameter_to_location(get_parameter_data())
   })
 
-  # update station choices with map clicks
-  reactive.sites <- reactiveValues(sites = list())
-
-  observeEvent(input$leafletSites_marker_click, {
-    click <- input$leafletSites_marker_click
-    if(click$id %in% reactive.sites$sites){
-      return(reactive.sites$sites <- setdiff(reactive.sites$sites, click$id))
-    }
-    reactive.sites$sites <- c(reactive.sites$sites, click$id)
-  })
-
-  observe({
-    reactive.sites$sites <- input$selectSite
-  })
-
-  observe({
-    updateSelectizeInput(session, 'selectSite', selected = reactive.sites$sites)
-  })
+  ### update site choices with map clicks
+  # currently disabled because can cause glitch when clicked twice very quickly
+  # reactive.sites <- reactiveValues(sites = list())
+  #
+  # observeEvent(input$leafletSites_marker_click, {
+  #   click <- input$leafletSites_marker_click
+  #   if(click$id %in% reactive.sites$sites){
+  #     return(reactive.sites$sites <- setdiff(reactive.sites$sites, click$id))
+  #   }
+  #   reactive.sites$sites <- c(reactive.sites$sites, click$id)
+  # })
+  #
+  # observe({
+  #   reactive.sites$sites <- input$selectSite
+  # })
+  #
+  # observe({
+  #   updateSelectizeInput(session, 'selectSite', selected = reactive.sites$sites)
+  # })
 
   ########## ---------- render UI ---------- ##########
   output$uiSites <- renderUI({
     selectInputX(ns("selectSite"),
-                 choices = get_sites())
+                 choices = c(get_sites(), ""), selected = "")
   })
 
   output$uiParameter <- renderUI({
@@ -125,10 +129,12 @@ mod_ems_server <- function(input, output, session){
     get_data()
   })
 
+  get_plot <- reactive({
+    ems_plot(data = get_data(), parameter = input$selectParameter)
+  })
+
   output$plotEms <- renderPlot({
-    req(input$selectParameter)
-    # req(sites$sites)
-    ems_plot(data = get_data(), parameter = reactive.sites$sites)
+    get_plot()
   })
 
   marker_deselect <- ems_marker("blue")
