@@ -28,10 +28,10 @@ filter_2yr_data <- function(...){
   rems::filter_ems_data(...)
 }
 
-combine_data <- function(...){
+combine_data <- function(x, ...){
   rems::bind_ems_data(
     filter_historic_data(...),
-    filter_2yr_data(...)
+    filter_2yr_data(x = x, ...)
   )
 }
 
