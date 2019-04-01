@@ -1,11 +1,7 @@
+########## ---------- lookups ---------- ##########
 site_to_emsid <- function(sites){
   x <- ems_sites
   x$EMS_ID[x$MONITORING_LOCATION %in% sites]
-}
-
-parameter_to_paramcode <- function(parameter){
-  x <- rems::ems_parameters
-  x$PARAMETER_CODE[x$PARAMETER == parameter]
 }
 
 parameter_to_site <- function(data){
@@ -19,7 +15,11 @@ parameter_to_location <- function(data){
     dplyr::ungroup()
 }
 
-# thin wrappers for rems filter functions to simplify arguments
+parameter_to_date <- function(data){
+  as.Date(range(data$COLLECTION_START, na.rm = TRUE))
+}
+
+########## ---------- fetching data ---------- ##########
 filter_historic_data <- function(..., check_exists = FALSE){
   rems::read_historic_data(..., check_exists = FALSE)
 }
@@ -48,14 +48,16 @@ run_mode_data <- function(run_mode, ...){
          combine_data(x = ems_data(), ...))
 }
 
-run_mode_date_range <- function(run_mode){
+get_run_mode_data <- function(parameter, run_mode){
   switch(run_mode,
-         "demo" = as.Date(range(ems_demo_data$COLLECTION_START, na.rm = TRUE)),
-         "2yr" = c(as.Date("2018-01-01"), Sys.Date()),
-         "historic" = as.Date(c("1964-01-01", "2018-01-01")),
-         c(as.Date("1964-01-01"), Sys.Date()))
-}
+         "demo" = run_mode_data(run_mode = run_mode,
+                                parameter = parameter),
+         shiny::withProgress(message = paste("Retrieving data and available sites for parameter:", parameter),
+                             value = 0.5, {
+                               run_mode_data(run_mode = run_mode,
+                                             parameter = parameter)}))}
 
+########## ---------- fetching parameters ---------- ##########
 historic_parameter <- function(){
   rems::attach_historic_data() %>%
     dplyr::select(PARAMETER) %>%
@@ -79,15 +81,15 @@ all_parameter <- function(run_mode){
     sort()
 }
 
+demo_parameter <- function(){
+  c("Temperature", "pH", "Turbidity")
+}
+
 parameter_message <- function(run_mode, fun){
   shiny::withProgress(message = paste("Fetching available parameters for run mode:", run_mode),
                       value = 0.5, {
                         fun
                       })
-}
-
-demo_parameter <- function(){
-  c("Temperature", "pH", "Turbidity")
 }
 
 run_mode_parameter <- function(run_mode){
@@ -97,13 +99,4 @@ run_mode_parameter <- function(run_mode){
          "historic" = parameter_message("historic", historic_parameter()),
          "all" = parameter_message("all", all_parameter()))
 }
-
-get_run_mode_data <- function(parameter, run_mode){
-  switch(run_mode,
-         "demo" = run_mode_data(run_mode = run_mode,
-                                parameter = parameter),
-         shiny::withProgress(message = paste("Retrieving data and available sites for parameter:", parameter),
-                             value = 0.5, {
-                               run_mode_data(run_mode = run_mode,
-                                             parameter = parameter)}))}
 
