@@ -6,6 +6,8 @@ Description: An R package to run 'shinyrems' app, an interface to the 'rems' R p
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
+Depends:
+    R (>= 2.10)
 Imports: 
     shiny,
     htmltools,

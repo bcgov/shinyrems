@@ -14,9 +14,9 @@ html_site_map <- function(parameter){
 }
 
 ems_plot <- function(data, parameter){
-  ggplot2::ggplot(data = data, ggplot2::aes(x = COLLECTION_START, y = RESULT,
-                                            group = MONITORING_LOCATION,
-                                            color = MONITORING_LOCATION)) +
+  ggplot2::ggplot(data = data, ggplot2::aes_string(x = "COLLECTION_START", y = "RESULT",
+                                            group = "MONITORING_LOCATION",
+                                            color = "MONITORING_LOCATION")) +
     ggplot2::geom_line() +
     ggplot2::geom_point(size = 0.5) +
     ggplot2::scale_color_discrete("Sites") +

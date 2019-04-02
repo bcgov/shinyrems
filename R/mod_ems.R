@@ -105,7 +105,6 @@ mod_ems_server <- function(input, output, session){
   })
 
   output$uiParameter <- renderUI({
-    print(run_mode_parameter(run_mode))
     selectInput(ns("selectParameter"),
                 label = "Select parameter:",
                 choices = c(run_mode_parameter(run_mode), ""),
