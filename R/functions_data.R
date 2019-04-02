@@ -4,12 +4,14 @@ site_to_emsid <- function(data, sites){
 }
 
 parameter_to_site <- function(data){
-  data$MONITORING_LOCATION %>% unique() %>% sort()
+  data$MONITORING_LOCATION %>%
+    unique() %>%
+    sort()
 }
 
 parameter_to_location <- function(data){
   data %>%
-    dplyr::group_by(EMS_ID, MONITORING_LOCATION, LATITUDE, LONGITUDE, LOCATION_TYPE) %>%
+    dplyr::group_by(.data$EMS_ID, .data$MONITORING_LOCATION, .data$LATITUDE, .data$LONGITUDE, .data$LOCATION_TYPE) %>%
     dplyr::summarise() %>%
     dplyr::ungroup()
 }
@@ -41,7 +43,7 @@ ems_data <- function(){
 
 run_mode_data <- function(run_mode, ...){
   switch(run_mode,
-         "demo" = filter_2yr_data(x = ems_demo_data, ...),
+         "demo" = filter_2yr_data(x = shinyrems::ems_demo_data, ...),
          "2yr" = filter_2yr_data(x = ems_data(), ...),
          "historic" = filter_historic_data(...),
          combine_data(x = ems_data(), ...))
@@ -61,16 +63,16 @@ historic_parameter <- function(){
   rems::attach_historic_data() %>%
     dplyr::select(PARAMETER) %>%
     dplyr::distinct() %>%
-    dplyr::filter(!is.na(PARAMETER), PARAMETER != "...") %>%
+    dplyr::filter(!is.na(PARAMETER)) %>%
     dplyr::collect() %>%
-    dplyr::pull(PARAMETER) %>%
+    dplyr::pull(.data$PARAMETER) %>%
     unique()
 }
 
 yr2_parameter <- function(run_mode){
   ems_data() %>%
-    dplyr::filter(!is.na(PARAMETER), PARAMETER != "...") %>%
-    dplyr::pull(PARAMETER) %>%
+    dplyr::filter(!is.na(.data$PARAMETER)) %>%
+    dplyr::pull(.data$PARAMETER) %>%
     unique()
 }
 
