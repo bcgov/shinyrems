@@ -1,6 +1,6 @@
 check_2yr_data <- function(){
   message("checking for most recent 2 years of data...")
-  rems::get_ems_data("2yr", ask = FALSE, dont_get = TRUE)
+  rems::get_ems_data("2yr", ask = FALSE, check_only = TRUE)
 }
 
 check_historic_data <- function(){

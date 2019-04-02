@@ -61,9 +61,9 @@ get_run_mode_data <- function(parameter, run_mode){
 ########## ---------- fetching parameters ---------- ##########
 historic_parameter <- function(){
   rems::attach_historic_data() %>%
-    dplyr::select(PARAMETER) %>%
+    dplyr::select(!!sym("PARAMETER")) %>%
     dplyr::distinct() %>%
-    dplyr::filter(!is.na(PARAMETER)) %>%
+    dplyr::filter(!is.na(!!sym("PARAMETER"))) %>%
     dplyr::collect() %>%
     dplyr::pull(.data$PARAMETER) %>%
     unique()
@@ -83,7 +83,7 @@ all_parameter <- function(run_mode){
 }
 
 demo_parameter <- function(){
-  c("Temperature", "pH", "Turbidity")
+  c("Temperature", "Turbidity")
 }
 
 parameter_message <- function(run_mode, fun){

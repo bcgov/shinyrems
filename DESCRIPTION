@@ -3,7 +3,7 @@ Title: An R package to run Shiny app interface to rems R package
 Version: 0.0.0.9000
 Authors@R: person('Seb', 'Dalgarno', email = 'seb@poissonconsulting.ca', role = c('cre', 'aut'))
 Description: An R package to run 'shinyrems' app, an interface to the 'rems' R package to visualize and download data from BC Data Catalogue ems database.
-License: What license is it under?
+License: Apache License (== 2.0) | file LICENSE
 Encoding: UTF-8
 LazyData: true
 Depends:
@@ -27,7 +27,8 @@ Imports:
 Remotes: 
     ThinkR-open/golem
 Suggests:
-    golem
+    golem,
+    testthat
 RoxygenNote: 6.1.1
 URL: https://github.com/poissonconsulting/shinyrems
 BugReports: https://github.com/poissonconsulting/shinyrems/issues

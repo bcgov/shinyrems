@@ -25,7 +25,7 @@ mod_about_ui <- function(id){
               a("GitHub page.", href = "https://github.com/bcgov/rems")),
            actionLink(ns('info_citation'), "Citation info"),
            shinyjs::hidden(div(id = ns("div_citation"),
-                      h6(HTML(paste("To cite package ‘rems’ in publications use:<br><br>
+                      h6(HTML(paste("To cite package 'rems' in publications use:<br><br>
                                     Andy Teucher (NA). rems: Get Data From British Columbia's Environmental Monitoring System. R
                                     package version 0.4.0.9999 <br><br>",
                                     "To cite app: <br><br>

@@ -1,3 +1,3 @@
 #' @importFrom magrittr %<>% %>%
-#' @importFrom rlang .data
+#' @importFrom rlang .data !! sym
 NULL
