@@ -20,26 +20,32 @@ drat::addRepo("poissonconsulting")
 install.packages("shinyrems")
 ```
 
-The app can be run in 4 modes:
+The app has 4 run modes:
 
-  - “demo”
-  - “2yr”
-  - “historic”
-  - “all”
+  - **“demo”**
+  - **“2yr”**
+  - **“historic”**
+  - **“all”**
 
-Each mode has different data requirements. If running app in “2yr”,
-“historic” or “all” mode, you will be prompted to download or update
-the data onto your machine prior to the app being launched. This
-requires internet\! In the case of “historic” and “all”, the data
-downloaded is in excess of 4gb\!
+Each run mode has different data requirements.
 
-To simply run the app without having to download any data first, use
-“demo” mode:
+  - If using **“2yr”**, **“historic”** or **“all”** run mode, you will
+    be prompted to download or update the data onto your machine prior
+    to the app being launched. This requires internet\!
+
+  - If using **“historic”** and **“all”**, the data downloaded is in
+    excess of 4gb\!
+
+  - If you only require data since 2018-01-01, the **“2yr”** run mode
+    works with a smaller dataset and the app will run a little faster.
+
+To simply run the app without having to download any data first, use the
+“demo” run mode:
 
     shinyrems::run_app(run_mode = "demo")
 
-For the other modes, simply substitute “demo” with another run\_mode,
-e.g.:
+For the other run modes, simply substitute “demo” with one of the other
+options, e.g.:
 
     shinyrems::run_app(run_mode = "2yr")
 
