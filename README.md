@@ -15,7 +15,7 @@ from the EMS database.
 First let’s install the package\! Paste the following into the console:
 
 ``` r
-remove.packages("rems")
+if(!"rems" %in% installed.packages()[,1])  remove.packages("rems")
 if(!"drat" %in% installed.packages()[,1]) install.packages("drat")
 drat::addRepo("poissonconsulting")
 install.packages("rems")
