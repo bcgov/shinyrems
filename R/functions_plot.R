@@ -49,7 +49,6 @@ ems_leaflet <- function(data, icon){
                                clusterOptions = leaflet::markerClusterOptions(showCoverageOnHover = F,
                                                                               spiderfyOnMaxZoom = T),
                                icon = icon)
-
 }
 
 ems_leaflet_update <- function(data, icon){

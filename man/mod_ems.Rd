@@ -5,7 +5,7 @@
 \alias{mod_ems_server}
 \title{mod_ems_ui and mod_ems_server}
 \usage{
-mod_ems_ui(id, dates = run_mode_date_range())
+mod_ems_ui(id)
 
 mod_ems_server(input, output, session)
 }

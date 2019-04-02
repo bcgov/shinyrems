@@ -19,7 +19,9 @@ Imports:
     magrittr,
     readr,
     shinycssloaders,
-    DT
+    DT,
+    checkr,
+    rlang
 Remotes: 
     ThinkR-open/golem
 Suggests:

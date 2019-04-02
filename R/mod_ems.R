@@ -13,7 +13,7 @@
 #' @keywords internal
 #' @export
 #' @importFrom shiny NS tagList
-mod_ems_ui <- function(id, dates = run_mode_date_range()){
+mod_ems_ui <- function(id){
   ns <- NS(id)
 
   sidebarLayout(
@@ -105,6 +105,7 @@ mod_ems_server <- function(input, output, session){
   })
 
   output$uiParameter <- renderUI({
+    print(run_mode_parameter(run_mode))
     selectInput(ns("selectParameter"),
                 label = "Select parameter:",
                 choices = c(run_mode_parameter(run_mode), ""),
