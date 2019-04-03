@@ -37,8 +37,7 @@ combine_data <- function(x, ...){
 }
 
 ems_data <- function(){
-  ret <- rems:::._remsCache_$get("2yr")[, rems:::wq_cols()]
-  rems:::add_rems_type(ret, "2yr")
+  rems::get_ems_data(dont_update = TRUE)
 }
 
 run_mode_data <- function(run_mode, ...){
