@@ -21,12 +21,12 @@ knitr::opts_chunk$set(
 
 #### Follow these instructions to run the app:
 
-First let's install the package! Paste the following into the console:
+First let's install the most recent versions of `rems` and `shinyrems` R packages. Paste the following lines into the console, one at a time:
 ``` r
-if(!"rems" %in% installed.packages()[,1])  remove.packages("rems")
+if(!"devtools" %in% installed.packages()[,1])  install.packages("devtools")
+devtools::install_github("bcgov/rems")
 if(!"drat" %in% installed.packages()[,1]) install.packages("drat")
 drat::addRepo("poissonconsulting")
-install.packages("rems")
 install.packages("shinyrems")
 ```
 
