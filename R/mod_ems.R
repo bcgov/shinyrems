@@ -65,8 +65,6 @@ mod_ems_server <- function(input, output, session){
                     emsid = emsid,
                     from_date = input$dateRange[1],
                     to_date = input$dateRange[2])
-    ### currently hiding all error messages
-    # validate(need(nrow(data) > 0, message = "No data available."))
     data
   })
 
@@ -77,26 +75,6 @@ mod_ems_server <- function(input, output, session){
   get_locations <- reactive({
     parameter_to_location(get_parameter_data())
   })
-
-  ### update site choices with map clicks
-  # currently disabled because can cause glitch when clicked twice very quickly
-  # reactive.sites <- reactiveValues(sites = list())
-  #
-  # observeEvent(input$leafletSites_marker_click, {
-  #   click <- input$leafletSites_marker_click
-  #   if(click$id %in% reactive.sites$sites){
-  #     return(reactive.sites$sites <- setdiff(reactive.sites$sites, click$id))
-  #   }
-  #   reactive.sites$sites <- c(reactive.sites$sites, click$id)
-  # })
-  #
-  # observe({
-  #   reactive.sites$sites <- input$selectSite
-  # })
-  #
-  # observe({
-  #   updateSelectizeInput(session, 'selectSite', selected = reactive.sites$sites)
-  # })
 
   ########## ---------- render UI ---------- ##########
   output$uiSites <- renderUI({
