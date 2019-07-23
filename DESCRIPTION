@@ -1,7 +1,11 @@
 Package: shinyrems
 Title: An R package to run Shiny app interface to rems R package
 Version: 0.0.0.9000
-Authors@R: person('Seb', 'Dalgarno', email = 'seb@poissonconsulting.ca', role = c('cre', 'aut'))
+Authors@R: c(
+    person("Sebastian", "Dalgarno", , "seb@poissonconsulting.ca", c("aut", "cre"), comment = c(ORCID = "0000-0002-3658-4517")),
+    person("Joe", "Thorley", , "joe@poissonconsulting.ca", "ctb", comment = c(ORCID = "0000-0002-7683-4592")),
+    person("Province of British Columbia", role = c("cph", "fnd"))
+    )
 Description: An R package to run 'shinyrems' app, an interface to the 'rems' R package to visualize and download data from BC Data Catalogue ems database.
 License: Apache License (== 2.0) | file LICENSE
 Encoding: UTF-8
