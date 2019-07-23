@@ -7,9 +7,7 @@ Authors@R: c(
     person("Province of British Columbia", role = c("cph", "fnd"))
     )
 Description: An R package to run 'shinyrems' app, an interface to the 'rems' R package to visualize and download data from BC Data Catalogue ems database.
-License: Apache License (== 2.0) | file LICENSE
-Encoding: UTF-8
-LazyData: true
+License: Apache License (>= 2.0)
 Depends:
     R (>= 2.10)
 Imports: 
@@ -28,11 +26,15 @@ Imports:
     DT,
     checkr,
     rlang
-Remotes: 
-    ThinkR-open/golem
 Suggests:
     golem,
     testthat
-RoxygenNote: 6.1.1
+Remotes: 
+    bccgov/rems,
+    ThinkR-open/golem
 URL: https://github.com/poissonconsulting/shinyrems
 BugReports: https://github.com/poissonconsulting/shinyrems/issues
+RoxygenNote: 6.1.1
+Encoding: UTF-8
+LazyData: true
+

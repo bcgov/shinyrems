@@ -1,28 +1,30 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-[![License:
-MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-
 # shinyrems
+
+<!-- badges: start -->
+
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![Apache
+license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+<!-- badges: end -->
 
 `shinyrems` is an app that allows you to visualize and download data
 from the EMS database.
 
-#### Follow these instructions to run the app:
+## Installation
 
-First let’s install the most recent versions of `rems` and `shinyrems` R
-packages. Paste the following lines into the console, one at a
-time:
+To install the latest development version from
+[GitHub](https://github.com/bcgov/shinyrems)
 
 ``` r
-if(!"devtools" %in% installed.packages()[,1])  install.packages("devtools")
-devtools::install_github("bcgov/rems")
-if(!"drat" %in% installed.packages()[,1]) install.packages("drat")
-drat::addRepo("poissonconsulting")
-install.packages("shinyrems")
+# install.packages("remotes")
+remotes::install_github("bcgov/shinyrems")
 ```
+
+## Usage
 
 The app has 4 run modes:
 
@@ -62,5 +64,21 @@ Please report any
 are always welcome.
 
 Please note that this project is released with a [Contributor Code of
-Conduct](CONDUCT.md). By participating in this project you agree to
-abide by its terms
+Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree
+to abide by its terms.
+
+## License
+
+    Copyright 2019 Province of British Columbia
+    
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at 
+    
+       http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.

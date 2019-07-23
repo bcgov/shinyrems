@@ -12,23 +12,25 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 # shinyrems
 
+<!-- badges: start -->
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![Apache license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+<!-- badges: end -->
+
 `shinyrems` is an app that allows you to visualize and download data from the EMS database.
 
-#### Follow these instructions to run the app:
+## Installation
 
-First let's install the most recent versions of `rems` and `shinyrems` R packages. Paste the following lines into the console, one at a time:
+To install the latest development version from [GitHub](https://github.com/bcgov/shinyrems)
 ``` r
-if(!"devtools" %in% installed.packages()[,1])  install.packages("devtools")
-devtools::install_github("bcgov/rems")
-if(!"drat" %in% installed.packages()[,1]) install.packages("drat")
-drat::addRepo("poissonconsulting")
-install.packages("shinyrems")
+# install.packages("remotes")
+remotes::install_github("bcgov/shinyrems")
 ```
+
+## Usage
 
 The app has 4 run modes: 
 
