@@ -57,11 +57,10 @@ options, e.g.:
 
 ## Contribution
 
-Please report any
-[issues](https://github.com/poissonconsulting/shinyrems/issues).
+Please report any [issues](https://github.com/bcgov/shinyrems/issues).
 
-[Pull requests](https://github.com/poissonconsulting/shinyrems/pulls)
-are always welcome.
+[Pull requests](https://github.com/bcgov/shinyrems/pulls) are always
+welcome.
 
 Please note that this project is released with a [Contributor Code of
 Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree

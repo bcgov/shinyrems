@@ -15,7 +15,7 @@ golem::fill_desc(
   author_first_name = "Seb", # Your First Name
   author_last_name = "Dalgarno",  # Your Last Name
   author_email = "seb@poissonconsulting.ca",      # Your Email
-  repo_url = "https://github.com/poissonconsulting/shinyrems")      # The (optional) URL of the GitHub Repo
+  repo_url = "https://github.com/bcgov/shinyrems")      # The (optional) URL of the GitHub Repo
 
 ## 1.2 - Set common Files
 ##
