@@ -15,13 +15,24 @@ selectInputX <- function(..., label = "Select sites:", choices, selected = choic
                  choices = choices,
                  selected = selected,
                  options = list(
-    'plugins' = list('remove_button'),
-    'create' = TRUE,
-    'persist' = FALSE))
+                   'plugins' = list('remove_button'),
+                   'create' = TRUE,
+                   'persist' = FALSE))
 }
 
 emsTableOutput <- function(...){
   wellPanel(dataTableOutput(...), class = "wellpanel")
+}
+
+button <- function(id, label, icon = "download", status = "primary"){
+  tags$button(id = id,
+              type = "button",
+              class = glue::glue("btn action-button btn-sm btn-{status}"),
+              HTML(as.character(icon(icon)), label))
+}
+
+click_js <- function(id){
+  glue::glue("document.getElementById('{id}').click();")
 }
 
 emsDownload <- function(..., label = "Download Data (csv)", br = TRUE){

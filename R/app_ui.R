@@ -13,10 +13,9 @@
 #' @import shiny
 app_ui <- function() {
   tagList(
-    actionButton("browser", "browser"),
-    tags$script("$('#browser').hide();"),
     shinyjs::useShinyjs(),
-    golem_add_external_resources(),
+    css_navbar(text_selected_color = "#5bc0de"),
+    css_hide_errors(),
     navbarPage(title =  "EMS Database", selected = 'EMS',
                tabPanel(title = 'EMS',
                         br(),
@@ -29,9 +28,4 @@ app_ui <- function() {
                         mod_about_ui("about_ui_1")
                         ))
   )
-}
-
-golem_add_external_resources <- function(){
-  addResourcePath( 'www', system.file('app/www', package = 'shinyrems'))
-  tagList(tags$link(rel="stylesheet", type="text/css", href="www/style.css"))
 }

@@ -34,8 +34,13 @@ mod_ems_ui <- function(id){
                  uiOutput(ns("uiSites")),
                  uiOutput(ns("uiDateRange")),
                  br(),
-                 emsDownload(ns('dlEmsData'), br = FALSE),
-                 emsDownload(ns('dlEmsPlot'), label = "Download Plot (png)", br = FALSE)),
+                 button(ns('dlEmsData'), label = "Get Data (csv)"),
+                 button(ns('dlEmsPlot'), label = "Get Plot (png)"),
+                 # invisible download handlers so can use bootstrap buttons
+                 downloadButton(ns("dlEmsData_handler"), label = NULL,
+                                style = "visibility: hidden;"),
+                 downloadButton(ns("dlEmsPlot_handler"), label = NULL,
+                                style = "visibility: hidden;")),
     mainPanel(width = 8,
               tabsetPanel(selected = "Plot",
                           tabPanel("Plot",
@@ -141,13 +146,21 @@ mod_ems_server <- function(input, output, session){
   })
 
   ########## ---------- download handlers ---------- ##########
-  output$dlEmsData <- downloadHandler(
+  observeEvent(input$dlEmsData, {
+    shinyjs::runjs(click_js(ns("dlEmsData_handler")))
+  })
+
+  observeEvent(input$dlEmsPlot, {
+    shinyjs::runjs(click_js(ns("dlEmsPlot_handler")))
+  })
+
+  output$dlEmsData_handler <- downloadHandler(
     filename = function() "ems_data.csv",
     content = function(file) {
       readr::write_csv(get_data(), file)
     })
 
-  output$dlEmsPlot <- downloadHandler(
+  output$dlEmsPlot_handler <- downloadHandler(
     filename = function() "ems_plot.png",
     content = function(file) {
       ggplot2::ggsave(file, plot = ems_plot(data = get_data(), parameter = input$selectParameter),
