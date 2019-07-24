@@ -23,7 +23,6 @@
 #' @rdname mod_ems
 #'
 #' @keywords internal
-#' @export
 #' @importFrom shiny NS tagList
 mod_ems_ui <- function(id){
   ns <- NS(id)
@@ -60,7 +59,6 @@ mod_ems_ui <- function(id){
 # Module Server
 
 #' @rdname mod_ems
-#' @export
 #' @keywords internal
 
 mod_ems_server <- function(input, output, session){

@@ -23,7 +23,6 @@
 #' @rdname mod_reference
 #'
 #' @keywords internal
-#' @export
 #' @importFrom shiny NS tagList
 mod_reference_ui <- function(id){
   ns <- NS(id)
@@ -46,7 +45,6 @@ mod_reference_ui <- function(id){
 # Module Server
 
 #' @rdname mod_reference
-#' @export
 #' @keywords internal
 
 mod_reference_server <- function(input, output, session){
