@@ -29,26 +29,16 @@ mod_reference_ui <- function(id){
   ns <- NS(id)
   fluidPage(
     fluidRow(
-      tabsetPanel(
-        tabPanel(title = "Parameters",
-                 emsDownload(ns("dlParameters")),
-                 emsTableOutput(ns("tableParameters"))),
-        tabPanel(title = "Location Samples",
-                 emsDownload(ns("dlSamples")),
-                 emsTableOutput(ns("tableSamples"))),
-        tabPanel(title = "Collection Methods",
-                 emsDownload(ns("dlCollection")),
-                 emsTableOutput(ns("tableCollection"))),
-        tabPanel(title = "Sample Classes",
-                 emsDownload(ns("dlClasses")),
-                 emsTableOutput(ns("tableClasses"))),
-        tabPanel(title = "Species",
-                 emsDownload(ns("dlSpecies")),
-                 emsTableOutput(ns("tableSpecies"))),
-        tabPanel(title = "Units",
-                 emsDownload(ns("dlUnits")),
-                 emsTableOutput(ns("tableUnits")))
-      )
+      selectInput(ns("selectTable"), label = "Select Reference Table",
+                  choices = c("Parameters", "Location Samples",
+                              "Collection Methods", "Sample Classes",
+                              "Species", "Units"),
+                  selected = "Parameters"),
+      button(ns("download")),
+      downloadButton(ns("download_handler"), label = NULL,
+                     style = "visibility: hidden;"),
+      br(), br(),
+      emsTableOutput(ns("table"))
     )
   )
 }
@@ -62,45 +52,22 @@ mod_reference_ui <- function(id){
 mod_reference_server <- function(input, output, session){
   ns <- session$ns
 
-  output$tableParameters <- renderDataTable({rems::ems_parameters})
-  output$dlParameters <- downloadHandler(
-    filename = function() "ems_parameters.csv",
-    content = function(file) {
-      readr::write_csv(rems::ems_parameters, file)
-    })
+  table <- reactive({
+    ems_reference_tables[[input$selectTable]]
+  })
 
-  output$tableSamples <- renderDataTable({rems::ems_location_samples})
-  output$dlSamples <- downloadHandler(
-    filename = function() "ems_location_samples.csv",
-    content = function(file) {
-      readr::write_csv(rems::ems_location_samples, file)
-    })
+  output$table <- renderDataTable({table()})
 
-  output$tableCollection <- renderDataTable({rems::ems_coll_methods})
-  output$dlCollection <- downloadHandler(
-    filename = function() "ems_coll_methods.csv",
-    content = function(file) {
-      readr::write_csv(rems::ems_coll_methods, file)
-    })
+  observeEvent(input$download, {
+    shinyjs::runjs(click_js(ns("download_handler")))
+  })
 
-  output$tableClasses <- renderDataTable({rems::ems_sample_classes})
-  output$dlClasses <- downloadHandler(
-    filename = function() "ems_sample_classes.csv",
+  output$download_handler <- downloadHandler(
+    filename = function(){
+      x <- gsub(" ", "", input$selectTable)
+      glue::glue("ems_{x}.csv")
+    },
     content = function(file) {
-      readr::write_csv(rems::ems_sample_classes, file)
-    })
-
-  output$tableSpecies <- renderDataTable({rems::ems_species})
-  output$dlSpecies <- downloadHandler(
-    filename = function() "ems_species.csv",
-    content = function(file) {
-      readr::write_csv(rems::ems_species, file)
-    })
-
-  output$tableUnits <- renderDataTable({rems::ems_units})
-  output$dlUnits <- downloadHandler(
-    filename = function() "ems_units.csv",
-    content = function(file) {
-      readr::write_csv(rems::ems_units, file)
+      readr::write_csv(table(), file)
     })
 }

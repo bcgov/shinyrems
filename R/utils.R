@@ -24,7 +24,7 @@ emsTableOutput <- function(...){
   wellPanel(dataTableOutput(...), class = "wellpanel")
 }
 
-button <- function(id, label, icon = "download", status = "primary"){
+button <- function(id, label = "Get Data (csv)", icon = "download", status = "primary"){
   tags$button(id = id,
               type = "button",
               class = glue::glue("btn action-button btn-sm btn-{status}"),
@@ -34,16 +34,3 @@ button <- function(id, label, icon = "download", status = "primary"){
 click_js <- function(id){
   glue::glue("document.getElementById('{id}').click();")
 }
-
-emsDownload <- function(..., label = "Download Data (csv)", br = TRUE){
-  if(br){
-    return(tagList(
-      br(),
-      downloadButton(..., class = 'small-dl',
-                     label = label),
-      br(), br()
-    ))
-  }
-  downloadButton(..., class = 'small-dl',  label = label)
-}
-
