@@ -21,7 +21,15 @@ selectInputX <- function(..., label = "Select sites:", choices, selected = choic
 }
 
 emsTableOutput <- function(...){
-  wellPanel(dataTableOutput(...), class = "wellpanel")
+  wellPanel(DT::DTOutput(...), class = "wellpanel")
+}
+
+emsDataTable <- function(data){
+  DT::datatable(data, escape = FALSE, rownames = FALSE,  class = 'cell-border compact',
+                options = list(ordering = TRUE,
+                               autowidth = FALSE, scrollX = TRUE,
+                               columnDefs = list(list(className = 'dt-center',
+                                                      targets = "_all"))))
 }
 
 button <- function(id, label = "Get Data (csv)", icon = "download", status = "primary"){

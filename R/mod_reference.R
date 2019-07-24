@@ -53,10 +53,10 @@ mod_reference_server <- function(input, output, session){
   ns <- session$ns
 
   table <- reactive({
-    ems_reference_tables[[input$selectTable]]
+    emsDataTable(ems_reference_tables[[input$selectTable]])
   })
 
-  output$table <- renderDataTable({table()})
+  output$table <- DT::renderDT({table()})
 
   observeEvent(input$download, {
     shinyjs::runjs(click_js(ns("download_handler")))

@@ -122,8 +122,8 @@ mod_ems_server <- function(input, output, session){
   })
 
   ########## ---------- render Outputs ---------- ##########
-  output$tableEms <- renderDataTable({
-    get_data()
+  output$tableEms <- DT::renderDT({
+    emsDataTable(get_data())
   })
 
   output$plotEms <- renderPlot({
