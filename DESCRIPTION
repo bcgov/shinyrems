@@ -28,7 +28,7 @@ Imports:
     glue
 Suggests:
     golem,
-    testthat
+    testthat (>= 2.1.0)
 Remotes: 
     bccgov/rems,
 URL: https://github.com/poissonconsulting/shinyrems

@@ -12,7 +12,7 @@
 
 ########## ---------- lookups ---------- ##########
 site_to_emsid <- function(data, sites){
-  data$EMS_ID[data$MONITORING_LOCATION %in% sites]
+  unique(data$EMS_ID[data$MONITORING_LOCATION %in% sites])
 }
 
 parameter_to_site <- function(data){
@@ -80,14 +80,14 @@ historic_parameter <- function(){
     unique()
 }
 
-yr2_parameter <- function(run_mode){
+yr2_parameter <- function(){
   ems_data() %>%
     dplyr::filter(!is.na(.data$PARAMETER)) %>%
     dplyr::pull(.data$PARAMETER) %>%
     unique()
 }
 
-all_parameter <- function(run_mode){
+all_parameter <- function(){
   c(historic_parameter(), yr2_parameter()) %>%
     unique() %>%
     sort()
