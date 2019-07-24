@@ -67,8 +67,19 @@ mod_ems_server <- function(input, output, session){
   ns <- session$ns
   run_mode <- getShinyOption("run_mode", "demo")
 
-  ########## ---------- reactives ---------- ##########
+  observe({
+    if(is.null(input$selectSite) ||
+       is.null(input$selectParameter) ||
+       input$selectParameter == ""){
+      shinyjs::disable("dlEmsData")
+      shinyjs::disable("dlEmsPlot")
+    } else {
+      shinyjs::enable("dlEmsData")
+      shinyjs::enable("dlEmsPlot")
+    }
+  })
 
+  ########## ---------- reactives ---------- ##########
   get_parameter_data <- reactive({
     req(input$selectParameter)
     get_run_mode_data(input$selectParameter, run_mode)
