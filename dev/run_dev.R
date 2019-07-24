@@ -10,13 +10,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
-# Set options here
-options(golem.app.prod = TRUE) # TRUE = production mode, FALSE = development mode
-
 # Detach all loaded packages and clean your environment
 golem::detach_all_attached()
 rm(list=ls(all.names = TRUE))
 golem::document_and_reload()
 
-shinyrems::run_app(run_mode = "2yr")
+shinyrems::run_app(run_mode = "demo")
 
