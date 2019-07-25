@@ -19,7 +19,6 @@ Imports:
     shinyjs,
     DBI,
     leaflet,
-    magrittr,
     readr,
     shinycssloaders,
     DT,
@@ -27,7 +26,6 @@ Imports:
     rlang,
     glue
 Suggests:
-    golem,
     testthat (>= 2.1.0)
 Remotes: 
     bccgov/rems,

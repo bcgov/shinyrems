@@ -10,10 +10,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
-# Detach all loaded packages and clean your environment
-golem::detach_all_attached()
 rm(list=ls(all.names = TRUE))
-golem::document_and_reload()
 
-shinyrems::run_app(run_mode = "historic")
+all_attached <- paste("package:", names(sessionInfo()$otherPkgs),
+                      sep = "")
+try(suppressWarnings(lapply(all_attached, detach, character.only = TRUE,
+                            unload = TRUE)), silent = TRUE)
+
+shinyrems::run_app(run_mode = "demo")
 

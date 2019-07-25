@@ -2,8 +2,6 @@
 
 export(run_app)
 import(shiny)
-importFrom(magrittr,"%<>%")
-importFrom(magrittr,"%>%")
 importFrom(rlang,"!!")
 importFrom(rlang,.data)
 importFrom(rlang,sym)
