@@ -37,8 +37,8 @@ mod_about_ui <- function(id){
            actionLink(ns('info_citation'), "Citation info"),
            shinyjs::hidden(div(id = ns("div_citation"),
                       h6(HTML(paste("To cite package 'rems' in publications use:<br><br>
-                                    Andy Teucher (NA). rems: Get Data From British Columbia's Environmental Monitoring System. R
-                                    package version 0.4.0.9999 <br><br>",
+                                    Andy Teucher (2019). rems: Get Data From British Columbia's Environmental Monitoring System. R
+                                    package version 0.4.2 <br><br>",
                                     "To cite app: <br><br>
                                     Seb Dalgarno (2018). shinyrems: An app for download and visualization of ems data.
                                     https://poissonconsulting.shinyapps.io/ypr/<br><br>
