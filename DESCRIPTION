@@ -1,12 +1,13 @@
 Package: shinyrems
-Title: An R package to run Shiny app interface to rems R package
-Version: 0.0.0.9000
+Title: Shiny Interface to 'rems'
+Version: 0.0.0.9001
 Authors@R: c(
     person("Sebastian", "Dalgarno", , "seb@poissonconsulting.ca", c("aut", "cre"), comment = c(ORCID = "0000-0002-3658-4517")),
     person("Joe", "Thorley", , "joe@poissonconsulting.ca", "ctb", comment = c(ORCID = "0000-0002-7683-4592")),
     person("Province of British Columbia", role = c("cph", "fnd"))
     )
-Description: An R package to run 'shinyrems' app, an interface to the 'rems' R package to visualize and download data from BC Data Catalogue ems database.
+Description: A shiny interface to visualize and download data from 
+    BC Data Catalogue 'ems' database using the 'rems' R package.
 License: Apache License (>= 2.0)
 Depends:
     R (>= 2.10)
@@ -27,11 +28,13 @@ Imports:
     glue,
     magrittr
 Suggests:
-    testthat (>= 2.1.0)
+    testthat (>= 2.1.0),
+    usethis
 Remotes: 
-    bccgov/rems,
+    bccgov/rems
 URL: https://github.com/poissonconsulting/shinyrems
 BugReports: https://github.com/poissonconsulting/shinyrems/issues
 RoxygenNote: 6.1.1
 Encoding: UTF-8
 LazyData: true
+Language: en-US
