@@ -11,43 +11,82 @@
 # See the License for the specific language governing permissions and limitations under the License.
 
 ########## ---------- lookups ---------- ##########
+run_mode_lookup <- function(run_mode){
+  switch(run_mode,
+         "2yr" = lookup_2yr,
+         "historic" = lookup_historic,
+         "demo" = lookup_demo)
+}
+
+permit_sites <- function(permits, lookup){
+  if(is.null(permits)){
+    return(sort(unique(lookup$EMS_ID)))
+  }
+  sort(unique(lookup$EMS_ID[which(lookup$PERMIT %in% permits)]))
+}
+
+monitoring_locations <- function(sites, lookup){
+  unique(lookup$MONITORING_LOCATION[lookup$EMS_ID %in% sites])
+}
+
+site_parameters <- function(sites, lookup){
+  unique(lookup$PARAMETER_CODE[lookup$EMS_ID %in% sites])
+}
+
+parameter_names <- function(parameters, lookup){
+  unique(lookup$PARAMETER[lookup$PARAMETER_CODE %in% parameters])
+}
+
+permits <- function(lookup){
+  sort(setdiff(unique(lookup$PERMIT), NA_character_))
+}
+
 site_to_emsid <- function(data, sites){
   unique(data$EMS_ID[data$MONITORING_LOCATION %in% sites])
 }
 
-parameter_to_site <- function(data){
-  data$MONITORING_LOCATION %>%
-    unique() %>%
-    sort()
+date_range <- function(sites, parameters, lookup){
+  data <- lookup[lookup$EMS_ID %in% sites & lookup$PARAMETER_CODE %in% parameters,]
+  as.Date(c(min(data$FROM_DATE, na.rm = TRUE), max(data$TO_DATE, na.rm = TRUE)))
 }
 
-parameter_to_location <- function(data){
-  data %>%
-    dplyr::group_by(.data$EMS_ID, .data$MONITORING_LOCATION, .data$LATITUDE, .data$LONGITUDE, .data$LOCATION_TYPE) %>%
-    dplyr::summarise() %>%
-    dplyr::ungroup()
-}
+# site_to_parameter <- function(data, sites){
+#   data$PARAMETER[data$EMS_ID %in% sites]
+# }
 
-parameter_to_date <- function(data){
-  as.Date(range(data$COLLECTION_START, na.rm = TRUE))
-}
-
-########## ---------- fetching data ---------- ##########
-filter_historic_data <- function(..., check_db = FALSE){
-  rems::read_historic_data(..., check_db = FALSE)
-}
-
+# parameter_to_site <- function(data){
+#   data$MONITORING_LOCATION %>%
+#     unique() %>%
+#     sort()
+# }
+#
+# parameter_to_location <- function(data){
+#   data %>%
+#     dplyr::group_by(.data$EMS_ID, .data$MONITORING_LOCATION, .data$LATITUDE, .data$LONGITUDE, .data$LOCATION_TYPE) %>%
+#     dplyr::summarise() %>%
+#     dplyr::ungroup()
+# }
+#
+# parameter_to_date <- function(data){
+#   as.Date(range(data$COLLECTION_START, na.rm = TRUE))
+# }
+#
+# ########## ---------- fetching data ---------- ##########
+# filter_historic_data <- function(..., check_db = FALSE){
+#   rems::read_historic_data(..., check_db = FALSE)
+# }
+#
 filter_2yr_data <- function(...){
   rems::filter_ems_data(...)
 }
-
-combine_data <- function(x, ...){
-  rems::bind_ems_data(
-    filter_historic_data(...),
-    filter_2yr_data(x = x, ...)
-  )
-}
-
+#
+# combine_data <- function(x, ...){
+#   rems::bind_ems_data(
+#     filter_historic_data(...),
+#     filter_2yr_data(x = x, ...)
+#   )
+# }
+#
 ems_data <- function(){
   rems::get_ems_data(dont_update = TRUE)
 }
@@ -60,55 +99,61 @@ run_mode_data <- function(run_mode, ...){
          combine_data(x = ems_data(), ...))
 }
 
-get_run_mode_data <- function(parameter, run_mode){
+get_run_mode_data <- function(parameter, site, from_date, to_date, run_mode){
   switch(run_mode,
          "demo" = run_mode_data(run_mode = run_mode,
-                                parameter = parameter),
+                                param_code = parameter,
+                                emsid = site,
+                                from_date = from_date,
+                                to_date = to_date),
          shiny::withProgress(message = paste("Retrieving data and available sites for parameter:", parameter),
                              value = 0.5, {
                                run_mode_data(run_mode = run_mode,
-                                             parameter = parameter)}))}
+                                             param_code = parameter,
+                                             emsid = site,
+                                             from_date = from_date,
+                                             to_date = to_date)}))}
 
-########## ---------- fetching parameters ---------- ##########
-historic_parameter <- function(){
-  rems::attach_historic_data() %>%
-    dplyr::select(!!sym("PARAMETER")) %>%
-    dplyr::distinct() %>%
-    dplyr::filter(!is.na(!!sym("PARAMETER"))) %>%
-    dplyr::collect() %>%
-    dplyr::pull(.data$PARAMETER) %>%
-    unique()
-}
-
-yr2_parameter <- function(){
-  ems_data() %>%
-    dplyr::filter(!is.na(.data$PARAMETER)) %>%
-    dplyr::pull(.data$PARAMETER) %>%
-    unique()
-}
-
-all_parameter <- function(){
-  c(historic_parameter(), yr2_parameter()) %>%
-    unique() %>%
-    sort()
-}
-
-demo_parameter <- function(){
-  c("Temperature", "Turbidity")
-}
-
-parameter_message <- function(run_mode, fun){
-  shiny::withProgress(message = paste("Fetching available parameters for run mode:", run_mode),
-                      value = 0.5, {
-                        fun
-                      })
-}
-
-run_mode_parameter <- function(run_mode){
-  switch(run_mode,
-         "demo" = demo_parameter(),
-         "2yr" = parameter_message("2yr", yr2_parameter()),
-         "historic" = parameter_message("historic", historic_parameter()),
-         "all" = parameter_message("all", all_parameter()))
-}
-
+# ########## ---------- fetching parameters ---------- ##########
+# historic_parameter <- function(){
+#   rems::attach_historic_data() %>%
+#     dplyr::select(!!sym("PARAMETER")) %>%
+#     dplyr::distinct() %>%
+#     dplyr::filter(!is.na(!!sym("PARAMETER"))) %>%
+#     dplyr::collect() %>%
+#     dplyr::pull(.data$PARAMETER) %>%
+#     unique()
+# }
+#
+# yr2_parameter <- function(){
+#   ems_data() %>%
+#     dplyr::filter(!is.na(.data$PARAMETER)) %>%
+#     dplyr::pull(.data$PARAMETER) %>%
+#     unique()
+# }
+#
+# all_parameter <- function(){
+#   c(historic_parameter(), yr2_parameter()) %>%
+#     unique() %>%
+#     sort()
+# }
+#
+# demo_parameter <- function(){
+#   c("Temperature", "Turbidity")
+# }
+#
+# parameter_message <- function(run_mode, fun){
+#   shiny::withProgress(message = paste("Fetching available parameters for run mode:", run_mode),
+#                       value = 0.5, {
+#                         fun
+#                       })
+# }
+#
+# run_mode_parameter <- function(run_mode){
+#   switch(run_mode,
+#          "demo" = demo_parameter(),
+#          "2yr" = parameter_message("2yr", yr2_parameter()),
+#          "historic" = parameter_message("historic", historic_parameter()),
+#          "all" = parameter_message("all", all_parameter()))
+# }
+#
