@@ -37,7 +37,7 @@ mod_reference_ui <- function(id){
       downloadButton(ns("download_handler"), label = NULL,
                      style = "visibility: hidden;"),
       br(), br(),
-      emsTableOutput(ns("table"))
+      ems_table_output(ns("table"))
     )
   )
 }
@@ -51,7 +51,7 @@ mod_reference_server <- function(input, output, session){
   ns <- session$ns
 
   table <- reactive({
-    emsDataTable(ems_reference_tables[[input$selectTable]])
+    ems_data_table(ems_reference_tables[[input$selectTable]])
   })
 
   output$table <- DT::renderDT({table()})
