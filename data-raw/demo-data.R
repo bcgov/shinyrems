@@ -31,3 +31,4 @@ ems_reference_tables <- list("Collection Methods" = rems::ems_coll_methods,
 
 use_data(ems_demo_data, overwrite = TRUE)
 use_data(ems_reference_tables, overwrite = TRUE, internal = TRUE)
+
