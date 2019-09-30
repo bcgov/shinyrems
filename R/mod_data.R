@@ -40,8 +40,7 @@ mod_data_ui <- function(id){
                                   style = "visibility: hidden;")),
 
       mainPanel(width = 8,
-                ems_table_output(ns('data_table'))
-                )
+                ems_table_output(ns('data_table')))
   ))
 }
 
@@ -79,69 +78,72 @@ mod_data_server <- function(input, output, session){
     run_mode_lookup(run_mode)
   })
 
-  permit_rv <- reactiveValues(permit = NULL)
+  permit_rv <- reactiveValues(permit = "")
   observeEvent(input$permit, {
     permit_rv$permit <- input$permit
   })
 
+  site_rv <- reactiveValues(selected = "")
+  observe({
+    site_rv$selected <- translate_sites(input$site, lookup(), input$site_type)
+  })
+
+  parameter_rv <- reactiveValues(selected = "")
+  observe({
+    parameter_rv$selected <- translate_parameters(input$parameter, lookup(),
+                                                  input$parameter_type)
+  })
+
   get_permits <- reactive({
-    if(!input$check_permit){
-      return(NULL)
-    }
-    permits(lookup())
+    if(!input$check_permit)
+      return()
+    c(permits(lookup()), "")
   })
 
   get_sites <- reactive({
     lookup <- lookup()
-    if(input$site_type == "EMS ID"){
-      return(permit_sites(permit_rv$permit, lookup))
-    }
-
     x <- permit_sites(permit_rv$permit, lookup)
-    names(x) <- monitoring_locations(x, lookup)
-    x
+    c(translate_sites(x, lookup, input$site_type), "")
+  })
+
+  get_parameters <- reactive({
+    lookup <- lookup()
+    x <- site_parameters(input$site, lookup)
+    c(translate_parameters(x, lookup, input$parameter_type), "")
   })
 
   get_data <- reactive({
     req(input$parameter)
     req(input$site)
     req(input$date_range)
-    ems_data_table(get_run_mode_data(input$parameter, input$site,
+    get_run_mode_data(input$parameter, input$site,
                                      input$date_range[1], input$date_range[2],
-                                     run_mode))
+                                     run_mode)
   })
 
-  message("confirm that monitoring location always matches")
-
-  get_parameters <- reactive({
-    lookup <- lookup()
-    if(input$parameter_type == "Parameter Code"){
-      return(site_parameters(input$site, lookup))
-    }
-
-    x <- site_parameters(input$site, lookup)
-    names(x) <- parameter_names(x, lookup)
-    x
-  })
+  message("confirm that monitoring location always matches ems id")
 
   output$ui_permit <- renderUI({
     select_input_x(ns("permit"), label = "Permit number:",
-                   choices = get_permits())
+                   choices = get_permits(),
+                   selected = "")
   })
 
   output$ui_site <- renderUI({
     select_input_x(ns("site"), label = NULL,
-                 choices = get_sites())
+                 choices = get_sites(),
+                 selected = site_rv$selected)
   })
 
   output$ui_parameter <- renderUI({
     select_input_x(ns("parameter"),
                 label = NULL,
-                choices = get_parameters())
+                choices = get_parameters(),
+                selected = parameter_rv$selected)
   })
 
   output$data_table <- DT::renderDT({
-    get_data()
+    ems_data_table(get_data())
   })
 
   output$ui_date <- renderUI({
@@ -153,6 +155,17 @@ mod_data_server <- function(input, output, session){
                    start = dates[1], end = dates[2],
                    min = dates[1], max = dates[2])
   })
+
+
+  observeEvent(input$dl_data, {
+    shinyjs::runjs(click_js(ns("dl_data_handler")))
+  })
+
+  output$dl_data_handler <- downloadHandler(
+    filename = function() "ems_data.csv",
+    content = function(file) {
+      readr::write_csv(get_data(), file)
+    })
 }
 
 
