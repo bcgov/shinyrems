@@ -30,5 +30,5 @@ run_app <- function(run_mode = "2yr") {
          "all" = check_all_data())
 
   shinyOptions(run_mode = run_mode)
-  shiny::runApp(system.file("app", package = "shinyrems"))
+  shiny::runApp(system.file("app", package = "shinyrems"), launch.browser = TRUE)
 }
