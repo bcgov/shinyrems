@@ -106,7 +106,7 @@ get_run_mode_data <- function(parameter, site, from_date, to_date, run_mode){
                                 emsid = site,
                                 from_date = from_date,
                                 to_date = to_date),
-         shiny::withProgress(message = paste("Retrieving data and available sites for parameter:", parameter),
+         shiny::withProgress(message = paste("Retrieving data..."),
                              value = 0.5, {
                                run_mode_data(run_mode = run_mode,
                                              param_code = parameter,
