@@ -22,6 +22,9 @@ permit_sites <- function(permits, lookup){
   if(is.null(permits)){
     return(sort(unique(lookup$EMS_ID)))
   }
+  if(permits == ""){
+    return("")
+  }
   sort(unique(lookup$EMS_ID[which(lookup$PERMIT %in% permits)]))
 }
 
@@ -48,6 +51,28 @@ site_to_emsid <- function(data, sites){
 date_range <- function(sites, parameters, lookup){
   data <- lookup[lookup$EMS_ID %in% sites & lookup$PARAMETER_CODE %in% parameters,]
   as.Date(c(min(data$FROM_DATE, na.rm = TRUE), max(data$TO_DATE, na.rm = TRUE)))
+}
+
+translate_sites <- function(x, lookup, site_type){
+  if(is.null(x)){
+    return("")
+  }
+  if(site_type == "EMS ID"){
+    return(x)
+  }
+  names(x) <- monitoring_locations(x, lookup)
+  x
+}
+
+translate_parameters <- function(x, lookup, site_type){
+  if(is.null(x)){
+    return("")
+  }
+  if(site_type == "Parameter Code"){
+    return(x)
+  }
+  names(x) <- parameter_names(x, lookup)
+  x
 }
 
 # site_to_parameter <- function(data, sites){
