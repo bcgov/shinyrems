@@ -121,8 +121,6 @@ mod_data_server <- function(input, output, session){
                                      run_mode)
   })
 
-  message("confirm that monitoring location always matches ems id")
-
   output$ui_permit <- renderUI({
     select_input_x(ns("permit"), label = "Permit number:",
                    choices = get_permits(),
