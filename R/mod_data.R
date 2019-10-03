@@ -34,7 +34,7 @@ mod_data_ui <- function(id){
                    uiOutput(ns("ui_parameter")),
                    uiOutput(ns("ui_date")),
                    br(),
-                   button(ns('dl_data'), label = "Get Data (csv)"),
+                   button(ns('dl_data'), label = "Raw Data (csv)"),
                    # invisible download handlers so can use bootstrap buttons
                    downloadButton(ns("dl_data_handler"), label = NULL,
                                   style = "visibility: hidden;")),
