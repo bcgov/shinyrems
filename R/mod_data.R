@@ -42,14 +42,15 @@ mod_data_ui <- function(id){
                                         buttonLabel = span(tagList(icon("upload"), "csv")),
                                         label = "",
                                         placeholder = "Upload your own dataset",
-                                        accept = c('.csv'))))),
+                                        accept = c('.csv')),
+                              button(ns('dl_template'), label = "Download Template"),
+                              downloadButton(ns("dl_template_handler"), label = NULL,
+                                             style = "visibility: hidden;")))),
       mainPanel(width = 8,
-                button(ns('dl_data'), label = "Download Raw Data (csv file)"),
                 # invisible download handlers so can use bootstrap buttons
+                uiOutput(ns("preview_table")),
                 downloadButton(ns("dl_data_handler"), label = NULL,
-                               style = "visibility: hidden;"),
-                br2(),
-                uiOutput(ns("preview_table")))
+                               style = "visibility: hidden;"))
   ))
 }
 
@@ -62,18 +63,16 @@ mod_data_ui <- function(id){
 mod_data_server <- function(input, output, session){
   ns <- session$ns
   run_mode <- getShinyOption("run_mode", "demo")
-  data_rv <- reactiveValues(state = NULL)
 
   ########## ---------- Find Data tab ---------- ##########
-  observe({
-    if(is.null(input$site) ||
-       is.null(input$parameter) ||
-       input$parameter == ""){
-      shinyjs::disable("dl_data")
-    } else {
-      shinyjs::enable("dl_data")
-    }
-  })
+  # observe({
+  #   req(preview_data())
+  #   if(is.data.frame(preview_data())){
+  #     shinyjs::show("dl_data")
+  #   } else {
+  #     shinyjs::hide("dl_data")
+  #   }
+  # })
 
   observe({
     if(!input$check_permit){
@@ -162,12 +161,17 @@ mod_data_server <- function(input, output, session){
   })
 
   ########## ---------- Upload Data tab ---------- ##########
+  observeEvent(input$dl_template, {
+    shinyjs::runjs(click_js(ns("dl_template_handler")))
+  })
 
-
-
+  output$dl_template_handler <- downloadHandler(
+    filename = function() "ems_template.csv",
+    content = function(file) {
+      readr::write_csv(template_to_df(template), file)
+    })
 
   ########## ---------- Preview Data tab ---------- ##########
-
   preview_data <- reactive({
     if(input$data_type == "data"){
       return(get_data())
@@ -175,17 +179,26 @@ mod_data_server <- function(input, output, session){
     data <- input$upload_data
     req(data)
     if(!grepl(".csv", data$name, fixed = TRUE)) {
-      return("hi there")
+      return("Please submit a csv file.")
     }
-    readr::read_csv(data$datapath)
+    data <- readr::read_csv(data$datapath)
+    x <- check_template(data, template)
+    if(is.character(x)){
+      return(x)
+    }
+    data
   })
 
   output$preview_table <- renderUI({
     data <- preview_data()
     if(is.character(data)){
-      return(p(data))
+      return(error_text(data))
     }
-    ems_table_output(ns('data_table'))
+    tagList(
+      button(ns('dl_data'), label = "Download Raw Data"),
+      br(),
+      ems_table_output(ns('data_table'))
+    )
   })
 
   output$data_table <- DT::renderDT({
@@ -199,7 +212,7 @@ mod_data_server <- function(input, output, session){
   output$dl_data_handler <- downloadHandler(
     filename = function() "ems_data.csv",
     content = function(file) {
-      readr::write_csv(get_data(), file)
+      readr::write_csv(preview_data(), file)
     })
 }
 

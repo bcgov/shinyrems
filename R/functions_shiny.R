@@ -25,6 +25,7 @@ ems_table_output <- function(...){
 }
 
 ems_data_table <- function(data){
+  if(!is.data.frame(data)) return()
   DT::datatable(data, escape = FALSE, rownames = FALSE,  class = 'cell-border compact',
                 options = list(ordering = TRUE,
                                autowidth = FALSE, scrollX = TRUE,
@@ -41,4 +42,14 @@ button <- function(id, label = "Get Data (csv)", icon = "download", status = "pr
 
 click_js <- function(id){
   glue::glue("document.getElementById('{id}').click();")
+}
+
+br2 <- function() tagList(br(), br())
+br3 <- function() tagList(br(), br(), br())
+
+error_text <- function(x) {
+  tagList(
+    helpText("Please fix the following error and resubmit:\n"),
+    p(x, style = "color: red;")
+  )
 }

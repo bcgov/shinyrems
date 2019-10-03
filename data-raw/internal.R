@@ -18,5 +18,14 @@ lookup_2yr_xy <- data %>%
 
 check_key(lookup_2yr_xy, "EMS_ID")
 
-usethis::use_data(lookup_2yr, lookup_2yr_xy, internal = TRUE, overwrite = TRUE)
+template <- list(EMS = list(example = 123,
+                            type = "integer",
+                            description = "EMS ID",
+                            check = c(1, 124)),
+                 this = list(example = "yup",
+                             type = "character",
+                             description = "This is a test.",
+                             check = c("")))
+
+usethis::use_data(lookup_2yr, lookup_2yr_xy, template, internal = TRUE, overwrite = TRUE)
 
