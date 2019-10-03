@@ -18,29 +18,38 @@ mod_data_ui <- function(id){
   tagList(
     sidebarLayout(
       sidebarPanel(width = 4, class = 'sidebar',
-                   checkboxInput(ns("check_permit"),
-                                 label = "Filter by Permit Number",
-                                 value = FALSE),
-                   uiOutput(ns("ui_permit")),
-                   tags$label("Select Site(s)"),
-                   radioButtons(ns("site_type"), label = NULL,
-                                choices = c("Monitoring Location", "EMS ID"),
-                                selected = "Monitoring Location", inline = TRUE),
-                   uiOutput(ns("ui_site")),
-                   tags$label("Select Parameter(s)"),
-                   radioButtons(ns("parameter_type"), label = NULL,
-                                choices = c("Parameter Name", "Parameter Code"),
-                                selected = "Parameter Name", inline = TRUE),
-                   uiOutput(ns("ui_parameter")),
-                   uiOutput(ns("ui_date")),
-                   br(),
-                   button(ns('dl_data'), label = "Raw Data (csv)"),
-                   # invisible download handlers so can use bootstrap buttons
-                   downloadButton(ns("dl_data_handler"), label = NULL,
-                                  style = "visibility: hidden;")),
-
+                   tabsetPanel(id = ns("data_type"),
+                     tabPanel(title = "Find Data",
+                              value = "data",
+                              checkboxInput(ns("check_permit"),
+                                            label = "Filter by Permit Number",
+                                            value = FALSE),
+                              uiOutput(ns("ui_permit")),
+                              tags$label("Select Site(s)"),
+                              radioButtons(ns("site_type"), label = NULL,
+                                           choices = c("Monitoring Location", "EMS ID"),
+                                           selected = "Monitoring Location", inline = TRUE),
+                              uiOutput(ns("ui_site")),
+                              tags$label("Select Parameter(s)"),
+                              radioButtons(ns("parameter_type"), label = NULL,
+                                           choices = c("Parameter Name", "Parameter Code"),
+                                           selected = "Parameter Name", inline = TRUE),
+                              uiOutput(ns("ui_parameter")),
+                              uiOutput(ns("ui_date"))),
+                     tabPanel(title = "Upload Data",
+                              value = "upload",
+                              fileInput(ns("upload_data"),
+                                        buttonLabel = span(tagList(icon("upload"), "csv")),
+                                        label = "",
+                                        placeholder = "Upload your own dataset",
+                                        accept = c('.csv'))))),
       mainPanel(width = 8,
-                ems_table_output(ns('data_table')))
+                button(ns('dl_data'), label = "Download Raw Data (csv file)"),
+                # invisible download handlers so can use bootstrap buttons
+                downloadButton(ns("dl_data_handler"), label = NULL,
+                               style = "visibility: hidden;"),
+                br2(),
+                uiOutput(ns("preview_table")))
   ))
 }
 
@@ -53,7 +62,9 @@ mod_data_ui <- function(id){
 mod_data_server <- function(input, output, session){
   ns <- session$ns
   run_mode <- getShinyOption("run_mode", "demo")
+  data_rv <- reactiveValues(state = NULL)
 
+  ########## ---------- Find Data tab ---------- ##########
   observe({
     if(is.null(input$site) ||
        is.null(input$parameter) ||
@@ -140,10 +151,6 @@ mod_data_server <- function(input, output, session){
                 selected = parameter_rv$selected)
   })
 
-  output$data_table <- DT::renderDT({
-    ems_data_table(get_data())
-  })
-
   output$ui_date <- renderUI({
     req(input$parameter)
     req(input$site)
@@ -154,6 +161,36 @@ mod_data_server <- function(input, output, session){
                    min = dates[1], max = dates[2])
   })
 
+  ########## ---------- Upload Data tab ---------- ##########
+
+
+
+
+  ########## ---------- Preview Data tab ---------- ##########
+
+  preview_data <- reactive({
+    if(input$data_type == "data"){
+      return(get_data())
+    }
+    data <- input$upload_data
+    req(data)
+    if(!grepl(".csv", data$name, fixed = TRUE)) {
+      return("hi there")
+    }
+    readr::read_csv(data$datapath)
+  })
+
+  output$preview_table <- renderUI({
+    data <- preview_data()
+    if(is.character(data)){
+      return(p(data))
+    }
+    ems_table_output(ns('data_table'))
+  })
+
+  output$data_table <- DT::renderDT({
+    ems_data_table(preview_data())
+  })
 
   observeEvent(input$dl_data, {
     shinyjs::runjs(click_js(ns("dl_data_handler")))
