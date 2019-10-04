@@ -10,7 +10,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
-#' @import shiny
 app_server <- function(input, output,session) {
 
   observeEvent(input$browser,{
@@ -22,6 +21,8 @@ app_server <- function(input, output,session) {
   # callModule(mod_ems_server, "ems_ui_1")
 
   callModule(mod_data_server, "data_ui_1")
+
+  callModule(mod_plot_server, "plot_ui_1")
 
   callModule(mod_reference_server, "reference_ui_1")
 

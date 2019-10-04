@@ -20,7 +20,6 @@
 #' "all" (loads both recent and historic data).
 #'
 #' @export
-#' @importFrom shiny runApp
 run_app <- function(run_mode = "2yr") {
   checkr::check_vector(run_mode, c("demo", "2yr", "historic", "all"))
 

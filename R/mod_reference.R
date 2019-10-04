@@ -23,7 +23,6 @@
 #' @rdname mod_reference
 #'
 #' @keywords internal
-#' @importFrom shiny NS tagList
 mod_reference_ui <- function(id){
   ns <- NS(id)
   fluidPage(

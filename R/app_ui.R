@@ -10,7 +10,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
-#' @import shiny
 app_ui <- function() {
   tagList(
     shinyjs::useShinyjs(),
@@ -23,6 +22,8 @@ app_ui <- function() {
                tabPanel(title = "1. Data",
                         br(),
                         mod_data_ui("data_ui_1")),
+               tabPanel(title = "2. Plot",
+                        mod_plot_ui("plot_ui_1")),
                tabPanel(title = 'Reference Tables',
                         br(),
                         mod_reference_ui("reference_ui_1")),
