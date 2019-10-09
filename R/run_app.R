@@ -21,7 +21,7 @@
 #'
 #' @export
 run_app <- function(run_mode = "2yr") {
-  checkr::check_vector(run_mode, c("demo", "2yr", "historic", "all"))
+  checkr::check_vector(run_mode, c("demo", "2yr", "historic", "all", "upload"))
 
   switch(run_mode,
          "2yr" = check_2yr_data(),

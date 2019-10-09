@@ -2,8 +2,6 @@
 
 export(mod_data_server)
 export(mod_data_ui)
-export(mod_plot_server)
-export(mod_plot_ui)
 export(run_app)
 import(leaflet)
 import(shiny)

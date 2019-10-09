@@ -46,7 +46,7 @@ mod_ems_ui <- function(id){
                                    plotOutput(ns('plotEms'))),
                           tabPanel("Table",
                                    br(),
-                                   emsTableOutput(ns('tableEms'))),
+                                   ems_table_output(ns('tableEms'))),
                           tabPanel("Site Map",
                                    br(),
                                    htmlOutput(ns("htmlSiteMap")),
@@ -131,7 +131,7 @@ mod_ems_server <- function(input, output, session){
 
   ########## ---------- render Outputs ---------- ##########
   output$tableEms <- DT::renderDT({
-    emsDataTable(get_data())
+    ems_data_table(get_data())
   })
 
   output$plotEms <- renderPlot({
