@@ -53,3 +53,9 @@ error_text <- function(x) {
     p(x, style = "color: red;")
   )
 }
+
+help_text <- function(x){
+  p(x, style = "font-size: 11px; color: grey;")
+}
+
+

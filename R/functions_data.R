@@ -18,6 +18,13 @@ run_mode_lookup <- function(run_mode){
          "demo" = lookup_demo)
 }
 
+run_mode_lookup_location <- function(run_mode){
+  switch(run_mode,
+         "2yr" = lookup_2yr_location,
+         "historic" = lookup_historic_location,
+         "demo" = lookup_demo_loation)
+}
+
 permit_sites <- function(permits, lookup){
   if(is.null(permits)){
     return(sort(unique(lookup$EMS_ID)))

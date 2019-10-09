@@ -12,7 +12,6 @@
 #'
 #' @keywords internal
 #' @export
-#' @importFrom shiny NS tagList
 mod_data_ui <- function(id){
   ns <- NS(id)
   tagList(
@@ -26,6 +25,8 @@ mod_data_ui <- function(id){
                                             value = FALSE),
                               uiOutput(ns("ui_permit")),
                               tags$label("Select Site(s)"),
+                              br(),
+                              actionLink(ns("search_map"), label = "Find sites on map"),
                               radioButtons(ns("site_type"), label = NULL,
                                            choices = c("Monitoring Location", "EMS ID"),
                                            selected = "Monitoring Location", inline = TRUE),
@@ -65,15 +66,6 @@ mod_data_server <- function(input, output, session){
   run_mode <- getShinyOption("run_mode", "demo")
 
   ########## ---------- Find Data tab ---------- ##########
-  # observe({
-  #   req(preview_data())
-  #   if(is.data.frame(preview_data())){
-  #     shinyjs::show("dl_data")
-  #   } else {
-  #     shinyjs::hide("dl_data")
-  #   }
-  # })
-
   observe({
     if(!input$check_permit){
       shinyjs::hide("ui_permit", anim = TRUE, animType = "slide")
@@ -84,8 +76,57 @@ mod_data_server <- function(input, output, session){
     }
   })
 
+  sitemap_modal <- reactive({
+    tagList(
+      help_text("Click a marker to add to selected sites.
+          Select from dropdown or click polygon to zoom
+                to watershed group."),
+      uiOutput(ns("ui_wsgroup")),
+      shinycssloaders::withSpinner(leaflet::leafletOutput(ns("site_map"))),
+      br(),
+      uiOutput(ns("ui_site_modal"))
+    )
+  })
+
+  output$ui_site_modal <- renderUI({
+    select_input_x(ns("site_modal"),
+                   label = "Selected Site(s)",
+                   choices = site_rv$selected,
+                   selected = site_rv$selected)
+  })
+
+  output$ui_wsgroup <- renderUI({
+    selectInput(ns("wsgroup"), label = "Zoom to watershed group",
+                choices = c(sort(watershed_groups$WATERSHED_GROUP_NAME), ""),
+                selected = wsgroup_rv$selected)
+  })
+
+  observe({
+    req(input$wsgroup)
+    ws <- watershed_groups[watershed_groups$WATERSHED_GROUP_NAME == input$wsgroup,]
+    leafletProxy("site_map") %>%
+      setView(lng = ws$lng_center, lat = ws$lat_center, zoom = 8L)
+  })
+
+  output$site_map <- leaflet::renderLeaflet({
+    ems_leaflet(watershed_groups, lookup_location(), input$site_type)
+  })
+
+  observeEvent(input$search_map, {
+    showModal(modalDialog(
+      sitemap_modal(),
+      easyClose = TRUE,
+      title = "Find sites on map",
+      footer = modalButton("Done")
+    ))
+  })
+
   lookup <- reactive({
     run_mode_lookup(run_mode)
+  })
+
+  lookup_location <- reactive({
+    run_mode_lookup_location(run_mode)
   })
 
   permit_rv <- reactiveValues(permit = "")
@@ -96,6 +137,30 @@ mod_data_server <- function(input, output, session){
   site_rv <- reactiveValues(selected = "")
   observe({
     site_rv$selected <- translate_sites(input$site, lookup(), input$site_type)
+  })
+
+  observe({
+    site_rv$selected <- translate_sites(input$site_modal, lookup(), input$site_type)
+  })
+
+  wsgroup_rv <- reactiveValues(selected = "")
+  observeEvent(input$wsgroup, {
+    wsgroup_rv$selected <- input$wsgroup
+  })
+
+  observeEvent(input$site_map_marker_click, {
+    site_rv$selected <- c(site_rv$selected,
+                          translate_sites(input$site_map_marker_click$id,
+                                          lookup(), input$site_type))
+    updateSelectizeInput(session, ns("site_modal"), selected = site_rv$selected)
+  })
+
+  observeEvent(input$site_map_shape_click, {
+    shp <- input$site_map_shape_click$id
+    ws <- watershed_groups[watershed_groups$WATERSHED_GROUP_NAME == shp,]
+    wsgroup_rv$selected <- ws$WATERSHED_GROUP_NAME
+    leafletProxy("site_map") %>%
+      setView(lng = ws$lng_center, lat = ws$lat_center, zoom = 8L)
   })
 
   parameter_rv <- reactiveValues(selected = "")
