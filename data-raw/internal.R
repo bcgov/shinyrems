@@ -5,22 +5,34 @@ library(poisspatial)
 library(sf)
 library(rmapshaper)
 
-data <- rems::get_ems_data(which = "2yr", dont_update = TRUE)
+data_2yr <- rems::get_ems_data(which = "2yr", dont_update = TRUE)
+data_historic <- rems::read_historic_data()
 
-lookup_2yr <- data %>%
-  group_by(EMS_ID, MONITORING_LOCATION, PERMIT,
-           PARAMETER_CODE, PARAMETER) %>%
-  arrange(COLLECTION_START) %>%
-  summarise(FROM_DATE = first(COLLECTION_START),
-            TO_DATE = last(COLLECTION_START)) %>%
-  ungroup()
+lookup <- function(data){
+  data %>%
+    group_by(EMS_ID, MONITORING_LOCATION, PERMIT,
+             PARAMETER_CODE, PARAMETER) %>%
+    arrange(COLLECTION_START) %>%
+    summarise(FROM_DATE = first(COLLECTION_START),
+              TO_DATE = last(COLLECTION_START)) %>%
+    ungroup()
+}
 
-lookup_2yr_location <- data %>%
-  select(EMS_ID, MONITORING_LOCATION, PERMIT, LATITUDE, LONGITUDE) %>%
-  distinct() %>%
-  ps_coords_to_sfc(coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
+lookup_location <- function(data){
+  data %>%
+    select(EMS_ID, MONITORING_LOCATION, PERMIT, LATITUDE, LONGITUDE) %>%
+    distinct() %>%
+    ps_coords_to_sfc(coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
+}
+
+lookup_2yr <- lookup(data_2yr)
+lookup_historic <- lookup(data_historic)
+
+lookup_2yr_location <- lookup_location(data_2yr)
+lookup_historic_location <- lookup_location(data_historic)
 
 check_key(lookup_2yr_location, "EMS_ID")
+check_key(lookup_historic_location, "EMS_ID")
 
 template <- list(EMS = list(example = 123,
                             type = "integer",
@@ -40,5 +52,7 @@ watershed_groups$lat_center <- cent[,2]
 
 watershed_groups <- watershed_groups %>% mutate_if(is.factor, as.character)
 
-usethis::use_data(lookup_2yr, lookup_2yr_location, template, watershed_groups, internal = TRUE, overwrite = TRUE)
+usethis::use_data(lookup_2yr, lookup_2yr_location, lookup_historic,
+                  lookup_historic_location, template, watershed_groups,
+                  internal = TRUE, overwrite = TRUE)
 
