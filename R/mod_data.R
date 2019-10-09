@@ -108,7 +108,7 @@ mod_data_server <- function(input, output, session){
   })
 
   output$site_map <- leaflet::renderLeaflet({
-    ems_leaflet(watershed_groups, lookup_location(), input$site_type)
+    ems_leaflet(watershed_groups, get_site_locations(), input$site_type)
   })
 
   observeEvent(input$search_map, {
@@ -178,6 +178,12 @@ mod_data_server <- function(input, output, session){
     lookup <- lookup()
     x <- permit_sites(permit_rv$permit, lookup)
     c(translate_sites(x, lookup, input$site_type), "")
+  })
+
+  get_site_locations <- reactive({
+    lookup <- lookup_location()
+    sites <- setdiff(get_sites(), "")
+    lookup[lookup$EMS_ID %in% sites,]
   })
 
   get_parameters <- reactive({

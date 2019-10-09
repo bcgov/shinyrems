@@ -29,8 +29,10 @@ permit_sites <- function(permits, lookup){
   if(is.null(permits)){
     return(sort(unique(lookup$EMS_ID)))
   }
-  if(permits == ""){
-    return("")
+  if(length(permits) == 1){
+    if(permits == ""){
+      return("")
+    }
   }
   sort(unique(lookup$EMS_ID[which(lookup$PERMIT %in% permits)]))
 }
