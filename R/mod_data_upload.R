@@ -17,6 +17,9 @@ mod_data_upload_ui <- function(id){
   ns <- NS(id)
   tagList(
     tagList(
+      radioButtons(ns("data_type"), label = "Data format",
+                   choices = c("tidy" = "Tidied EMS Data", "raw" = "Raw EMS Data"),
+                   selected = "tidy"),
       fileInput(ns("upload_data"),
                 buttonLabel = span(tagList(icon("upload"), "csv")),
                 label = "",
@@ -42,10 +45,17 @@ mod_data_upload_server <- function(input, output, session, run_mode){
     shinyjs::runjs(click_js(ns("dl_template_handler")))
   })
 
+  template <- reactive({
+    type <- input$data_type
+    if(type == "tidy")
+      return(template_tidy)
+    template_raw
+  })
+
   output$dl_template_handler <- downloadHandler(
     filename = function() "ems_template.csv",
     content = function(file) {
-      readr::write_csv(template_to_df(template), file)
+      readr::write_csv(template_to_df(template()), file)
     })
 
   get_data <- reactive({
@@ -55,7 +65,7 @@ mod_data_upload_server <- function(input, output, session, run_mode){
       return("Please submit a csv file.")
     }
     data <- readr::read_csv(data$datapath)
-    x <- check_template(data, template)
+    x <- check_template(data, template())
     if(is.character(x)){
       return(x)
     }
