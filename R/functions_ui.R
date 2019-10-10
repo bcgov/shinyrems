@@ -15,7 +15,7 @@ sitemap_modal <- function(ns){
   )
 }
 
-run_mode_data_ui <- function(run_mode){
+run_mode_data_sidebar <- function(run_mode){
   if(run_mode == "upload")
     return(mod_data_upload_ui("data_upload_ui_1"))
   mod_data_find_ui("data_find_ui_1")
