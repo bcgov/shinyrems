@@ -12,13 +12,19 @@
 
 app_server <- function(input, output,session) {
 
-  observeEvent(input$browser,{
-    browser()
-  })
+  run_mode <- getShinyOption("run_mode", "demo")
+
+  if(run_mode == "upload"){
+    get_data <- callModule(mod_data_upload_server, "data_upload_ui_1", run_mode)
+  } else {
+    get_data <- callModule(mod_data_find_server, "data_find_ui_1", run_mode)
+  }
+
+  callModule(mod_data_preview_server, "data_preview_ui_1", run_mode, get_data())
 
   callModule(mod_about_server, "about_ui_1")
 
-  callModule(mod_data_server, "data_ui_1")
+  # callModule(mod_data_server, "data_ui_1")
 
   callModule(mod_reference_server, "reference_ui_1")
 

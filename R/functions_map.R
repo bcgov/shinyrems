@@ -30,3 +30,9 @@ ems_leaflet <- function(watershed_groups, sites, site_type){
                label = sites[[id]])
 }
 
+zoom_to <- function(id, ws){
+  ws <- watershed_groups[watershed_groups$WATERSHED_GROUP_NAME == ws,]
+  leafletProxy(id) %>%
+    setView(lng = ws$lng_center, lat = ws$lat_center, zoom = 8L)
+}
+

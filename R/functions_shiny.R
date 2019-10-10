@@ -10,6 +10,31 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
+click_js <- function(id){
+  glue::glue("document.getElementById('{id}').click();")
+}
+
+br2 <- function() tagList(br(), br())
+br3 <- function() tagList(br(), br(), br())
+
+error_text <- function(x) {
+  tagList(
+    helpText("Please fix the following error and resubmit:\n"),
+    p(x, style = "color: red;")
+  )
+}
+
+help_text <- function(x){
+  p(x, style = "font-size: 11px; color: grey;")
+}
+
+button <- function(id, label = "Get Data (csv)", icon = "download", status = "primary"){
+  tags$button(id = id,
+              type = "button",
+              class = glue::glue("btn action-button btn-sm btn-{status}"),
+              HTML(as.character(icon(icon)), label))
+}
+
 select_input_x <- function(..., label = "Select sites:", choices, selected = choices[1]) {
   selectizeInput(..., multiple = TRUE, label = label,
                  choices = choices,
@@ -31,31 +56,6 @@ ems_data_table <- function(data){
                                autowidth = FALSE, scrollX = TRUE,
                                columnDefs = list(list(className = 'dt-center',
                                                       targets = "_all"))))
-}
-
-button <- function(id, label = "Get Data (csv)", icon = "download", status = "primary"){
-  tags$button(id = id,
-              type = "button",
-              class = glue::glue("btn action-button btn-sm btn-{status}"),
-              HTML(as.character(icon(icon)), label))
-}
-
-click_js <- function(id){
-  glue::glue("document.getElementById('{id}').click();")
-}
-
-br2 <- function() tagList(br(), br())
-br3 <- function() tagList(br(), br(), br())
-
-error_text <- function(x) {
-  tagList(
-    helpText("Please fix the following error and resubmit:\n"),
-    p(x, style = "color: red;")
-  )
-}
-
-help_text <- function(x){
-  p(x, style = "font-size: 11px; color: grey;")
 }
 
 
