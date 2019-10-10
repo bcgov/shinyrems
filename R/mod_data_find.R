@@ -54,40 +54,6 @@ mod_data_find_server <- function(input, output, session, run_mode){
     }
   })
 
-  output$ui_site_modal <- renderUI({
-    select_input_x(ns("site_modal"),
-                   label = "Selected Site(s)",
-                   choices = site_rv$selected,
-                   selected = site_rv$selected)
-  })
-
-  output$ui_wsgroup <- renderUI({
-    selectInput(ns("wsgroup"), label = "Zoom to watershed group",
-                choices = c(sort(watershed_groups$WATERSHED_GROUP_NAME), ""),
-                selected = wsgroup_rv$selected)
-  })
-
-  observe({
-    req(input$wsgroup)
-    zoom_to("site_map", input$wsgroup)
-  })
-
-  output$site_map <- leaflet::renderLeaflet({
-    ems_leaflet(watershed_groups, get_site_locations(), input$site_type)
-  })
-
-  observeEvent(input$search_map, {
-    showModal(sitemap_modal(ns))
-  })
-
-  lookup <- reactive({
-    run_mode_lookup(run_mode)
-  })
-
-  lookup_location <- reactive({
-    run_mode_lookup_location(run_mode)
-  })
-
   permit_rv <- reactiveValues(selected = "")
   observeEvent(input$permit, {
     permit_rv$selected <- input$permit
@@ -107,22 +73,18 @@ mod_data_find_server <- function(input, output, session, run_mode){
     wsgroup_rv$selected <- input$wsgroup
   })
 
-  observeEvent(input$site_map_marker_click, {
-    site_rv$selected <- c(site_rv$selected,
-                          translate_sites(input$site_map_marker_click$id,
-                                          lookup(), input$site_type))
-    updateSelectizeInput(session, ns("site_modal"), selected = site_rv$selected)
-  })
-
-  observeEvent(input$site_map_shape_click, {
-    ws <- input$site_map_shape_click$id
-    wsgroup_rv$selected <- ws
-  })
-
   parameter_rv <- reactiveValues(selected = "")
   observe({
     parameter_rv$selected <- translate_parameters(input$parameter, lookup(),
                                                   input$parameter_type)
+  })
+
+  lookup <- reactive({
+    run_mode_lookup(run_mode)
+  })
+
+  lookup_location <- reactive({
+    run_mode_lookup_location(run_mode)
   })
 
   get_permits <- reactive({
@@ -156,6 +118,19 @@ mod_data_find_server <- function(input, output, session, run_mode){
                       run_mode)
   })
 
+  output$ui_site_modal <- renderUI({
+    select_input_x(ns("site_modal"),
+                   label = "Selected Site(s)",
+                   choices = site_rv$selected,
+                   selected = site_rv$selected)
+  })
+
+  output$ui_wsgroup <- renderUI({
+    selectInput(ns("wsgroup"), label = "Zoom to watershed group",
+                choices = c(sort(watershed_groups$WATERSHED_GROUP_NAME), ""),
+                selected = wsgroup_rv$selected)
+  })
+
   output$ui_permit <- renderUI({
     select_input_x(ns("permit"), label = "Permit number:",
                    choices = c(get_permits(), ""),
@@ -183,6 +158,31 @@ mod_data_find_server <- function(input, output, session, run_mode){
                    label = "Get any available data between dates:",
                    start = dates[1], end = dates[2],
                    min = dates[1], max = dates[2])
+  })
+
+  observeEvent(input$search_map, {
+    showModal(sitemap_modal(ns))
+  })
+
+  output$site_map <- leaflet::renderLeaflet({
+    ems_leaflet(watershed_groups, get_site_locations(), input$site_type)
+  })
+
+  observe({
+    req(input$wsgroup)
+    zoom_to("site_map", input$wsgroup)
+  })
+
+  observeEvent(input$site_map_marker_click, {
+    site_rv$selected <- c(site_rv$selected,
+                          translate_sites(input$site_map_marker_click$id,
+                                          lookup(), input$site_type))
+    updateSelectizeInput(session, ns("site_modal"), selected = site_rv$selected)
+  })
+
+  observeEvent(input$site_map_shape_click, {
+    ws <- input$site_map_shape_click$id
+    wsgroup_rv$selected <- ws
   })
 
   return(get_data)

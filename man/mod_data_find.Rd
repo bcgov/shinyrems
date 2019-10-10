@@ -7,7 +7,7 @@
 \usage{
 mod_data_find_ui(id)
 
-mod_data_find_server(input, output, session)
+mod_data_find_server(input, output, session, run_mode)
 }
 \arguments{
 \item{id}{shiny id}

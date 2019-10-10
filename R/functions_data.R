@@ -117,19 +117,3 @@ get_run_mode_data <- function(parameter, site, from_date, to_date, run_mode){
                                              emsid = site,
                                              from_date = from_date,
                                              to_date = to_date)}))}
-
-preview <- function(data_type, data, return_data){
-  if(data_type== "data"){
-    return(return_data)
-  }
-  if(!grepl(".csv", data$name, fixed = TRUE)) {
-    return("Please submit a csv file.")
-  }
-  data <- readr::read_csv(data$datapath)
-  x <- check_template(data, template)
-  if(is.character(x)){
-    return(x)
-  }
-  data
-}
-

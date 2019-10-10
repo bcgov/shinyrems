@@ -7,7 +7,7 @@
 \usage{
 mod_data_upload_ui(id)
 
-mod_data_upload_server(input, output, session)
+mod_data_upload_server(input, output, session, run_mode)
 }
 \arguments{
 \item{id}{shiny id}

@@ -7,7 +7,7 @@
 \usage{
 mod_data_preview_ui(id)
 
-mod_data_preview_server(input, output, session, data)
+mod_data_preview_server(input, output, session, run_mode, data)
 }
 \arguments{
 \item{id}{shiny id}
