@@ -49,7 +49,8 @@ mod_data_upload_server <- function(input, output, session, run_mode){
     })
 
   get_data <- reactive({
-    data <- input$data_upload
+    req(input$upload_data)
+    data <- input$upload_data
     if(!grepl(".csv", data$name, fixed = TRUE)) {
       return("Please submit a csv file.")
     }
