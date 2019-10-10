@@ -6,7 +6,7 @@ library(sf)
 library(rmapshaper)
 
 data_2yr <- rems::get_ems_data(which = "2yr", dont_update = TRUE)
-data_historic <- rems::read_historic_data()
+data_historic <- rems::read_historic_data(check_db = FALSE)
 
 lookup <- function(data){
   data %>%
@@ -61,7 +61,10 @@ watershed_groups$lat_center <- cent[,2]
 
 watershed_groups <- watershed_groups %>% mutate_if(is.factor, as.character)
 
+run_modes <- c("2yr", "historic", "all", "demo", "upload")
+
 usethis::use_data(lookup_2yr, lookup_2yr_location, lookup_historic,
-                  lookup_historic_location, template_raw, template_tidy,
-                  watershed_groups, internal = TRUE, overwrite = TRUE)
+                  lookup_historic_location, template_raw,
+                  template_tidy, watershed_groups, run_modes,
+                  internal = TRUE, overwrite = TRUE)
 
