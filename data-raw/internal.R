@@ -34,14 +34,23 @@ lookup_historic_location <- lookup_location(data_historic)
 check_key(lookup_2yr_location, "EMS_ID")
 check_key(lookup_historic_location, "EMS_ID")
 
-template <- list(EMS = list(example = 123,
+template_tidy <- list(EMS = list(example = 123,
                             type = "integer",
                             description = "EMS ID",
                             check = c(1, 124)),
-                 this = list(example = "yup",
+                 tidy = list(example = "yup",
                              type = "character",
                              description = "This is a test.",
                              check = c("")))
+
+template_raw <- list(EMS = list(example = 123,
+                                 type = "integer",
+                                 description = "EMS ID",
+                                 check = c(1, 124)),
+                      raw = list(example = "yup",
+                                  type = "character",
+                                  description = "This is a test.",
+                                  check = c("")))
 
 watershed_groups <- st_read("~/Poisson/Data/spatial/fwa/gdb/FWA_BC.gdb", layer = "FWA_WATERSHED_GROUPS_POLY")
 watershed_groups <- ms_simplify(watershed_groups, keep = 0.01) %>%
@@ -53,6 +62,6 @@ watershed_groups$lat_center <- cent[,2]
 watershed_groups <- watershed_groups %>% mutate_if(is.factor, as.character)
 
 usethis::use_data(lookup_2yr, lookup_2yr_location, lookup_historic,
-                  lookup_historic_location, template, watershed_groups,
-                  internal = TRUE, overwrite = TRUE)
+                  lookup_historic_location, template_raw, template_tidy,
+                  watershed_groups, internal = TRUE, overwrite = TRUE)
 
