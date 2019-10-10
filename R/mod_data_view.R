@@ -13,10 +13,10 @@
 #' @keywords internal
 #' @export
 #' @importFrom shiny NS tagList
-mod_data_preview_ui <- function(id){
+mod_data_view_ui <- function(id){
   ns <- NS(id)
   tagList(
-    uiOutput(ns("preview_table")),
+    uiOutput(ns("view_table")),
     downloadButton(ns("dl_data_handler"), label = NULL,
                    style = "visibility: hidden;")
   )
@@ -28,10 +28,10 @@ mod_data_preview_ui <- function(id){
 #' @export
 #' @keywords internal
 
-mod_data_preview_server <- function(input, output, session, run_mode, data){
+mod_data_view_server <- function(input, output, session, run_mode, data){
   ns <- session$ns
 
-  output$preview_table <- renderUI({
+  output$view_table <- renderUI({
     if(is.character(data())){
       return(error_text(data()))
     }
@@ -56,10 +56,3 @@ mod_data_preview_server <- function(input, output, session, run_mode, data){
       readr::write_csv(data(), file)
     })
 }
-
-## To be copied in the UI
-# mod_data_preview_ui("data_preview_ui_1")
-
-## To be copied in the server
-# callModule(mod_data_preview_server, "data_preview_ui_1")
-
