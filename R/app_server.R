@@ -20,7 +20,7 @@ app_server <- function(input, output,session) {
     get_data <- callModule(mod_data_find_server, "data_find_ui_1", run_mode)
   }
 
-  callModule(mod_data_preview_server, "data_preview_ui_1", run_mode, get_data())
+  callModule(mod_data_preview_server, "data_preview_ui_1", run_mode, get_data)
 
   callModule(mod_about_server, "about_ui_1")
 

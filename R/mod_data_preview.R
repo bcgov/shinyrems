@@ -32,8 +32,8 @@ mod_data_preview_server <- function(input, output, session, run_mode, data){
   ns <- session$ns
 
   output$preview_table <- renderUI({
-    if(is.character(data)){
-      return(error_text(data))
+    if(is.character(data())){
+      return(error_text(data()))
     }
     tagList(
       button(ns('dl_data'), label = "Download Raw Data"),
@@ -43,7 +43,7 @@ mod_data_preview_server <- function(input, output, session, run_mode, data){
   })
 
   output$data_table <- DT::renderDT({
-    ems_data_table(data)
+    ems_data_table(data())
   })
 
   observeEvent(input$dl_data, {
@@ -53,7 +53,7 @@ mod_data_preview_server <- function(input, output, session, run_mode, data){
   output$dl_data_handler <- downloadHandler(
     filename = function() "ems_data.csv",
     content = function(file) {
-      readr::write_csv(data, file)
+      readr::write_csv(data(), file)
     })
 }
 

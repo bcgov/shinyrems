@@ -133,7 +133,6 @@ mod_data_find_server <- function(input, output, session, run_mode){
   get_sites <- reactive({
     lookup <- lookup()
     x <- permit_sites(permit_rv$selected, lookup)
-    print(x)
     translate_sites(x, lookup, input$site_type)
   })
 
