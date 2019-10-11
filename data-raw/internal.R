@@ -27,9 +27,11 @@ lookup_location <- function(data){
 
 lookup_2yr <- lookup(data_2yr)
 lookup_historic <- lookup(data_historic)
+lookup_demo <- lookup(shinyrems::ems_demo_data)
 
 lookup_2yr_location <- lookup_location(data_2yr)
 lookup_historic_location <- lookup_location(data_historic)
+lookup_demo_location <- lookup_location(shinyrems::ems_demo_data)
 
 check_key(lookup_2yr_location, "EMS_ID")
 check_key(lookup_historic_location, "EMS_ID")
@@ -63,8 +65,9 @@ watershed_groups <- watershed_groups %>% mutate_if(is.factor, as.character)
 
 run_modes <- c("2yr", "historic", "all", "demo", "upload")
 
-usethis::use_data(lookup_2yr, lookup_2yr_location, lookup_historic,
-                  lookup_historic_location, template_raw,
-                  template_tidy, watershed_groups, run_modes,
-                  internal = TRUE, overwrite = TRUE)
+usethis::use_data(lookup_2yr, lookup_2yr_location,
+                  lookup_historic, lookup_historic_location,
+                  lookup_demo, lookup_demo_location,
+                  template_raw, template_tidy, watershed_groups,
+                  run_modes, internal = TRUE, overwrite = TRUE)
 
