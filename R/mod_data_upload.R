@@ -38,7 +38,7 @@ mod_data_upload_ui <- function(id){
 #' @export
 #' @keywords internal
 
-mod_data_upload_server <- function(input, output, session, run_mode){
+mod_data_upload_server <- function(input, output, session){
   ns <- session$ns
 
   observeEvent(input$dl_template, {

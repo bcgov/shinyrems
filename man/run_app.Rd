@@ -4,16 +4,12 @@
 \alias{run_app}
 \title{Run the Shiny Application}
 \usage{
-run_app(run_mode = "2yr")
+run_app()
 }
-\arguments{
-\item{run_mode}{A string indicating which dataset the app should use.
+\description{
 Possible choices are:
 "demo" (loads a small demo dataset that does not require any downloading);
 "2yr" (loads and prompts download/update of recent EMS data from 2018-01-01 onwards);
 "historic" (loads and prompts download/update of historic EMS data from 1964-01-01 to 2018-01-02);
-"all" (loads both recent and historic data).}
-}
-\description{
-Run the Shiny Application
+"all" (loads both recent and historic data).
 }

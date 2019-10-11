@@ -10,24 +10,26 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
-app_server <- function(input, output,session) {
+app_server <- function(input, output, session) {
 
-  run_mode <- getShinyOption("run_mode", "demo")
+  run_mode <- callModule(mod_dataset_server, "dataset_ui_1")
 
-  if(run_mode == "upload"){
-    get_data <- callModule(mod_data_upload_server, "data_upload_ui_1", run_mode)
-  } else {
-    get_data <- callModule(mod_data_find_server, "data_find_ui_1", run_mode)
-  }
+  observe({
+    req(run_mode())
+    if(run_mode() == "upload"){
+      get_data <- callModule(mod_data_upload_server, "data_upload_ui_1")
+    } else {
+      get_data <- callModule(mod_data_find_server, "data_find_ui_1", run_mode)
+    }
+    callModule(mod_data_view_server, "data_view_ui_1", get_data)
+  })
 
-  callModule(mod_data_view_server, "data_view_ui_1", run_mode, get_data)
 
   callModule(mod_refine_sidebar_server, "refine_sidebar_ui_1")
+
   callModule(mod_refine_view_server, "refine_view_ui_1")
 
   callModule(mod_about_server, "about_ui_1")
-
-  # callModule(mod_data_server, "data_ui_1")
 
   callModule(mod_reference_server, "reference_ui_1")
 

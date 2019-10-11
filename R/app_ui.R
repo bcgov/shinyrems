@@ -11,17 +11,19 @@
 # See the License for the specific language governing permissions and limitations under the License.
 
 app_ui <- function() {
-  run_mode <- getShinyOption("run_mode", "demo")
+
+  run_mode <- "2yr"
 
   tagList(
     shinyjs::useShinyjs(),
     css_navbar(text_selected_color = "#5bc0de"),
     # css_hide_errors(),
-    navbarPage(title =  "EMS Database", selected = '1. Data',
+    navbarPage(title =  "EMS Database", selected = '1. Get data',
                tabPanel(title = "1. Get data",
                         br(),
                         sidebarLayout(
                           sidebarPanel(class = 'sidebar',
+                                       mod_dataset_ui("dataset_ui_1"),
                                        run_mode_data_sidebar(run_mode)),
                           mainPanel(mod_data_view_ui("data_view_ui_1")))),
                tabPanel(title = "2. Refine data",

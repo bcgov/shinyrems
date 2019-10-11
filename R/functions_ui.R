@@ -1,4 +1,4 @@
-sitemap_modal <- function(ns){
+modal_sitemap <- function(ns){
   modalDialog(
     tagList(
       help_text("Click a marker to add to selected sites.
@@ -19,6 +19,19 @@ run_mode_data_sidebar <- function(run_mode){
   if(run_mode == "upload")
     return(mod_data_upload_ui("data_upload_ui_1"))
   mod_data_find_ui("data_find_ui_1")
+}
+
+modal_data <- function(which, update, ns){
+  x <- glue("You don't have the {which} dataset.")
+  if(update)
+    x <- glue("There is a newer {which} dataset available.")
+  modalDialog(
+    h4(glue("{x} Would you like to download it and store a local copy on your computer?")),
+    button(ns("yes"), "Yes!"),
+    button(ns("no"), "No thanks"),
+    uiOutput(ns("download_text_ui")),
+    footer = NULL
+  )
 }
 
 # find_data_ui <- function(ns){

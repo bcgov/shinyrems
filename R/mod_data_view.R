@@ -28,7 +28,7 @@ mod_data_view_ui <- function(id){
 #' @export
 #' @keywords internal
 
-mod_data_view_server <- function(input, output, session, run_mode, data){
+mod_data_view_server <- function(input, output, session, data){
   ns <- session$ns
 
   output$view_table <- renderUI({

@@ -16,12 +16,13 @@
 mod_data_find_ui <- function(id){
   ns <- NS(id)
   tagList(
+
+    tags$label("Select site(s) or"),
+    actionLink(ns("search_map"), label = "find sites on map"),
     checkboxInput(ns("check_permit"),
                   label = "Filter by Permit Number",
                   value = FALSE),
     uiOutput(ns("ui_permit")),
-    tags$label("Select site(s) or"),
-    actionLink(ns("search_map"), label = "find sites on map"),
     radioButtons(ns("site_type"), label = NULL,
                  choices = c("Monitoring Location", "EMS ID"),
                  selected = "Monitoring Location", inline = TRUE),
@@ -80,11 +81,11 @@ mod_data_find_server <- function(input, output, session, run_mode){
   })
 
   lookup <- reactive({
-    run_mode_lookup(run_mode)
+    run_mode_lookup(run_mode())
   })
 
   lookup_location <- reactive({
-    run_mode_lookup_location(run_mode)
+    run_mode_lookup_location(run_mode())
   })
 
   get_permits <- reactive({
@@ -115,7 +116,7 @@ mod_data_find_server <- function(input, output, session, run_mode){
     req(input$date_range)
     get_run_mode_data(input$parameter, input$site,
                       input$date_range[1], input$date_range[2],
-                      run_mode)
+                      run_mode())
   })
 
   output$ui_site_modal <- renderUI({
@@ -161,7 +162,7 @@ mod_data_find_server <- function(input, output, session, run_mode){
   })
 
   observeEvent(input$search_map, {
-    showModal(sitemap_modal(ns))
+    showModal(modal_sitemap(ns))
   })
 
   output$site_map <- leaflet::renderLeaflet({

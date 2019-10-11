@@ -13,14 +13,22 @@
 check_2yr_data <- function(){
   message("checking for most recent 2 years of data...")
   if(!rems:::._remsCache_$exists("2yr")){
-    rems::get_ems_data("2yr", ask = TRUE, check_only = FALSE, dont_update = TRUE)
+    rems::get_ems_data("2yr", ask = TRUE, check_only = FALSE, dont_update = FALSE)
   }
   rems::get_ems_data("2yr", ask = FALSE, check_only = TRUE, dont_update = TRUE)
 }
 
-check_historic_data <- function(){
-  message("checking for historic data...")
-  rems::download_historic_data(ask = TRUE)
+check_data_exists <- function(which){
+  cache_date <- rems::get_cache_date(which)
+  if(is.infinite(cache_date))
+    return(invisible(FALSE))
+  invisible(TRUE)
+}
+
+check_data_update <- function(which){
+  cache_date <- rems::get_cache_date(which)
+  file_meta <- rems:::get_file_metadata(which)
+  cache_date >= file_meta[["server_date"]]
 }
 
 check_all_data <- function(){
