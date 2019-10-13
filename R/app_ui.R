@@ -11,7 +11,6 @@
 # See the License for the specific language governing permissions and limitations under the License.
 
 app_ui <- function() {
-
   run_mode <- "2yr"
 
   tagList(
@@ -24,7 +23,7 @@ app_ui <- function() {
                         sidebarLayout(
                           sidebarPanel(class = 'sidebar',
                                        mod_dataset_ui("dataset_ui_1"),
-                                       run_mode_data_sidebar(run_mode)),
+                                       uiOutput("data_sidebar_ui")),
                           mainPanel(mod_data_view_ui("data_view_ui_1")))),
                tabPanel(title = "2. Refine data",
                         br(),

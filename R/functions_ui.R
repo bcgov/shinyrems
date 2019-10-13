@@ -21,15 +21,26 @@ run_mode_data_sidebar <- function(run_mode){
   mod_data_find_ui("data_find_ui_1")
 }
 
-modal_data <- function(which, update, ns){
+modal_data_download <- function(which, ns){
   x <- glue("You don't have the {which} dataset.")
-  if(update)
-    x <- glue("There is a newer {which} dataset available.")
+
   modalDialog(
-    h4(glue("{x} Would you like to download it and store a local copy on your computer?")),
-    button(ns("yes"), "Yes!"),
-    button(ns("no"), "No thanks"),
-    uiOutput(ns("download_text_ui")),
+    p(glue("You don't have the {which} dataset.
+            Would you like to download it?")),
+    button(ns("yes_download"), "Yes!"),
+    button(ns("no_download"), "No thanks"),
+    textOutput(ns("download_text")),
+    footer = NULL
+  )
+}
+
+modal_data_update <- function(which, ns){
+  modalDialog(
+    p(glue("There is a newer version of the {which} dataset available.
+            Would you like to download it?")),
+    button(ns("yes_update"), "Yes!"),
+    button(ns("no_update"), "No thanks"),
+    uiOutput(ns("update_text_ui")),
     footer = NULL
   )
 }

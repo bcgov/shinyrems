@@ -15,10 +15,21 @@ app_server <- function(input, output, session) {
   run_mode <- callModule(mod_dataset_server, "dataset_ui_1")
 
   observe({
-    req(run_mode())
+    print(run_mode())
+    if(run_mode() == "none"){
+      shinyjs::hide("data_sidebar_ui")
+    } else {
+      shinyjs::show("data_sidebar_ui")
+    }
     if(run_mode() == "upload"){
+      output$data_sidebar_ui <- renderUI({
+        mod_data_upload_ui("data_upload_ui_1")
+      })
       get_data <- callModule(mod_data_upload_server, "data_upload_ui_1")
     } else {
+      output$data_sidebar_ui <- renderUI({
+        mod_data_find_ui("data_find_ui_1")
+      })
       get_data <- callModule(mod_data_find_server, "data_find_ui_1", run_mode)
     }
     callModule(mod_data_view_server, "data_view_ui_1", get_data)

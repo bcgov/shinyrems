@@ -31,49 +31,73 @@ mod_dataset_ui <- function(id){
 mod_dataset_server <- function(input, output, session){
   ns <- session$ns
 
-  check_update <- reactive({
-    req(input$dataset)
-    if(input$dataset %in% c("upload", "demo"))
+  check_data <- reactive({
+    dataset <- input$dataset
+    withProgress(Sys.sleep(2), value = 0.5,
+                              message = glue("Checking that data exists..."))
+    download <- FALSE
+    if(download){
+      return(showModal(modal_data_download(input$dataset, ns)))
+    }
+    withProgress(Sys.sleep(2), value = 0.5,
+                 message = glue("Checking for updates..."))
+    update <- TRUE
+    if(update){
+      return(showModal(modal_data_update(input$dataset, ns)))
+    }
+    update
+    # withProgress(check_data_exists(input$dataset), value = 0.5,
+    #              message = glue("Checking for updates to
+    #                             '{input$dataset}' dataset..."))
+    # withProgress(check_data_update(input$dataset), value = 0.5,
+    #              message = glue("Checking that '{input$dataset}' dataset
+    #                             has been downloaded..."))
+
+  })
+
+  dataset_rv <- reactiveValues(done = "demo")
+
+  observeEvent(input$dataset, {
+    if(input$dataset %in% c("demo", "upload")){
+      dataset_rv$done <- input$dataset
       return()
-    check_data_update(input$dataset)
+    }
+    dataset_rv$done <- "none"
+    data <- check_data()
+    if(is.data.frame(data)){
+      dataset_rv$done <- input$dataset
+    }
   })
 
-  check_exists <- reactive({
-    req(input$dataset)
-    if(input$dataset %in% c("upload", "demo"))
-      return()
-    check_data_exists(input$dataset)
-  })
-
-  observe({
-    req(check_update())
-    req(check_exists())
-
-    if(check_exists())
-      return(showModal(modal_data(input$dataset, FALSE, ns)))
-
-    if(check_update())
-      return(showModal(modal_update(input$dataset, TRUE, ns)))
-  })
-
-  observeEvent(input$yes, {
-    output$download_text_ui <- renderUI({
-      textOutput(ns("download_text"))
-    })
-    download_dataset(input$dataset)
-  })
-
-  output$download_text <- renderText({
-    glue("Downloading {input$dataset} dataset. This could take a while...")
-
-  })
-
-  observeEvent(input$no, {
-    updateRadioButtons("dataset", selected = "demo")
+  observeEvent(input$no_download, {
+    dataset_rv$done <- "demo"
+    updateRadioButtons(session, "dataset", selected = "demo")
     removeModal()
   })
 
-  return(reactive(input$dataset))
+  observeEvent(input$no_update, {
+    removeModal()
+  })
+
+  observeEvent(input$yes_download, {
+    output$download_text <- renderText({
+      glue("Downloading {input$dataset} dataset. This could take a while...")
+    })
+    removeModal()
+    # download_dataset(input$dataset)
+    dataset_rv$done <- input$dataset
+  })
+
+  observeEvent(input$yes_update, {
+    output$update_text <- renderText({
+      glue("Updating {input$dataset} dataset. This could take a while...")
+    })
+    removeModal()
+    # download_dataset(input$dataset)
+    dataset_rv$done <- input$dataset
+  })
+
+  return(reactive(dataset_rv$done))
 }
 
 
