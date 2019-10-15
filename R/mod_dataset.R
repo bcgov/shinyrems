@@ -37,13 +37,13 @@ mod_dataset_server <- function(input, output, session){
                               message = glue("Checking that data exists..."))
     download <- FALSE
     if(download){
-      return(showModal(modal_data_download(input$dataset, ns)))
+      return(showModal(modal_data(input$dataset, update = FALSE, ns)))
     }
     withProgress(Sys.sleep(2), value = 0.5,
                  message = glue("Checking for updates..."))
     update <- TRUE
     if(update){
-      return(showModal(modal_data_update(input$dataset, ns)))
+      return(showModal(modal_data(input$dataset, update = TRUE, ns)))
     }
     update
     # withProgress(check_data_exists(input$dataset), value = 0.5,
@@ -77,23 +77,27 @@ mod_dataset_server <- function(input, output, session){
 
   observeEvent(input$no_update, {
     removeModal()
+    dataset_rv$done <-  input$dataset
   })
+
+  foo <- function() {
+    message("one")
+    Sys.sleep(0.5)
+    message("two")
+  }
+
+  output$download_text <- renderText({"hi"})
 
   observeEvent(input$yes_download, {
-    output$download_text <- renderText({
-      glue("Downloading {input$dataset} dataset. This could take a while...")
+    withCallingHandlers({
+      shinyjs::html("download_text", "")
+      foo()
+      # download_data(input$dataset)
+    },
+    message = function(m) {
+      shinyjs::html(id = "download_text", html = m$message, add = TRUE)
     })
-    removeModal()
-    # download_dataset(input$dataset)
-    dataset_rv$done <- input$dataset
-  })
-
-  observeEvent(input$yes_update, {
-    output$update_text <- renderText({
-      glue("Updating {input$dataset} dataset. This could take a while...")
-    })
-    removeModal()
-    # download_dataset(input$dataset)
+    # removeModal()
     dataset_rv$done <- input$dataset
   })
 
