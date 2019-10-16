@@ -118,8 +118,4 @@ get_run_mode_data <- function(parameter, site, from_date, to_date, run_mode){
                                              from_date = from_date,
                                              to_date = to_date)}))}
 
-download_data <- function(which){
-  switch(which,
-         "2yr" = rems::get_ems_data("2yr", force = TRUE, ask = FALSE),
-         "historic" = rems::download_historic_data(force = TRUE, ask = FALSE))
-}
+

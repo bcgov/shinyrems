@@ -37,7 +37,13 @@ data_download_ui <- function(which, check, ns){
     button(ns("yes_download"), "Yes!", icon = icon(NULL)),
     button(ns(id), "No", icon = icon(NULL)),
     br2(),
-    textOutput(ns("download_text"))
+    textOutput(ns("download_text")),
+    shinyWidgets::progressBar(
+      id = ns("download_progress"),
+      value = 0,
+      title = "",
+      display_pct = TRUE
+    )
   ), title = NULL, footer = NULL
   )
 }

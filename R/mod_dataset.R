@@ -44,11 +44,9 @@ mod_dataset_server <- function(input, output, session){
     if(check == "done")
       return()
 
-    check <- "upload"
     output$check_data_ui <- renderUI({
       showModal(data_download_ui(which, check, ns))
     })
-
   })
 
   observeEvent(input$no_download, {
@@ -67,10 +65,17 @@ mod_dataset_server <- function(input, output, session){
   }
 
   observeEvent(input$yes_download, {
+    # output$download_progress_ui <- renderUI({
+    #   shinyWidgets::progressBar(
+    #     id = ns("download_progress"),
+    #     value = 0,
+    #     title = "",
+    #     display_pct = TRUE
+    #   )
+    # })
     withCallingHandlers({
       shinyjs::html("download_text", "")
-      foo()
-      # download_data(input$dataset)
+      download_data(input$dataset, session, "download_progress")
     },
     message = function(m) {
       shinyjs::html(id = "download_text", html = m$message, add = TRUE)

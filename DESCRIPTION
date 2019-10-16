@@ -28,7 +28,9 @@ Imports:
     glue,
     magrittr,
     wqbc,
-    bsplus
+    bsplus,
+    shinyhttr,
+    shinyWidgets
 Suggests:
     testthat (>= 2.1.0),
     usethis
