@@ -22,7 +22,7 @@ run_mode_lookup_location <- function(run_mode){
   switch(run_mode,
          "2yr" = lookup_2yr_location,
          "historic" = lookup_historic_location,
-         "demo" = lookup_demo_loation)
+         "demo" = lookup_demo_location)
 }
 
 permit_sites <- function(permits, lookup){

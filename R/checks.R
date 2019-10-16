@@ -18,17 +18,33 @@ check_2yr_data <- function(){
   rems::get_ems_data("2yr", ask = FALSE, check_only = TRUE, dont_update = TRUE)
 }
 
-check_data_exists <- function(which){
+check_data <- function(which){
   cache_date <- rems::get_cache_date(which)
   if(is.infinite(cache_date))
-    return(invisible(FALSE))
-  invisible(TRUE)
+    return("download")
+  file_meta <- rems:::get_file_metadata(which)
+  if(cache_date >= file_meta[["server_date"]])
+    return("update")
+  "done"
 }
 
-check_data_update <- function(which){
-  cache_date <- rems::get_cache_date(which)
-  file_meta <- rems:::get_file_metadata(which)
-  cache_date >= file_meta[["server_date"]]
+check_data_progress <- function(which){
+  if(which == "all"){
+    return(withProgress({
+      check <- check_data("2yr")
+      which <- "2yr"
+      if(check == "done"){
+        check <- check_data("historic")
+        which <- "historic"
+      }
+      list(check = check, which = which)},
+      value = 0.5,
+      message = "checking for data updates ..."))
+  }
+  withProgress({check <- check_data(which)
+  list(check = check, which = which)},
+               value = 0.5,
+               message = "checking for data updates ...")
 }
 
 check_all_data <- function(){

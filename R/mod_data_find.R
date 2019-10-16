@@ -41,7 +41,7 @@ mod_data_find_ui <- function(id){
 #' @export
 #' @keywords internal
 
-mod_data_find_server <- function(input, output, session, run_mode){
+mod_data_find_server <- function(input, output, session, dataset){
   ns <- session$ns
 
   observe({
@@ -81,11 +81,11 @@ mod_data_find_server <- function(input, output, session, run_mode){
   })
 
   lookup <- reactive({
-    run_mode_lookup(run_mode())
+    run_mode_lookup(dataset())
   })
 
   lookup_location <- reactive({
-    run_mode_lookup_location(run_mode())
+    run_mode_lookup_location(dataset())
   })
 
   get_permits <- reactive({
@@ -116,7 +116,7 @@ mod_data_find_server <- function(input, output, session, run_mode){
     req(input$date_range)
     get_run_mode_data(input$parameter, input$site,
                       input$date_range[1], input$date_range[2],
-                      run_mode())
+                      dataset())
   })
 
   output$ui_site_modal <- renderUI({

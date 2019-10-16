@@ -12,33 +12,60 @@
 
 app_server <- function(input, output, session) {
 
-  run_mode <- callModule(mod_dataset_server, "dataset_ui_1")
+  # withProgress(dataset_rv <- callModule(mod_dataset_server, "dataset_ui_1"),
+  #              value = 0.5, message = "checking for data updates...")
+
+  dataset_rv <- callModule(mod_dataset_server, "dataset_ui_1")
 
   observe({
-    print(run_mode())
-    if(run_mode() == "none"){
-      shinyjs::hide("data_sidebar_ui")
-    } else {
-      shinyjs::show("data_sidebar_ui")
-    }
-    if(run_mode() == "upload"){
-      output$data_sidebar_ui <- renderUI({
+    dataset <- dataset_rv$dataset
+    check <- dataset_rv$check
+    which <- dataset_rv$which
+
+    if(dataset() == "upload"){
+      return({
+        output$data_sidebar_ui <- renderUI({
         mod_data_upload_ui("data_upload_ui_1")
       })
       get_data <- callModule(mod_data_upload_server, "data_upload_ui_1")
-    } else {
-      output$data_sidebar_ui <- renderUI({
-        mod_data_find_ui("data_find_ui_1")
       })
-      get_data <- callModule(mod_data_find_server, "data_find_ui_1", run_mode)
     }
-    callModule(mod_data_view_server, "data_view_ui_1", get_data)
+
+    if(dataset() == "demo"){
+      return({
+        output$data_sidebar_ui <- renderUI({
+          mod_data_find_ui("data_find_ui_1")
+        })
+        get_data <- callModule(mod_data_find_server, "data_find_ui_1", dataset)
+      })
+    }
+
+    if(check() == "done"){
+      return({
+        output$data_sidebar_ui <- renderUI({
+          mod_data_find_ui("data_find_ui_1")
+        })
+        get_data <- callModule(mod_data_find_server, "data_find_ui_1", dataset)
+      })
+    }
+    output$data_sidebar_ui <- renderUI({
+      mod_data_check_ui("data_check_ui_1")
+    })
+    callModule(mod_data_check_server, "data_check_ui_1", dataset, check, which)
+
+    # else {
+    #   output$data_sidebar_ui <- renderUI({
+    #     mod_data_find_ui("data_find_ui_1")
+    #   })
+    #   get_data <- callModule(mod_data_find_server, "data_find_ui_1", run_mode)
+    # }
+    # callModule(mod_data_view_server, "data_view_ui_1", get_data)
   })
 
 
-  callModule(mod_refine_sidebar_server, "refine_sidebar_ui_1")
-
-  callModule(mod_refine_view_server, "refine_view_ui_1")
+  # callModule(mod_refine_sidebar_server, "refine_sidebar_ui_1")
+  #
+  # callModule(mod_refine_view_server, "refine_view_ui_1")
 
   callModule(mod_about_server, "about_ui_1")
 
