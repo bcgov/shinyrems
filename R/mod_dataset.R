@@ -65,14 +65,6 @@ mod_dataset_server <- function(input, output, session){
   }
 
   observeEvent(input$yes_download, {
-    # output$download_progress_ui <- renderUI({
-    #   shinyWidgets::progressBar(
-    #     id = ns("download_progress"),
-    #     value = 0,
-    #     title = "",
-    #     display_pct = TRUE
-    #   )
-    # })
     withCallingHandlers({
       shinyjs::html("download_text", "")
       download_data(input$dataset, session, "download_progress")

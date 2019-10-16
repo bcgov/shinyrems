@@ -23,7 +23,7 @@ check_data <- function(which){
   if(is.infinite(cache_date))
     return("download")
   file_meta <- rems:::get_file_metadata(which)
-  if(cache_date >= file_meta[["server_date"]])
+  if(cache_date < file_meta[["server_date"]])
     return("update")
   "done"
 }
