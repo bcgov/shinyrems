@@ -36,29 +36,47 @@ mod_data_check_server <- function(input, output, session, dataset, check, which)
 
     if(check == "download"){
       output$check_data <- renderUI({
-        tagList(
-          p(glue("You don't have the {which} dataset.
-                 Would you like to download it?")),
-          button(ns("yes_download"), "Yes!", icon = icon(NULL)),
-          button(ns("no_download"), "No thanks", icon = icon(NULL)),
-          br(),
-          textOutput(ns("download_text"))
-        )
+        data_download_ui(which, ns)
       })
     }
     if(check == "update"){
       output$check_data <- renderUI({
-        tagList(
-          p(glue("There is a newer version of the {which} dataset available.
-                 Would you like to download it?")),
-          button(ns("yes_download"), "Yes!", icon = icon(NULL)),
-          button(ns("no_update"), "No thanks", icon = icon(NULL)),
-          br(),
-          textOutput(ns("download_text"))
-        )
+        data_upload_ui(which, ns)
+
       })
     }
   })
+
+  check_rv <- reactiveValues(check = NULL)
+
+  observeEvent(input$no_download, {
+    check_rv$check <- "no_download"
+  })
+
+  observeEvent(input$no_update, {
+    check_rv$check <- "no_update"
+  })
+
+  foo <- function() {
+    message("one")
+    Sys.sleep(0.5)
+    message("two")
+  }
+
+  observeEvent(input$yes_download, {
+    withCallingHandlers({
+      shinyjs::html("download_text", "")
+      foo()
+      # download_data(input$dataset)
+    },
+    message = function(m) {
+      shinyjs::html(id = "download_text", html = m$message, add = TRUE)
+    })
+    # removeModal()
+    check_rv$check <- "yes_download"
+  })
+
+  return(reactive(check_rv$check))
 }
 
 ## To be copied in the UI

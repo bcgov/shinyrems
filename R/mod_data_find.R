@@ -18,7 +18,9 @@ mod_data_find_ui <- function(id){
   tagList(
 
     tags$label("Select site(s) or"),
-    actionLink(ns("search_map"), label = "find sites on map"),
+    actionLink(ns("search_map"), label = "find sites on map") %>%
+      bsplus::bs_attach_modal(id_modal = ns("modal_map")),
+    modal_sitemap(ns),
     checkboxInput(ns("check_permit"),
                   label = "Filter by Permit Number",
                   value = FALSE),
@@ -162,7 +164,7 @@ mod_data_find_server <- function(input, output, session, dataset){
   })
 
   observeEvent(input$search_map, {
-    showModal(modal_sitemap(ns))
+    shinyBS::toggleModal(session, ns("modal_map"), toggle = "open")
   })
 
   output$site_map <- leaflet::renderLeaflet({
@@ -186,12 +188,10 @@ mod_data_find_server <- function(input, output, session, dataset){
     wsgroup_rv$selected <- ws
   })
 
+  observeEvent(input$done, {
+    removeModal()
+  })
+
   return(get_data)
 }
-
-## To be copied in the UI
-# mod_data_find_ui("data_find_ui_1")
-
-## To be copied in the server
-# callModule(mod_data_find_server, "data_find_ui_1")
 

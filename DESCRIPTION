@@ -27,7 +27,8 @@ Imports:
     rlang,
     glue,
     magrittr,
-    wqbc
+    wqbc,
+    bsplus
 Suggests:
     testthat (>= 2.1.0),
     usethis

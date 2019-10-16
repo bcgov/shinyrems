@@ -47,11 +47,6 @@ check_data_progress <- function(which){
                message = "checking for data updates ...")
 }
 
-check_all_data <- function(){
-  check_2yr_data()
-  check_historic_data()
-}
-
 
 
 
