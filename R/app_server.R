@@ -39,19 +39,9 @@ app_server <- function(input, output, session) {
       mod_data_find_ui("data_find_ui_1")
     })
     get_data <- callModule(mod_data_find_server, "data_find_ui_1", dataset)
+
+    callModule(mod_data_view_server, "data_view_ui_1", get_data)
   })
-
-    # check <- callModule(mod_data_check_server, "data_check_ui_1",
-    #                     dataset, check, which)
-
-    # else {
-    #   output$data_sidebar_ui <- renderUI({
-    #     mod_data_find_ui("data_find_ui_1")
-    #   })
-    #   get_data <- callModule(mod_data_find_server, "data_find_ui_1", run_mode)
-    # }
-    # callModule(mod_data_view_server, "data_view_ui_1", get_data)
-
 
   # callModule(mod_refine_sidebar_server, "refine_sidebar_ui_1")
   #
