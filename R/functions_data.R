@@ -92,30 +92,37 @@ combine_data <- function(x, ...){
 }
 
 ems_data <- function(){
-  rems::get_ems_data(which = "2yr", dont_update = TRUE, force = TRUE)
+  shiny::withProgress(message = paste("Retrieving data..."),
+                      value = 0.5, {
+                        rems::get_ems_data(which = "2yr",
+                                           dont_update = TRUE, force = TRUE)})
+
 }
 
-run_mode_data <- function(run_mode, ...){
-  switch(run_mode,
+get_data <- function(dataset, data_2yr = NULL, ...){
+  switch(dataset,
          "demo" = filter_2yr_data(x = shinyrems::ems_demo_data, ...),
-         "2yr" = filter_2yr_data(x = ems_data(), ...),
+         "2yr" = filter_2yr_data(x = data_2yr, ...),
          "historic" = filter_historic_data(...),
-         combine_data(x = ems_data(), ...))
+         combine_data(x = data_2yr, ...))
 }
 
-get_run_mode_data <- function(parameter, site, from_date, to_date, run_mode){
-  switch(run_mode,
-         "demo" = run_mode_data(run_mode = run_mode,
-                                param_code = parameter,
-                                emsid = site,
-                                from_date = from_date,
-                                to_date = to_date),
-         shiny::withProgress(message = paste("Retrieving data..."),
-                             value = 0.5, {
-                               run_mode_data(run_mode = run_mode,
-                                             param_code = parameter,
-                                             emsid = site,
-                                             from_date = from_date,
-                                             to_date = to_date)}))}
+get_data_progress <- function(dataset, data_2yr, parameter,
+                              site, from_date, to_date){
+  if(dataset %in% c("demo", "2yr"))
+    return(get_data(dataset = dataset,
+                    param_code = parameter,
+                    emsid = site,
+                    from_date = from_date,
+                    to_date = to_date))
+  shiny::withProgress(message = paste("Retrieving data..."),
+                      value = 0.5, {
+                        get_data(dataset = dataset,
+                                 data_2yr = data_2yr,
+                                 param_code = parameter,
+                                 emsid = site,
+                                 from_date = from_date,
+                                 to_date = to_date)})
+}
 
 
