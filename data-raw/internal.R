@@ -5,36 +5,22 @@ library(poisspatial)
 library(sf)
 library(rmapshaper)
 
-data_2yr <- rems::get_ems_data(which = "2yr", dont_update = TRUE)
+data_2yr <- rems::get_ems_data(which = "2yr", dont_update = TRUE, force = TRUE)
 data_historic <- rems::read_historic_data(check_db = FALSE)
 
 lookup <- function(data){
   data %>%
     group_by(EMS_ID, MONITORING_LOCATION, PERMIT,
-             PARAMETER_CODE, PARAMETER) %>%
+             PARAMETER_CODE, PARAMETER, LONGITUDE, LATITUDE) %>%
     arrange(COLLECTION_START) %>%
     summarise(FROM_DATE = first(COLLECTION_START),
               TO_DATE = last(COLLECTION_START)) %>%
     ungroup()
 }
 
-lookup_location <- function(data){
-  data %>%
-    select(EMS_ID, MONITORING_LOCATION, PERMIT, LATITUDE, LONGITUDE) %>%
-    distinct() %>%
-    ps_coords_to_sfc(coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
-}
-
 lookup_2yr <- lookup(data_2yr)
 lookup_historic <- lookup(data_historic)
 lookup_demo <- lookup(shinyrems::ems_demo_data)
-
-lookup_2yr_location <- lookup_location(data_2yr)
-lookup_historic_location <- lookup_location(data_historic)
-lookup_demo_location <- lookup_location(shinyrems::ems_demo_data)
-
-check_key(lookup_2yr_location, "EMS_ID")
-check_key(lookup_historic_location, "EMS_ID")
 
 template_tidy <- list(EMS = list(example = 123,
                             type = "integer",
@@ -63,11 +49,9 @@ watershed_groups$lat_center <- cent[,2]
 
 watershed_groups <- watershed_groups %>% mutate_if(is.factor, as.character)
 
-run_modes <- c("2yr", "historic", "all", "demo", "upload")
+datasets <- c("2yr", "historic", "all", "demo", "upload")
 
-usethis::use_data(lookup_2yr, lookup_2yr_location,
-                  lookup_historic, lookup_historic_location,
-                  lookup_demo, lookup_demo_location,
+usethis::use_data(lookup_2yr, lookup_historic, lookup_demo,
                   template_raw, template_tidy, watershed_groups,
-                  run_modes, internal = TRUE, overwrite = TRUE)
+                  datasets, internal = TRUE, overwrite = TRUE)
 
