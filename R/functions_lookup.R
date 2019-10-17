@@ -1,5 +1,5 @@
-get_lookup <- function(which, data = NULL){
-  switch(which,
+get_lookup <- function(dataset, data = NULL){
+  switch(dataset,
          "2yr" = lookup(data),
          "historic" = lookup_historic,
          "demo" = lookup_demo,
@@ -22,7 +22,7 @@ lookup <- function(data){
   as.data.frame(lookup)
 }
 
-lookup_location <- function(data){
+get_lookup_location <- function(data){
   x <- c("EMS_ID", "MONITORING_LOCATION", "PERMIT",
          "LATITUDE", "LONGITUDE")
   data <- data.table::data.table(data)

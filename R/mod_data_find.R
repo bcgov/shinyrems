@@ -82,12 +82,19 @@ mod_data_find_server <- function(input, output, session, dataset){
                                                   input$parameter_type)
   })
 
+  data_2yr <- reactive({
+    if(!(dataset() %in% c("2yr", "all")))
+      return()
+    ems_data()
+  })
+
   lookup <- reactive({
-    run_mode_lookup(dataset())
+    get_lookup(dataset(), data = data_2yr())
   })
 
   lookup_location <- reactive({
-    run_mode_lookup_location(dataset())
+    req(lookup())
+    get_lookup_location(lookup())
   })
 
   get_permits <- reactive({
@@ -96,9 +103,8 @@ mod_data_find_server <- function(input, output, session, dataset){
   })
 
   get_sites <- reactive({
-    lookup <- lookup()
-    x <- permit_sites(permit_rv$selected, lookup)
-    translate_sites(x, lookup, input$site_type)
+    x <- permit_sites(permit_rv$selected, lookup())
+    translate_sites(x, lookup(), input$site_type)
   })
 
   get_site_locations <- reactive({
@@ -107,18 +113,17 @@ mod_data_find_server <- function(input, output, session, dataset){
   })
 
   get_parameters <- reactive({
-    lookup <- lookup()
-    x <- site_parameters(input$site, lookup)
-    translate_parameters(x, lookup, input$parameter_type)
+    x <- site_parameters(input$site, lookup())
+    translate_parameters(x, lookup(), input$parameter_type)
   })
 
   get_data <- reactive({
     req(input$parameter)
     req(input$site)
     req(input$date_range)
-    get_run_mode_data(input$parameter, input$site,
-                      input$date_range[1], input$date_range[2],
-                      dataset())
+    get_data_progress(dataset(), data_2yr(),
+                      input$parameter, input$site,
+                      input$date_range[1], input$date_range[2])
   })
 
   output$ui_site_modal <- renderUI({

@@ -17,7 +17,7 @@ mod_dataset_ui <- function(id){
   ns <- NS(id)
   tagList(
     radioButtons(ns("dataset"), label = "Select dataset",
-                 choices = run_modes,
+                 choices = datasets,
                  selected = "demo", inline = TRUE),
     uiOutput(ns("check_data_ui"))
   )
@@ -37,7 +37,9 @@ mod_dataset_server <- function(input, output, session){
     if(dataset %in% c("demo", "upload"))
       return()
 
-    check_data <- check_data_progress(dataset)
+    # check_data <- check_data_progress(dataset)
+    check_data <- list(check = "done",
+                       which = dataset)
     check <- check_data[["check"]]
     which <- check_data[["which"]]
 
