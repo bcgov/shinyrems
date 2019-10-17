@@ -92,7 +92,7 @@ combine_data <- function(x, ...){
 }
 
 ems_data <- function(){
-  rems::get_ems_data(dont_update = TRUE)
+  rems::get_ems_data(dont_update = TRUE, force = TRUE)
 }
 
 run_mode_data <- function(run_mode, ...){
