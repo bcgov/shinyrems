@@ -30,7 +30,8 @@ Imports:
     wqbc,
     bsplus,
     shinyhttr,
-    shinyWidgets
+    shinyWidgets,
+    data.table
 Suggests:
     testthat (>= 2.1.0),
     usethis
