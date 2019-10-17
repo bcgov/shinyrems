@@ -15,8 +15,6 @@ app_server <- function(input, output, session) {
   dataset <- callModule(mod_dataset_server, "dataset_ui_1")
 
   observe({
-    print(dataset())
-
     if(dataset() == "upload"){
       return({
         output$data_sidebar_ui <- renderUI({

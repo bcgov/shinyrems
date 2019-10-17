@@ -91,12 +91,9 @@ combine_data <- function(x, ...){
   )
 }
 
-ems_data <- function(){
-  shiny::withProgress(message = paste("Retrieving data..."),
-                      value = 0.5, {
-                        rems::get_ems_data(which = "2yr",
-                                           dont_update = TRUE, force = TRUE)})
-
+ems_data <- function(which){
+  rems::get_ems_data(which = which,
+                     dont_update = TRUE, force = TRUE)
 }
 
 get_data <- function(dataset, data_2yr = NULL, ...){

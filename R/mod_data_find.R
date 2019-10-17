@@ -82,14 +82,8 @@ mod_data_find_server <- function(input, output, session, dataset){
                                                   input$parameter_type)
   })
 
-  data_2yr <- reactive({
-    if(!(dataset() %in% c("2yr", "all")))
-      return()
-    ems_data()
-  })
-
   lookup <- reactive({
-    get_lookup(dataset(), data = data_2yr())
+    get_lookup(dataset())
   })
 
   lookup_location <- reactive({
