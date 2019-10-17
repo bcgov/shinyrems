@@ -25,6 +25,8 @@ ems_leaflet <- function(watershed_groups, sites, site_type){
                                                     fillOpacity = 0.3,
                                                     fillColor = "blue")) %>%
     addMarkers(data = sites,
+               lng = ~LONGITUDE,
+               lat = ~LATITUDE,
                group = "Sites",
                layerId = ~EMS_ID,
                label = sites[[id]])
