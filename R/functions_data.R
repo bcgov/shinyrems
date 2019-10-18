@@ -25,19 +25,34 @@ run_mode_lookup_location <- function(run_mode){
          "demo" = lookup_demo_location)
 }
 
-permit_sites <- function(permits, lookup){
+site_col <- function(site_type){
+  if(site_type == "EMS ID")
+    return("EMS_ID")
+  "MONITORING_LOCATION"
+}
+
+param_col <- function(param_type){
+  if(param_type == "Parameter Code")
+    return("PARAMETER_CODE")
+  "PARAMETER"
+}
+
+permit_sites <- function(permits, lookup, site_type){
+  x <- site_col(site_type)
   if(!is.null(permits) && permits != ""){
-    return(sort(unique(lookup$EMS_ID[which(lookup$PERMIT %in% permits)])))
+    return(sort(unique(lookup[[x]][which(lookup$PERMIT %in% permits)])))
   }
-  sort(unique(lookup$EMS_ID))
+  sort(unique(lookup[[x]]))
 }
 
-monitoring_locations <- function(sites, lookup){
-  unique(lookup$MONITORING_LOCATION[lookup$EMS_ID %in% sites])
-}
+# monitoring_locations <- function(sites, lookup){
+#   unique(lookup$MONITORING_LOCATION[lookup$EMS_ID %in% sites])
+# }
 
-site_parameters <- function(sites, lookup){
-  unique(lookup$PARAMETER_CODE[lookup$EMS_ID %in% sites])
+site_parameters <- function(sites, lookup, site_type, param_type){
+  x <- site_col(site_type)
+  y <- param_col(param_type)
+  unique(lookup[[y]][lookup[[x]] %in% sites])
 }
 
 parameter_names <- function(parameters, lookup){
@@ -48,31 +63,21 @@ permits <- function(lookup){
   sort(setdiff(unique(lookup$PERMIT), NA_character_))
 }
 
-date_range <- function(sites, parameters, lookup){
-  data <- lookup[lookup$EMS_ID %in% sites & lookup$PARAMETER_CODE %in% parameters,]
+date_range <- function(sites, parameters, lookup, site_type, param_type){
+  x <- site_col(site_type)
+  y <- param_col(param_type)
+  data <- lookup[lookup[[x]] %in% sites & lookup[[y]] %in% parameters,]
   as.Date(c(min(data$FROM_DATE, na.rm = TRUE), max(data$TO_DATE, na.rm = TRUE)))
 }
 
-translate_sites <- function(x, lookup, site_type){
-  if(is.null(x)){
-    return("")
-  }
-  if(site_type == "EMS ID"){
-    return(x)
-  }
-  names(x) <- monitoring_locations(x, lookup)
-  x
+translate_site <- function(x, lookup, site_type){
+  col <- site_col(site_type)
+  lookup$EMS_ID[lookup[[col]] %in% x]
 }
 
-translate_parameters <- function(x, lookup, site_type){
-  if(is.null(x)){
-    return("")
-  }
-  if(site_type == "Parameter Code"){
-    return(x)
-  }
-  names(x) <- parameter_names(x, lookup)
-  x
+translate_parameter <- function(x, lookup, param_type){
+  col <- param_col(param_type)
+  lookup$PARAMETER_CODE[lookup[[col]] %in% x]
 }
 
 ########## ---------- fetching data ---------- ##########
@@ -105,7 +110,12 @@ ems_data <- function(dataset, ...){
 }
 
 ems_data_progress <- function(dataset, parameter,
-                              site, from_date, to_date){
+                              site, from_date, to_date,
+                              site_type, param_type, lookup){
+
+  parameter <- translate_parameter(parameter, lookup, param_type)
+  site <- translate_site(site, lookup, site_type)
+
   if(dataset %in% c("demo", "2yr"))
     return(ems_data(dataset = dataset,
                     param_code = parameter,

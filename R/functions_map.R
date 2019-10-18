@@ -1,8 +1,6 @@
 ems_leaflet <- function(watershed_groups, sites, site_type){
 
-  id <- "MONITORING_LOCATION"
-  if(site_type == "EMS ID")
-    id <- "EMS_ID"
+  id <- site_col(site_type)
 
   leaflet() %>%
     addProviderTiles("Esri.WorldImagery", group = "Satelite") %>%
@@ -28,7 +26,7 @@ ems_leaflet <- function(watershed_groups, sites, site_type){
                lng = ~LONGITUDE,
                lat = ~LATITUDE,
                group = "Sites",
-               layerId = ~EMS_ID,
+               layerId = sites[[id]],
                label = sites[[id]])
 }
 

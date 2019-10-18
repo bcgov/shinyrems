@@ -33,7 +33,7 @@ mod_data_ui <- function(id){
                                        selected = "Monitoring Location", inline = TRUE),
                           uiOutput(ns("ui_site")),
                           tags$label("Select Parameter(s)"),
-                          radioButtons(ns("parameter_type"), label = NULL,
+                          radioButtons(ns("param_type"), label = NULL,
                                        choices = c("Parameter Name", "Parameter Code"),
                                        selected = "Parameter Name", inline = TRUE),
                           uiOutput(ns("ui_parameter")),
@@ -125,18 +125,18 @@ mod_data_server <- function(input, output, session){
   })
 
   get_sites <- reactive({
-    x <- permit_sites(input$permit, lookup())
-    translate_sites(x, lookup(), input$site_type)
+    permit_sites(input$permit, lookup(), input$site_type)
+    # translate_sites(x, lookup(), input$site_type)
   })
 
   get_site_locations <- reactive({
     lookup <- lookup_location()
-    lookup[lookup$EMS_ID %in% get_sites(),]
+    x <- site_col(input$site_type)
+    lookup[lookup[[x]] %in% get_sites(),]
   })
 
   get_parameters <- reactive({
-    x <- site_parameters(input$site, lookup())
-    translate_parameters(x, lookup(), input$parameter_type)
+    site_parameters(input$site, lookup(), input$site_type, input$param_type)
   })
 
   get_data <- reactive({
@@ -144,7 +144,8 @@ mod_data_server <- function(input, output, session){
     req(input$site)
     req(input$date_range)
     ems_data_progress(input$dataset, input$parameter, input$site,
-                      input$date_range[1], input$date_range[2])
+                      input$date_range[1], input$date_range[2],
+                      input$site_type, input$param_type, lookup())
   })
 
   output$ui_map_site <- renderUI({
@@ -182,7 +183,8 @@ mod_data_server <- function(input, output, session){
   output$ui_date <- renderUI({
     req(input$parameter)
     req(input$site)
-    dates <- date_range(input$site, input$parameter, lookup())
+    dates <- date_range(input$site, input$parameter, lookup(),
+                        input$site_type, input$param_type)
     dateRangeInput(ns("date_range"),
                    label = "Get any available data between dates:",
                    start = dates[1], end = dates[2],
@@ -194,7 +196,6 @@ mod_data_server <- function(input, output, session){
   })
 
   observeEvent(input$search_map, {
-    # shinyBS::toggleModal(session, ns("modal_map"), toggle = "open")
     updateTabsetPanel(session, "tabset_data", selected = "Site Map")
   })
 
@@ -209,7 +210,7 @@ mod_data_server <- function(input, output, session){
 
   observeEvent(input$leaf_marker_click, {
     sites <- c(input$leaf_marker_click$id, input$site)
-    updateSelectInput(session, "map_site", selected = sites)
+    updateSelectizeInput(session, "map_site", selected = sites)
     updateSelectizeInput(session, "site", selected = sites)
   })
 
@@ -221,6 +222,7 @@ mod_data_server <- function(input, output, session){
     ws <- input$leaf_shape_click$id
     updateSelectInput(session, "wsgroup", selected = ws)
   })
+
 }
 
 ## To be copied in the UI

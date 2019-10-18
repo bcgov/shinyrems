@@ -10,14 +10,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
-check_2yr_data <- function(){
-  message("checking for most recent 2 years of data...")
-  if(!rems:::._remsCache_$exists("2yr")){
-    rems::get_ems_data("2yr", ask = TRUE, check_only = FALSE, dont_update = FALSE)
-  }
-  rems::get_ems_data("2yr", ask = FALSE, check_only = TRUE, dont_update = TRUE)
-}
-
 check_data <- function(which){
   cache_date <- rems::get_cache_date(which)
   if(is.infinite(cache_date))
