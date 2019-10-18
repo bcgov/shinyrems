@@ -14,5 +14,5 @@ shinyutils::dev_prep()
 
 # devtools::build()
 
-shinyrems::run_app(run_mode = "upload")
+shinyrems::run_app()
 

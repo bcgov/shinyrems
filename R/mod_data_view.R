@@ -32,9 +32,9 @@ mod_data_view_server <- function(input, output, session, data){
   ns <- session$ns
 
   output$view_table <- renderUI({
-    if(is.character(data())){
-      return(error_text(data()))
-    }
+    # if(is.character(data())){
+    #   return(error_text(data()))
+    # }
     tagList(
       button(ns('dl_data'), label = "Download Raw Data"),
       br2(),

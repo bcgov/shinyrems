@@ -115,8 +115,7 @@ mod_data_find_server <- function(input, output, session, dataset){
     req(input$parameter)
     req(input$site)
     req(input$date_range)
-    get_data_progress(dataset(), data_2yr(),
-                      input$parameter, input$site,
+    ems_data_progress(dataset(), input$parameter, input$site,
                       input$date_range[1], input$date_range[2])
   })
 

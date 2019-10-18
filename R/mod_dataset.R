@@ -60,12 +60,6 @@ mod_dataset_server <- function(input, output, session){
     removeModal()
   })
 
-  foo <- function() {
-    message("one")
-    Sys.sleep(0.5)
-    message("two")
-  }
-
   observeEvent(input$yes_download, {
     withCallingHandlers({
       shinyjs::html("download_text", "")

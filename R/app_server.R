@@ -20,7 +20,7 @@ app_server <- function(input, output, session) {
         output$data_sidebar_ui <- renderUI({
         mod_data_upload_ui("data_upload_ui_1")
       })
-      get_data <- callModule(mod_data_upload_server, "data_upload_ui_1")
+      get_data <<- callModule(mod_data_upload_server, "data_upload_ui_1")
       })
     }
 
@@ -29,17 +29,18 @@ app_server <- function(input, output, session) {
         output$data_sidebar_ui <- renderUI({
           mod_data_find_ui("data_find_ui_1")
         })
-        get_data <- callModule(mod_data_find_server, "data_find_ui_1", dataset)
+        get_data <<- callModule(mod_data_find_server, "data_find_ui_1", dataset)
       })
     }
 
     output$data_sidebar_ui <- renderUI({
       mod_data_find_ui("data_find_ui_1")
     })
-    get_data <- callModule(mod_data_find_server, "data_find_ui_1", dataset)
-
-    callModule(mod_data_view_server, "data_view_ui_1", get_data)
+    get_data <<- callModule(mod_data_find_server, "data_find_ui_1", dataset)
   })
+
+  callModule(mod_data_view_server, "data_view_ui_1", get_data)
+
 
   # callModule(mod_refine_sidebar_server, "refine_sidebar_ui_1")
   #
