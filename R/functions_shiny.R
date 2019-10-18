@@ -58,4 +58,12 @@ ems_data_table <- function(data){
                                                       targets = "_all"))))
 }
 
+hide <- function(id){
+  shinyjs::hide(id, anim = TRUE)
+}
+
+show <- function(id){
+  shinyjs::show(id, anim = TRUE)
+}
+
 

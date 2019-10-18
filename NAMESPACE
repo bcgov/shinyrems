@@ -2,6 +2,8 @@
 
 export(mod_data_find_server)
 export(mod_data_find_ui)
+export(mod_data_server)
+export(mod_data_ui)
 export(mod_data_upload_server)
 export(mod_data_upload_ui)
 export(mod_data_view_server)
@@ -24,3 +26,4 @@ importFrom(rlang,.data)
 importFrom(rlang,sym)
 importFrom(shiny,NS)
 importFrom(shiny,tagList)
+importFrom(shinycssloaders,withSpinner)

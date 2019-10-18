@@ -12,5 +12,6 @@
 
 #' @import leaflet shiny glue data.table
 #' @importFrom magrittr %<>% %>%
+#' @importFrom shinycssloaders withSpinner
 #' @importFrom rlang .data !! sym
 NULL
