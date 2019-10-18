@@ -15,43 +15,50 @@
 #' @importFrom shiny NS tagList
 mod_data_ui <- function(id){
   ns <- NS(id)
-  tagList(
-    radioButtons(ns("dataset"), label = "Select dataset",
-                 choices = datasets,
-                 selected = "demo", inline = TRUE),
-    # uiOutput(ns("check_data_ui")),
-    shinyjs::hidden(div(id = ns("div_data_find"),
-        tags$label("Select site(s) or"),
-        actionLink(ns("search_map"), label = "find sites on map") %>%
-          bsplus::bs_attach_modal(id_modal = ns("modal_map")),
-        modal_sitemap(ns),
-        checkboxInput(ns("check_permit"),
-                      label = "Filter by Permit Number",
-                      value = FALSE),
-        uiOutput(ns("ui_permit")),
-        radioButtons(ns("site_type"), label = NULL,
-                     choices = c("Monitoring Location", "EMS ID"),
-                     selected = "Monitoring Location", inline = TRUE),
-        uiOutput(ns("ui_site")),
-        tags$label("Select Parameter(s)"),
-        radioButtons(ns("parameter_type"), label = NULL,
-                     choices = c("Parameter Name", "Parameter Code"),
-                     selected = "Parameter Name", inline = TRUE),
-        uiOutput(ns("ui_parameter")),
-        uiOutput(ns("ui_date")))),
-    shinyjs::hidden(div(id = ns("div_data_upload"),
-        radioButtons(ns("data_type"), label = "Data format",
-                     choices = c("tidy" = "Tidied EMS Data", "raw" = "Raw EMS Data"),
-                     selected = "tidy"),
-        fileInput(ns("upload_data"),
-                  buttonLabel = span(tagList(icon("upload"), "csv")),
-                  label = "",
-                  placeholder = "Upload your own dataset",
-                  accept = c('.csv')),
-        button(ns('dl_template'), label = "Download Template"),
-        downloadButton(ns("dl_template_handler"), label = NULL,
-                       style = "visibility: hidden;")))
 
+  sidebarLayout(
+    sidebarPanel(
+      radioButtons(ns("dataset"), label = "Select dataset",
+                   choices = datasets,
+                   selected = "demo", inline = TRUE),
+      shinyjs::hidden(div(id = ns("div_data_find"),
+                          tags$label("Select site(s) or"),
+                          actionLink(ns("search_map"), label = "find sites on map"),
+                          checkboxInput(ns("check_permit"),
+                                        label = "Filter by Permit Number",
+                                        value = FALSE),
+                          uiOutput(ns("ui_permit")),
+                          radioButtons(ns("site_type"), label = NULL,
+                                       choices = c("Monitoring Location", "EMS ID"),
+                                       selected = "Monitoring Location", inline = TRUE),
+                          uiOutput(ns("ui_site")),
+                          tags$label("Select Parameter(s)"),
+                          radioButtons(ns("parameter_type"), label = NULL,
+                                       choices = c("Parameter Name", "Parameter Code"),
+                                       selected = "Parameter Name", inline = TRUE),
+                          uiOutput(ns("ui_parameter")),
+                          uiOutput(ns("ui_date")))),
+      shinyjs::hidden(div(id = ns("div_data_upload"),
+                          radioButtons(ns("data_type"), label = "Data format",
+                                       choices = c("tidy" = "Tidied EMS Data", "raw" = "Raw EMS Data"),
+                                       selected = "tidy"),
+                          fileInput(ns("upload_data"),
+                                    buttonLabel = span(tagList(icon("upload"), "csv")),
+                                    label = "",
+                                    placeholder = "Upload your own dataset",
+                                    accept = c('.csv')),
+                          button(ns('dl_template'), label = "Download Template"),
+                          downloadButton(ns("dl_template_handler"), label = NULL,
+                                         style = "visibility: hidden;")))
+    ),
+    mainPanel(
+      tabsetPanel(selected = "Data",
+                  id = ns("tabset_data"),
+                  tabPanel(title = "Data"),
+        tabPanel(title = "Site Map",
+                 uiOutput(ns("ui_map")))
+      )
+    )
   )
 }
 
@@ -140,8 +147,8 @@ mod_data_server <- function(input, output, session){
                       input$date_range[1], input$date_range[2])
   })
 
-  output$ui_site_modal <- renderUI({
-    select_input_x(ns("site_modal"),
+  output$ui_map_site <- renderUI({
+    select_input_x(ns("map_site"),
                    label = "Selected Site(s)",
                    choices = input$site,
                    selected = input$site)
@@ -182,27 +189,37 @@ mod_data_server <- function(input, output, session){
                    min = dates[1], max = dates[2])
   })
 
-  observeEvent(input$search_map, {
-    shinyBS::toggleModal(session, ns("modal_map"), toggle = "open")
+  output$ui_map <- renderUI({
+    site_map(ns)
   })
 
-  output$site_map <- leaflet::renderLeaflet({
+  observeEvent(input$search_map, {
+    # shinyBS::toggleModal(session, ns("modal_map"), toggle = "open")
+    updateTabsetPanel(session, "tabset_data", selected = "Site Map")
+  })
+
+  output$leaf <- leaflet::renderLeaflet({
     ems_leaflet(watershed_groups, get_site_locations(), input$site_type)
   })
 
   observe({
     req(input$wsgroup)
-    zoom_to("site_map", input$wsgroup)
+    zoom_to("leaf", input$wsgroup)
   })
 
-  observeEvent(input$site_map_marker_click, {
-    sites <- c(input$site_map_marker_click$id, input$site)
-    updateSelectizeInput(session, ns("site_modal"), selected = sites)
+  observeEvent(input$leaf_marker_click, {
+    sites <- c(input$leaf_marker_click$id, input$site)
+    updateSelectInput(session, "map_site", selected = sites)
+    updateSelectizeInput(session, "site", selected = sites)
   })
 
-  observeEvent(input$site_map_shape_click, {
-    ws <- input$site_map_shape_click$id
-    updateSelectizeInput(session, ns("wsgroup"), selected = ws)
+  observeEvent(input$map_site, {
+    updateSelectizeInput(session, "site", selected = input$map_site)
+  })
+
+  observeEvent(input$leaf_shape_click, {
+    ws <- input$leaf_shape_click$id
+    updateSelectInput(session, "wsgroup", selected = ws)
   })
 }
 

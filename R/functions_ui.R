@@ -1,19 +1,13 @@
-modal_sitemap <- function(ns){
-  bsplus::bs_modal(
-    id = ns("modal_map"),
-    # trigger = ns("search_map"),
-    title = "Find sites on map",
-    body = tagList(
-      help_text("Click a marker to add to selected sites.
+site_map <- function(ns){
+  tagList(
+    br(),
+    help_text("Click a marker to add to selected sites.
           Select from dropdown or click polygon to zoom
                 to watershed group."),
-      uiOutput(ns("ui_wsgroup")),
-      shinycssloaders::withSpinner(leaflet::leafletOutput(ns("site_map"))),
-      br(),
-      uiOutput(ns("ui_site_modal"))
-    ),
-    footer = bsplus::bs_modal_closebutton(label = "Done")
-    # footer = button(ns("done"), icon = icon(NULL), label = "Done")
+    uiOutput(ns("ui_wsgroup")),
+    shinycssloaders::withSpinner(leaflet::leafletOutput(ns("leaf"))),
+    br(),
+    uiOutput(ns("ui_map_site"))
   )
 }
 
