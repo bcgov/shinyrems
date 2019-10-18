@@ -22,6 +22,9 @@ lookup_2yr <- lookup(data_2yr)
 lookup_historic <- lookup(data_historic)
 lookup_demo <- lookup(shinyrems::ems_demo_data)
 
+lookup_2yr <- lookup_2yr[sample(1:nrow(lookup_2yr), 1000),]
+lookup_historic <- lookup_historic[sample(1:nrow(lookup_historic), 1000),]
+
 template_tidy <- list(EMS = list(example = 123,
                             type = "integer",
                             description = "EMS ID",
