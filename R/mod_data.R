@@ -49,14 +49,19 @@ mod_data_ui <- function(id){
                                     accept = c('.csv')),
                           button(ns('dl_template'), label = "Download Template"),
                           downloadButton(ns("dl_template_handler"), label = NULL,
-                                         style = "visibility: hidden;")))
+                                         style = "visibility: hidden;"))),
+      uiOutput(ns("ui_download"))
     ),
     mainPanel(
       tabsetPanel(selected = "Data",
                   id = ns("tabset_data"),
-                  tabPanel(title = "Data"),
-        tabPanel(title = "Site Map",
-                 uiOutput(ns("ui_map")))
+                  tabPanel(title = "Data",
+                           br(),
+                           uiOutput(ns("view_table")),
+                           downloadButton(ns("dl_data_handler"), label = NULL,
+                                          style = "visibility: hidden;")),
+                  tabPanel(title = "Site Map",
+                           uiOutput(ns("ui_map")))
       )
     )
   )
@@ -152,7 +157,8 @@ mod_data_server <- function(input, output, session){
     select_input_x(ns("map_site"),
                    label = "Selected Site(s)",
                    choices = input$site,
-                   selected = input$site)
+                   selected = input$site,
+                   width = 400)
   })
 
   output$ui_wsgroup <- renderUI({
@@ -222,6 +228,33 @@ mod_data_server <- function(input, output, session){
     ws <- input$leaf_shape_click$id
     updateSelectInput(session, "wsgroup", selected = ws)
   })
+
+  output$ui_download <- renderUI({
+    req(get_data())
+    button(ns('dl_data'), label = "Download Raw Data")
+  })
+
+  output$view_table <- renderUI({
+    req(get_data())
+    # if(is.character(data())){
+    #   return(error_text(data()))
+    # }
+    ems_table_output(ns('data_table'))
+  })
+
+  output$data_table <- DT::renderDT({
+    ems_data_table(get_data())
+  })
+
+  observeEvent(input$dl_data, {
+    shinyjs::runjs(click_js(ns("dl_data_handler")))
+  })
+
+  output$dl_data_handler <- downloadHandler(
+    filename = function() "ems_data.csv",
+    content = function(file) {
+      readr::write_csv(get_data(), file)
+    })
 
 }
 
