@@ -20,13 +20,7 @@ app_ui <- function() {
     navbarPage(title =  "EMS Database", selected = '1. Get data',
                tabPanel(title = "1. Get data",
                         br(),
-                        mod_data_ui("data_ui_1")
-                        # sidebarLayout(
-                        #   sidebarPanel(class = 'sidebar',
-                        #                mod_data_ui("data_ui_1")),
-                        #                # uiOutput("data_sidebar_ui")),
-                        #   mainPanel(mod_data_view_ui("data_view_ui_1")))
-                        ),
+                        mod_data_ui("data_ui_1")),
                tabPanel(title = "2. Refine data",
                         br(),
                         sidebarLayout(

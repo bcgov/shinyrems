@@ -45,18 +45,10 @@ permit_sites <- function(permits, lookup, site_type){
   sort(unique(lookup[[x]]))
 }
 
-# monitoring_locations <- function(sites, lookup){
-#   unique(lookup$MONITORING_LOCATION[lookup$EMS_ID %in% sites])
-# }
-
 site_parameters <- function(sites, lookup, site_type, param_type){
   x <- site_col(site_type)
   y <- param_col(param_type)
   unique(lookup[[y]][lookup[[x]] %in% sites])
-}
-
-parameter_names <- function(parameters, lookup){
-  unique(lookup$PARAMETER[lookup$PARAMETER_CODE %in% parameters])
 }
 
 permits <- function(lookup){

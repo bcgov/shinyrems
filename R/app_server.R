@@ -14,38 +14,6 @@ app_server <- function(input, output, session) {
 
   data <- callModule(mod_data_server, "data_ui_1")
 
-  # observe({
-  #   if(dataset() == "upload"){
-  #     return({
-  #       output$data_sidebar_ui <- renderUI({
-  #       mod_data_upload_ui("data_upload_ui_1")
-  #     })
-  #     get_data <<- callModule(mod_data_upload_server, "data_upload_ui_1")
-  #     })
-  #   }
-  #
-  #   if(dataset() == "demo"){
-  #     return({
-  #       output$data_sidebar_ui <- renderUI({
-  #         mod_data_find_ui("data_find_ui_1")
-  #       })
-  #       get_data <<- callModule(mod_data_find_server, "data_find_ui_1", dataset)
-  #     })
-  #   }
-  #
-  #   output$data_sidebar_ui <- renderUI({
-  #     mod_data_find_ui("data_find_ui_1")
-  #   })
-  #   get_data <<- callModule(mod_data_find_server, "data_find_ui_1", dataset)
-  # })
-
-  # callModule(mod_data_view_server, "data_view_ui_1", data)
-
-
-  # callModule(mod_refine_sidebar_server, "refine_sidebar_ui_1")
-  #
-  # callModule(mod_refine_view_server, "refine_view_ui_1")
-
   callModule(mod_about_server, "about_ui_1")
 
   callModule(mod_reference_server, "reference_ui_1")

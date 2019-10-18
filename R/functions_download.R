@@ -1,4 +1,3 @@
-
 download_data <- function(which, shiny_session, shiny_id){
   switch(which,
          "2yr" = get_ems_data2(which = "2yr", force = TRUE, ask = FALSE,

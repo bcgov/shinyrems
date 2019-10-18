@@ -10,12 +10,6 @@ site_map <- function(ns){
   )
 }
 
-run_mode_data_sidebar <- function(run_mode){
-  if(run_mode == "upload")
-    return(mod_data_upload_ui("data_upload_ui_1"))
-  mod_data_find_ui("data_find_ui_1")
-}
-
 data_download_modal <- function(check, which, ns){
   x <- glue("There is a newer version of the {which} dataset available.")
   id <- "no_update"

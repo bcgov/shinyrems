@@ -17,13 +17,6 @@ click_js <- function(id){
 br2 <- function() tagList(br(), br())
 br3 <- function() tagList(br(), br(), br())
 
-error_text <- function(x) {
-  tagList(
-    helpText("Please fix the following error and resubmit:\n"),
-    p(x, style = "color: red;")
-  )
-}
-
 help_text <- function(x){
   p(x, style = "font-size: 11px; color: grey;")
 }
