@@ -22,8 +22,8 @@ app_ui <- function() {
                         br(),
                         sidebarLayout(
                           sidebarPanel(class = 'sidebar',
-                                       mod_dataset_ui("dataset_ui_1"),
-                                       uiOutput("data_sidebar_ui")),
+                                       mod_data_ui("data_ui_1")),
+                                       # uiOutput("data_sidebar_ui")),
                           mainPanel(mod_data_view_ui("data_view_ui_1")))),
                tabPanel(title = "2. Refine data",
                         br(),
