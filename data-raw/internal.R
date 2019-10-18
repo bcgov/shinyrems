@@ -1,5 +1,6 @@
 library(rems)
 library(dplyr)
+library(data.table)
 library(checkr)
 library(poisspatial)
 library(sf)
@@ -9,13 +10,12 @@ data_2yr <- rems::get_ems_data(which = "2yr", dont_update = TRUE, force = TRUE)
 data_historic <- rems::read_historic_data(check_db = FALSE)
 
 lookup <- function(data){
-  data %>%
-    group_by(EMS_ID, MONITORING_LOCATION, PERMIT,
-             PARAMETER_CODE, PARAMETER, LONGITUDE, LATITUDE) %>%
-    arrange(COLLECTION_START) %>%
-    summarise(FROM_DATE = first(COLLECTION_START),
-              TO_DATE = last(COLLECTION_START)) %>%
-    ungroup()
+  dt <- data.table::data.table(data)
+  lookup <- dt[, .(FROM_DATE = min(COLLECTION_START, na.rm = TRUE),
+                   TO_DATE = max(COLLECTION_START, na.rm = TRUE)),
+               .(EMS_ID, MONITORING_LOCATION, PERMIT,
+                 PARAMETER_CODE, PARAMETER, LONGITUDE, LATITUDE)]
+  as.data.frame(lookup)
 }
 
 lookup_2yr <- lookup(data_2yr)
