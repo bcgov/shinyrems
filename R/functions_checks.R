@@ -41,6 +41,26 @@ check_data_progress <- function(which){
                message = "checking for data updates ...")
 }
 
+check_data_upload <- function(data, template){
+  if(!grepl(".csv", data$name, fixed = TRUE)) {
+    return("Please submit a csv file.")
+  }
+  data <- readr::read_csv(data$datapath)
+  x <- check_template(data, template)
+  if(is.character(x)){
+    return(x)
+  }
+  data
+}
 
+check_template <- function(x, template){
+  x <- try(checkr::check_data(x = x,
+                              values = sapply(template, function(x) x$check, USE.NAMES = FALSE),
+                              nrow = c(1L,.Machine$integer.max),
+                              error = TRUE, x_name = "data"), silent = TRUE)
+  if(is_try_error(x))
+    return(gsub("Error : |\n", "", x[1]))
+  invisible(TRUE)
+}
 
 
