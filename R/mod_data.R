@@ -40,7 +40,8 @@ mod_data_ui <- function(id){
                           uiOutput(ns("ui_date")))),
       shinyjs::hidden(div(id = ns("div_data_upload"),
                           radioButtons(ns("data_type"), label = "Data format",
-                                       choices = c("tidy" = "Tidied EMS Data", "raw" = "Raw EMS Data"),
+                                       choices = c("Tidied EMS Data" = "tidy",
+                                                   "Raw EMS Data" = "raw"),
                                        selected = "tidy"),
                           fileInput(ns("upload_data"),
                                     buttonLabel = span(tagList(icon("upload"), "csv")),
@@ -60,9 +61,7 @@ mod_data_ui <- function(id){
                            downloadButton(ns("dl_data_handler"), label = NULL,
                                           style = "visibility: hidden;")),
                   tabPanel(title = "Site Map",
-                           shinyjs::hidden(div(id = ns("div_data_map"),
-                                               wellPanel(uiOutput(ns("ui_map")),
-                                                         class = "wellpanel"))))
+                           wellPanel(site_map(ns), class = "wellpanel"))
       )
     )
   )
@@ -83,11 +82,14 @@ mod_data_server <- function(input, output, session){
   observeEvent(input$dataset, {
     hide("div_data_find")
     hide("div_data_upload")
-    hide("div_data_map")
+    showTab("tabset_data", target = "Site Map", session = session)
     updateTabsetPanel(session, "tabset_data", selected = "Data")
     dataset <- input$dataset
     if(dataset == "upload"){
-      return(show("div_data_upload"))
+      return({
+        show("div_data_upload")
+        hideTab("tabset_data", target = "Site Map", session = session)
+        })
     }
     if(dataset == "demo"){
       return(show("div_data_find"))
@@ -99,11 +101,6 @@ mod_data_server <- function(input, output, session){
       return()
     }
     show("div_data_find")
-  })
-
-  observeEvent(input$tabset_data, {
-    if(input$tabset_data == "Site Map")
-      show("div_data_map")
   })
 
   observeEvent(input$no_download, {
@@ -145,7 +142,6 @@ mod_data_server <- function(input, output, session){
 
   get_sites <- reactive({
     permit_sites(input$permit, lookup(), input$site_type)
-    # translate_sites(x, lookup(), input$site_type)
   })
 
   get_site_locations <- reactive({
@@ -159,6 +155,10 @@ mod_data_server <- function(input, output, session){
   })
 
   get_data <- reactive({
+    if(input$dataset == "upload"){
+      req(input$upload_data)
+      return(check_data_upload(input$upload_data, template()))
+    }
     req(input$parameter)
     req(input$site)
     req(input$date_range)
@@ -211,13 +211,8 @@ mod_data_server <- function(input, output, session){
                    min = dates[1], max = dates[2])
   })
 
-  output$ui_map <- renderUI({
-    site_map(ns)
-  })
-
   observeEvent(input$search_map, {
     updateTabsetPanel(session, "tabset_data", selected = "Site Map")
-    show("div_data_map")
   })
 
   output$leaf <- leaflet::renderLeaflet({
@@ -245,15 +240,16 @@ mod_data_server <- function(input, output, session){
   })
 
   output$ui_download <- renderUI({
-    req(get_data())
+    if(is.null(get_data()) || input$dataset == "upload")
+      return()
     button(ns('dl_data'), label = "Download Raw Data")
   })
 
   output$view_table <- renderUI({
     req(get_data())
-    # if(is.character(data())){
-    #   return(error_text(data()))
-    # }
+    if(is.character(get_data())){
+      return(showModal(error_modal(get_data())))
+    }
     ems_table_output(ns('data_table'))
   })
 
@@ -271,6 +267,22 @@ mod_data_server <- function(input, output, session){
       readr::write_csv(get_data(), file)
     })
 
+  observeEvent(input$dl_template, {
+    shinyjs::runjs(click_js(ns("dl_template_handler")))
+  })
+
+  template <- reactive({
+    type <- input$data_type
+    if(type == "tidy")
+      return(template_tidy)
+    template_raw
+  })
+
+  output$dl_template_handler <- downloadHandler(
+    filename = function() "ems_template.csv",
+    content = function(file) {
+      readr::write_csv(template_to_df(template()), file)
+    })
 }
 
 ## To be copied in the UI

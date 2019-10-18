@@ -40,3 +40,11 @@ data_download_modal <- function(check, which, ns){
   ), title = NULL, footer = NULL
   )
 }
+
+error_modal <- function(x){
+  modalDialog(title = "Please fix the following error and resubmit:",
+              footer = modalButton(label = "Got it"),
+    tagList(
+      p(x)
+    )
+  )}
