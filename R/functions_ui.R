@@ -37,7 +37,7 @@ data_download_modal <- function(check, which, ns){
     button(ns("yes_download"), "Yes!", icon = icon(NULL)),
     button(ns(id), "No", icon = icon(NULL)),
     br2(),
-    withSpinner(textOutput(ns("download_text"))),
+    textOutput(ns("download_text")),
     shinyWidgets::progressBar(
       id = ns("download_progress"),
       value = 0,
