@@ -1,6 +1,5 @@
 site_map <- function(ns){
   tagList(
-    br(),
     help_text("Click a marker to add to selected sites.
           Select from dropdown or click polygon to zoom
                 to watershed group."),

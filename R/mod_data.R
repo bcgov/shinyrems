@@ -56,12 +56,13 @@ mod_data_ui <- function(id){
       tabsetPanel(selected = "Data",
                   id = ns("tabset_data"),
                   tabPanel(title = "Data",
-                           br(),
                            uiOutput(ns("view_table")),
                            downloadButton(ns("dl_data_handler"), label = NULL,
                                           style = "visibility: hidden;")),
                   tabPanel(title = "Site Map",
-                           uiOutput(ns("ui_map")))
+                           shinyjs::hidden(div(id = ns("div_data_map"),
+                                               wellPanel(uiOutput(ns("ui_map")),
+                                                         class = "wellpanel"))))
       )
     )
   )
@@ -81,8 +82,16 @@ mod_data_server <- function(input, output, session){
 
   observeEvent(input$dataset, {
     hide("div_data_find")
+    hide("div_data_upload")
+    hide("div_data_map")
+    updateTabsetPanel(session, "tabset_data", selected = "Data")
     dataset <- input$dataset
-
+    if(dataset == "upload"){
+      return(show("div_data_upload"))
+    }
+    if(dataset == "demo"){
+      return(show("div_data_find"))
+    }
     check <- check_data_progress(dataset)
     # check <- c("done", which)
     if(check[1] != "done"){
@@ -90,6 +99,11 @@ mod_data_server <- function(input, output, session){
       return()
     }
     show("div_data_find")
+  })
+
+  observeEvent(input$tabset_data, {
+    if(input$tabset_data == "Site Map")
+      show("div_data_map")
   })
 
   observeEvent(input$no_download, {
@@ -203,6 +217,7 @@ mod_data_server <- function(input, output, session){
 
   observeEvent(input$search_map, {
     updateTabsetPanel(session, "tabset_data", selected = "Site Map")
+    show("div_data_map")
   })
 
   output$leaf <- leaflet::renderLeaflet({
