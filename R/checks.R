@@ -29,6 +29,8 @@ check_data <- function(which){
 }
 
 check_data_progress <- function(which){
+  if(which %in% c("demo", "upload"))
+    return(c("done", which))
   if(which == "all"){
     return(withProgress({
       check <- check_data("2yr")
@@ -37,12 +39,12 @@ check_data_progress <- function(which){
         check <- check_data("historic")
         which <- "historic"
       }
-      list(check = check, which = which)},
+      c(check, which)},
       value = 0.5,
       message = "checking for data updates ..."))
   }
   withProgress({check <- check_data(which)
-  list(check = check, which = which)},
+  c(check, which)},
                value = 0.5,
                message = "checking for data updates ...")
 }
