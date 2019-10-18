@@ -283,11 +283,7 @@ mod_data_server <- function(input, output, session){
     content = function(file) {
       readr::write_csv(template_to_df(template()), file)
     })
+
+  return(get_data)
 }
-
-## To be copied in the UI
-# mod_data_ui("data_ui_1")
-
-## To be copied in the server
-# callModule(mod_data_server, "data_ui_1")
 
