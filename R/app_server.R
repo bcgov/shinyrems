@@ -18,4 +18,8 @@ app_server <- function(input, output, session) {
 
   callModule(mod_reference_server, "reference_ui_1")
 
+  data_refined <- callModule(mod_refine_server, "refine_ui_1", data)
+
+  callModule(mod_results_server, "results_ui_1", data_refined)
+
 }

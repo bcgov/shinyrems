@@ -23,11 +23,10 @@ app_ui <- function() {
                         mod_data_ui("data_ui_1")),
                tabPanel(title = "2. Refine data",
                         br(),
-                        sidebarLayout(
-                          sidebarPanel(class = "sidebar",
-                                       mod_refine_sidebar_ui("refine_sidebar_ui_1")),
-                          mainPanel(mod_refine_view_ui("refine_view_ui_1"))
-                        )),
+                        mod_refine_ui("refine_ui_1")),
+               tabPanel(title = "3. Results",
+                        br(),
+                        mod_results_ui("results_ui_1")),
                tabPanel(title = 'Reference Tables',
                         br(),
                         mod_reference_ui("reference_ui_1")),
