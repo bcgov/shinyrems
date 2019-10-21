@@ -12,14 +12,14 @@
 
 app_server <- function(input, output, session) {
 
-  data <- callModule(mod_data_server, "data_ui_1")
+  tidy_data <- callModule(mod_data_server, "data_ui_1")
 
   callModule(mod_about_server, "about_ui_1")
 
   callModule(mod_reference_server, "reference_ui_1")
 
-  data_refined <- callModule(mod_refine_server, "refine_ui_1", data)
+  clean_data <- callModule(mod_clean_server, "clean_ui_1", tidy_data)
 
-  callModule(mod_results_server, "results_ui_1", data_refined)
+  callModule(mod_results_server, "results_ui_1", clean_data)
 
 }
