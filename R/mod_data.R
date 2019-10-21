@@ -161,7 +161,7 @@ mod_data_server <- function(input, output, session){
     site_parameters(input$site, lookup(), input$site_type, input$param_type)
   })
 
-  get_data <- reactive({
+  raw_data <- reactive({
     if(input$dataset == "upload"){
       req(input$upload_data)
       return(check_data_upload(input$upload_data, template()))
@@ -247,22 +247,22 @@ mod_data_server <- function(input, output, session){
   })
 
   output$ui_download <- renderUI({
-    if(is.null(get_data()) || input$dataset == "upload") return()
+    if(is.null(raw_data()) || input$dataset == "upload") return()
     if(input$tabset_data == "Raw Data")
       return(button(ns('dl_raw'), label = "Download Raw Data"))
     button(ns('dl_tidy'), label = "Download Tidy Data")
   })
 
   output$view_table <- renderUI({
-    req(get_data())
-    if(is.character(get_data())){
-      return(showModal(error_modal(get_data())))
+    req(raw_data())
+    if(is.character(raw_data())){
+      return(showModal(error_modal(raw_data())))
     }
     ems_table_output(ns('data_table'))
   })
 
   output$data_table <- DT::renderDT({
-    ems_data_table(get_data())
+    ems_data_table(raw_data())
   })
 
   observeEvent(input$dl_raw, {
@@ -276,7 +276,7 @@ mod_data_server <- function(input, output, session){
   output$dl_raw_handler <- downloadHandler(
     filename = function() "ems_raw_data.csv",
     content = function(file) {
-      readr::write_csv(get_data(), file)
+      readr::write_csv(raw_data(), file)
     })
 
   output$dl_tidy_handler <- downloadHandler(
@@ -303,12 +303,12 @@ mod_data_server <- function(input, output, session){
     })
 
   tidy_data <- reactive({
-    req(get_data())
-    ems_tidy(get_data(), input$mdl_action)
+    req(raw_data())
+    ems_tidy(raw_data(), input$mdl_action)
   })
 
   output$table_tidy <- DT::renderDT({
-    req(get_data())
+    req(raw_data())
     ems_data_table(tidy_data())
   })
 
