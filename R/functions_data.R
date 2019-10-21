@@ -123,5 +123,9 @@ ems_data_progress <- function(dataset, parameter,
                                  to_date = to_date)})
 }
 
+ems_tidy <- function(data, mdl_action){
+  wqbc::tidy_ems_data(data, mdl_action = mdl_action)
+}
+
 
 

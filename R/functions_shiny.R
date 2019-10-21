@@ -39,14 +39,14 @@ select_input_x <- function(..., label = "Select sites:", choices, selected = cho
 }
 
 ems_table_output <- function(...){
-  wellPanel(DT::DTOutput(...), class = "wellpanel")
+  wellPanel(DT::DTOutput(...), style = "font-size:87%", class = "wellpanel")
 }
 
 ems_data_table <- function(data){
   if(!is.data.frame(data)) return()
   DT::datatable(data, escape = FALSE, rownames = FALSE,  class = 'cell-border compact',
                 options = list(ordering = TRUE,
-                               autowidth = FALSE, scrollX = TRUE,
+                               autowidth = TRUE, scrollX = TRUE,
                                columnDefs = list(list(className = 'dt-center',
                                                       targets = "_all"))))
 }

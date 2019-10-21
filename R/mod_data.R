@@ -37,7 +37,10 @@ mod_data_ui <- function(id){
                                        choices = c("Parameter Name", "Parameter Code"),
                                        selected = "Parameter Name", inline = TRUE),
                           uiOutput(ns("ui_parameter")),
-                          uiOutput(ns("ui_date")))),
+                          uiOutput(ns("ui_date")),
+                          selectInput(ns("mdl_action"), label = "MDL Action",
+                                      choices = c("zero", "mdl", "half", "na", "none"),
+                                      selected = "zero"))),
       shinyjs::hidden(div(id = ns("div_data_upload"),
                           radioButtons(ns("data_type"), label = "Data format",
                                        choices = c("Tidied EMS Data" = "tidy",
@@ -56,9 +59,13 @@ mod_data_ui <- function(id){
     mainPanel(
       tabsetPanel(selected = "Data",
                   id = ns("tabset_data"),
-                  tabPanel(title = "Data",
+                  tabPanel(title = "Raw Data",
                            uiOutput(ns("view_table")),
-                           downloadButton(ns("dl_data_handler"), label = NULL,
+                           downloadButton(ns("dl_raw_handler"), label = NULL,
+                                          style = "visibility: hidden;")),
+                  tabPanel(title = "Tidy Data",
+                           ems_table_output(ns('table_tidy')),
+                           downloadButton(ns("dl_tidy_handler"), label = NULL,
                                           style = "visibility: hidden;")),
                   tabPanel(title = "Site Map",
                            wellPanel(site_map(ns), class = "wellpanel"))
@@ -240,9 +247,10 @@ mod_data_server <- function(input, output, session){
   })
 
   output$ui_download <- renderUI({
-    if(is.null(get_data()) || input$dataset == "upload")
-      return()
-    button(ns('dl_data'), label = "Download Raw Data")
+    if(is.null(get_data()) || input$dataset == "upload") return()
+    if(input$tabset_data == "Raw Data")
+      return(button(ns('dl_raw'), label = "Download Raw Data"))
+    button(ns('dl_tidy'), label = "Download Tidy Data")
   })
 
   output$view_table <- renderUI({
@@ -257,14 +265,24 @@ mod_data_server <- function(input, output, session){
     ems_data_table(get_data())
   })
 
-  observeEvent(input$dl_data, {
-    shinyjs::runjs(click_js(ns("dl_data_handler")))
+  observeEvent(input$dl_raw, {
+    shinyjs::runjs(click_js(ns("dl_raw_handler")))
   })
 
-  output$dl_data_handler <- downloadHandler(
-    filename = function() "ems_data.csv",
+  observeEvent(input$dl_tidy, {
+    shinyjs::runjs(click_js(ns("dl_tidy_handler")))
+  })
+
+  output$dl_raw_handler <- downloadHandler(
+    filename = function() "ems_raw_data.csv",
     content = function(file) {
       readr::write_csv(get_data(), file)
+    })
+
+  output$dl_tidy_handler <- downloadHandler(
+    filename = function() "ems_tidy_data.csv",
+    content = function(file) {
+      readr::write_csv(tidy_data(), file)
     })
 
   observeEvent(input$dl_template, {
@@ -284,6 +302,16 @@ mod_data_server <- function(input, output, session){
       readr::write_csv(template_to_df(template()), file)
     })
 
-  return(get_data)
+  tidy_data <- reactive({
+    req(get_data())
+    ems_tidy(get_data(), input$mdl_action)
+  })
+
+  output$table_tidy <- DT::renderDT({
+    req(get_data())
+    ems_data_table(tidy_data())
+  })
+
+  return(tidy_data)
 }
 
