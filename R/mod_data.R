@@ -51,22 +51,16 @@ mod_data_ui <- function(id){
                                     label = "",
                                     placeholder = "Upload your own dataset",
                                     accept = c('.csv')),
-                          button(ns('dl_template'), label = "Download Template"),
-                          downloadButton(ns("dl_template_handler"), label = NULL,
-                                         style = "visibility: hidden;"))),
+                          button(ns('dl_template'), label = "Download Template"))),
       uiOutput(ns("ui_download"))
     ),
     mainPanel(
-      tabsetPanel(selected = "Data",
+      tabsetPanel(selected = "Tidy Data",
                   id = ns("tabset_data"),
                   tabPanel(title = "Raw Data",
-                           uiOutput(ns("view_table")),
-                           downloadButton(ns("dl_raw_handler"), label = NULL,
-                                          style = "visibility: hidden;")),
+                           uiOutput(ns("view_table"))),
                   tabPanel(title = "Tidy Data",
-                           ems_table_output(ns('table_tidy')),
-                           downloadButton(ns("dl_tidy_handler"), label = NULL,
-                                          style = "visibility: hidden;")),
+                           ems_table_output(ns('table_tidy'))),
                   tabPanel(title = "Site Map",
                            wellPanel(site_map(ns), class = "wellpanel"))
       )
@@ -110,6 +104,12 @@ mod_data_server <- function(input, output, session){
     show("div_data_find")
   })
 
+  observe({
+    if(!is.null(tidy_data()))
+      return(show("table_tidy"))
+    hide("table_tidy")
+  })
+
   observeEvent(input$no_download, {
     updateRadioButtons(session, "dataset", selected = "demo")
     removeModal()
@@ -122,13 +122,7 @@ mod_data_server <- function(input, output, session){
   })
 
   observeEvent(input$yes_download, {
-    withCallingHandlers({
-      shinyjs::html("download_text", "")
-      download_data(input$dataset, session, "download_progress")
-    },
-    message = function(m) {
-      shinyjs::html(id = "download_text", html = m$message, add = TRUE)
-    })
+    print_console("download_text")
     removeModal()
     show("div_data_find")
   })
@@ -246,6 +240,18 @@ mod_data_server <- function(input, output, session){
     updateSelectInput(session, "wsgroup", selected = ws)
   })
 
+  output$view_table <- renderUI({
+    req(raw_data())
+    if(is.character(raw_data())){
+      return(showModal(error_modal(raw_data())))
+    }
+    ems_table_output(ns('table_raw'))
+  })
+
+  output$table_raw <- DT::renderDT({
+    ems_data_table(raw_data())
+  })
+
   output$ui_download <- renderUI({
     if(is.null(raw_data()) || input$dataset == "upload") return()
     if(input$tabset_data == "Raw Data")
@@ -253,41 +259,17 @@ mod_data_server <- function(input, output, session){
     button(ns('dl_tidy'), label = "Download Tidy Data")
   })
 
-  output$view_table <- renderUI({
-    req(raw_data())
-    if(is.character(raw_data())){
-      return(showModal(error_modal(raw_data())))
-    }
-    ems_table_output(ns('data_table'))
-  })
-
-  output$data_table <- DT::renderDT({
-    ems_data_table(raw_data())
-  })
-
-  observeEvent(input$dl_raw, {
-    shinyjs::runjs(click_js(ns("dl_raw_handler")))
-  })
-
-  observeEvent(input$dl_tidy, {
-    shinyjs::runjs(click_js(ns("dl_tidy_handler")))
-  })
-
-  output$dl_raw_handler <- downloadHandler(
+  output$dl_raw <- downloadHandler(
     filename = function() "ems_raw_data.csv",
     content = function(file) {
       readr::write_csv(raw_data(), file)
     })
 
-  output$dl_tidy_handler <- downloadHandler(
+  output$dl_tidy <- downloadHandler(
     filename = function() "ems_tidy_data.csv",
     content = function(file) {
       readr::write_csv(tidy_data(), file)
     })
-
-  observeEvent(input$dl_template, {
-    shinyjs::runjs(click_js(ns("dl_template_handler")))
-  })
 
   template <- reactive({
     type <- input$data_type
@@ -296,19 +278,13 @@ mod_data_server <- function(input, output, session){
     template_raw
   })
 
-  output$dl_template_handler <- downloadHandler(
-    filename = function() "ems_template.csv",
-    content = function(file) {
-      readr::write_csv(template_to_df(template()), file)
-    })
-
   tidy_data <- reactive({
     req(raw_data())
     ems_tidy(raw_data(), input$mdl_action)
   })
 
   output$table_tidy <- DT::renderDT({
-    req(raw_data())
+    # req(raw_data())
     ems_data_table(tidy_data())
   })
 

@@ -22,10 +22,10 @@ help_text <- function(x){
 }
 
 button <- function(id, label = "Get Data (csv)", icon = "download", status = "primary"){
-  tags$button(id = id,
-              type = "button",
-              class = glue::glue("btn action-button btn-sm btn-{status}"),
-              HTML(as.character(icon(icon)), label))
+  actionButton(inputId = id,
+               label = label,
+               icon = icon(icon),
+               class = glue::glue("btn action-button btn-sm btn-{status}"))
 }
 
 select_input_x <- function(..., label = "Select sites:", choices, selected = choices[1]) {
@@ -57,6 +57,16 @@ hide <- function(id){
 
 show <- function(id){
   shinyjs::show(id, anim = TRUE)
+}
+
+print_console <- function(id){
+  withCallingHandlers({
+    shinyjs::html(id, "")
+    download_data(input$dataset, session, "download_progress")
+  },
+  message = function(m) {
+    shinyjs::html(id = id, html = m$message, add = TRUE)
+  })
 }
 
 
