@@ -107,13 +107,6 @@ ems_data_progress <- function(dataset, parameter,
 
   parameter <- translate_parameter(parameter, lookup, param_type)
   site <- translate_site(site, lookup, site_type)
-
-  if(dataset %in% c("demo", "2yr"))
-    return(ems_data(dataset = dataset,
-                    param_code = parameter,
-                    emsid = site,
-                    from_date = from_date,
-                    to_date = to_date))
   shiny::withProgress(message = paste("Retrieving data..."),
                       value = 0.5, {
                         ems_data(dataset = dataset,
