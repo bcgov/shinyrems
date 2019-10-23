@@ -121,8 +121,8 @@ ems_tidy <- function(data, mdl_action){
 }
 
 ems_clean <- function(data, by, sds, ignore_undetected,
-                      large_only, delete_outliers, remove_blanks){
-  clean_wqdata2(data, by = by, max_cv = Inf, sds = sds,
+                      large_only, delete_outliers, remove_blanks, max_cv){
+  clean_wqdata2(data, by = by, max_cv = max_cv, sds = sds,
                 ignore_undetected = ignore_undetected,
                 large_only = large_only, delete_outliers = delete_outliers,
                 remove_blanks = remove_blanks)
@@ -130,6 +130,18 @@ ems_clean <- function(data, by, sds, ignore_undetected,
 
 ems_standardize <- function(data, strict){
   wqbc::standardize_wqdata(data, strict)
+}
+
+add_outlier_brush <- function(data, brush){
+  x <- brushedPoints(data, brush, allRows = TRUE)
+  x$Outlier[x$selected_] <- TRUE
+  x$selected_ <- NULL
+  x
+}
+
+add_outlier_table <- function(data, rows){
+  data$Outlier[rows] <- TRUE
+  data
 }
 
 

@@ -18,12 +18,14 @@ mod_clean_ui <- function(id){
   sidebarLayout(
     sidebarPanel(class = "sidebar",
                  checkboxInput(ns("remove_blanks"), "Remove blanks", value = FALSE),
+                 uiOutput(ns("ui_sample_state")),
                  h4("Daily aggregation by columns"),
                  select_input_x(ns("by"), label = NULL,
                                 choices = c("EMS_ID", "Station", "SAMPLE_STATE",
                                             "SAMPLE_CLASS", "SAMPLE_DESCRIPTOR",
                                             "LOCATION_TYPE"),
                                 selected = "Station"),
+                 numericInput(ns("max_cv"), label = "Maximum CV", value = Inf),
                  h4("Automatic outlier detection"),
                  numericInput(ns("sds"), label = "Number of standard deviations",
                               value = 10),
@@ -31,11 +33,21 @@ mod_clean_ui <- function(id){
                  checkboxInput(ns("large_only"), "Large values only", TRUE),
                  checkboxInput(ns("delete_outliers"), "Detele outliers", FALSE),
                  shinyjs::hidden(button(ns("dl_clean"), "Download Clean Data"))),
-    mainPanel(tabsetPanel(selected = "Table",
+    mainPanel(tabsetPanel(selected = "Clean Data",
                           id = ns("tabset_data"),
-                          tabPanel(title = "Table",
+                          tabPanel(title = "Clean Data",
                                    uiOutput(ns("ui_table_clean"))),
-                          tabPanel(title = "Plot"),
+                          tabPanel(title = "Select Outliers",
+                                   br(),
+                                   help_text("Click and drag mouse over plot to manually select outliers.
+                                             Table in 'Clean Data' tab will be automatically updated."),
+                                   plotOutput(ns("plot_clean"), brush = brushOpts(
+                                     id = ns("plot_brush"),
+                                     delay = 5000
+                                   )),
+                                   shinyjs::hidden(button(ns("clear_outliers"),
+                                                          label = "Clear selected outliers",
+                                                          icon = icon(NULL)))),
                           tabPanel(title = "Messages",
                                    br(),
                                    help_output(ns("console_clean")))
@@ -65,10 +77,37 @@ mod_clean_server <- function(input, output, session, stand_data){
                 ignore_undetected = input$ignore_undetected,
                 large_only = input$large_only,
                 delete_outliers = input$delete_outliers,
-                remove_blanks = input$remove_blanks)},
+                remove_blanks = input$remove_blanks,
+                max_cv = input$max_cv)},
       message = function(m) {
         shinyjs::html(id = "console_clean", html = HTML(paste(m$message, "<br>")), add = TRUE)
       })
+  })
+
+  clean_rv <- reactiveValues(data = NULL)
+
+  observe({
+    clean_rv$data <- clean_data()
+  })
+
+  # observeEvent(input$table_clean_rows_selected, {
+  #   clean_rv$data <- add_outlier_table(clean_rv$data, input$table_clean_rows_selected)
+  # })
+
+  observeEvent(input$plot_brush, {
+    clean_rv$data <- add_outlier_brush(clean_rv$data, input$plot_brush)
+  })
+
+  observe({
+    req(clean_rv$data)
+    req(clean_data())
+    if(all(clean_rv$data$Outlier == clean_data()$Outlier))
+      return(shinyjs::hide("clear_outliers"))
+    shinyjs::show("clear_outliers")
+  })
+
+  observeEvent(input$clear_outliers, {
+    clean_rv$data <- clean_data()
   })
 
   output$ui_table_clean <- renderUI({
@@ -77,8 +116,21 @@ mod_clean_server <- function(input, output, session, stand_data){
   })
 
   output$table_clean <- DT::renderDT({
-    req(clean_data())
-    ems_data_table(clean_data())
+    req(clean_rv$data)
+    ems_data_table(clean_rv$data)
+  })
+
+  output$ui_sample_state <- renderUI({
+    req(stand_data())
+    x <- sort(unique(stand_data()$SAMPLE_STATE))
+    select_input_x(ns("sample_state"), label = "Select SAMPLE_STATE",
+                   choices = x,
+                   selected = x)
+  })
+
+  output$plot_clean <- renderPlot({
+    req(clean_rv$data)
+    wqbc::plot_timeseries(clean_rv$data)
   })
 
   return(clean_data)
