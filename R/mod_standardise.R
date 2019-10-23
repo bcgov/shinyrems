@@ -18,13 +18,14 @@ mod_standardise_ui <- function(id){
   sidebarLayout(
     sidebarPanel(class = "sidebar",
                  checkboxInput(ns("strict"), "Strict matching", value = TRUE),
-                 tags$label("Console ouptut"),
-                 help_output(ns("console_stand")),
-                 br(),
-                 button(ns("dl_stand"), "Download Standardized Data")),
+                 shinyjs::hidden(button(ns("dl_stand"),
+                                        "Download Standardized Data"))),
     mainPanel(tabsetPanel(selected = "Standardized Data",
                           tabPanel(title = "Standardized Data",
-                                   uiOutput(ns("ui_table_stand")))
+                                   uiOutput(ns("ui_table_stand"))),
+                          tabPanel(title = "Messages",
+                                   br(),
+                                   help_output(ns("console_stand")))
     ))
   )
 }
@@ -40,13 +41,10 @@ mod_standardise_server <- function(input, output, session, tidy_data){
 
   stand_data <- reactive({
     req(tidy_data())
-    print("hi")
     if(nrow(tidy_data()) < 1) return()
-    print(tidy_data())
     withCallingHandlers({
       shinyjs::html("console_stand", "")
       ems_standardize(tidy_data(), input$strict)},
-
     message = function(m) {
       shinyjs::html(id = "console_stand", html = HTML(paste(m$message, "<br>")), add = TRUE)
     })
@@ -74,10 +72,4 @@ mod_standardise_server <- function(input, output, session, tidy_data){
 
   return(stand_data)
 }
-
-## To be copied in the UI
-# mod_standardise_ui("standardise_ui_1")
-
-## To be copied in the server
-# callModule(mod_standardise_server, "standardise_ui_1")
 
