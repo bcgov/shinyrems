@@ -120,8 +120,12 @@ ems_tidy <- function(data, mdl_action){
   wqbc::tidy_ems_data(data, mdl_action = mdl_action)
 }
 
-ems_clean <- function(data){
-  wqbc::clean_wqdata(data)
+ems_clean <- function(data, by, sds, ignore_undetected,
+                      large_only, delete_outliers, remove_blanks){
+  clean_wqdata2(data, by = by, max_cv = Inf, sds = sds,
+                ignore_undetected = ignore_undetected,
+                large_only = large_only, delete_outliers = delete_outliers,
+                remove_blanks = remove_blanks)
 }
 
 ems_standardize <- function(data, strict){
