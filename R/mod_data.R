@@ -104,10 +104,6 @@ mod_data_server <- function(input, output, session){
     show("div_data_find")
   })
 
-  observe({
-    show_hide(tidy_data(), "table_tidy")
-  })
-
   observeEvent(input$no_download, {
     updateRadioButtons(session, "dataset", selected = "demo")
     removeModal()
