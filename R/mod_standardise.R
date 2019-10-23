@@ -39,7 +39,10 @@ mod_standardise_server <- function(input, output, session, tidy_data){
   ns <- session$ns
 
   stand_data <- reactive({
-
+    req(tidy_data())
+    print("hi")
+    if(nrow(tidy_data()) < 1) return()
+    print(tidy_data())
     withCallingHandlers({
       shinyjs::html("console_stand", "")
       ems_standardize(tidy_data(), input$strict)},
