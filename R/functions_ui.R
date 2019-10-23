@@ -24,7 +24,7 @@ data_download_modal <- function(check, which, ns){
     button(ns("yes_download"), "Yes!", icon = icon(NULL)),
     button(ns(id), "No", icon = icon(NULL)),
     br2(),
-    textOutput(ns("download_text")),
+    help_output(ns("download_text")),
     shinyWidgets::progressBar(
       id = ns("download_progress"),
       value = 0,
@@ -42,3 +42,8 @@ error_modal <- function(x){
       p(x)
     )
   )}
+
+help_output <- function(id){
+  div(textOutput(id),
+      style = "color: grey;")
+}
