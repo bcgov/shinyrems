@@ -24,7 +24,7 @@ mod_standardise_ui <- function(id){
                  button(ns("dl_stand"), "Download Standardized Data")),
     mainPanel(tabsetPanel(selected = "Standardized Data",
                           tabPanel(title = "Standardized Data",
-                                   ems_table_output(ns('table_stand')))
+                                   uiOutput(ns("ui_table_stand")))
     ))
   )
 }
@@ -58,6 +58,12 @@ mod_standardise_server <- function(input, output, session, tidy_data){
     content = function(file) {
       readr::write_csv(stand_data(), file)
     })
+
+  output$ui_table_stand <- renderUI({
+    req(stand_data)
+    ems_data_table(stand_data())
+    ems_table_output(ns('table_stand'))
+  })
 
   output$table_stand <- DT::renderDT({
     ems_data_table(stand_data())

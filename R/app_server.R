@@ -20,7 +20,7 @@ app_server <- function(input, output, session) {
 
   stand_data <- callModule(mod_standardise_server, "standardise_ui_1", tidy_data)
 
-  clean_data <- callModule(mod_clean_server, "clean_ui_1", stand_data)
+  # clean_data <- callModule(mod_clean_server, "clean_ui_1", stand_data)
 
   callModule(mod_results_server, "results_ui_1", clean_data)
 

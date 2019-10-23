@@ -21,7 +21,7 @@ app_ui <- function() {
                tabPanel(title = "1. Get data",
                         br(),
                         mod_data_ui("data_ui_1")),
-               tabPanel(title = "2. Standardise data",
+               tabPanel(title = "2. Standardize data",
                         br(),
                         mod_standardise_ui("standardise_ui_1")),
                tabPanel(title = "3. Clean data",

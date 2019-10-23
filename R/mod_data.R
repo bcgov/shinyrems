@@ -58,9 +58,9 @@ mod_data_ui <- function(id){
       tabsetPanel(selected = "Tidy Data",
                   id = ns("tabset_data"),
                   tabPanel(title = "Raw Data",
-                           uiOutput(ns("view_table"))),
+                           uiOutput(ns("ui_table_raw"))),
                   tabPanel(title = "Tidy Data",
-                           ems_table_output(ns('table_tidy'))),
+                           uiOutput(ns("ui_table_tidy"))),
                   tabPanel(title = "Site Map",
                            wellPanel(site_map(ns), class = "wellpanel"))
       )
@@ -105,9 +105,7 @@ mod_data_server <- function(input, output, session){
   })
 
   observe({
-    if(!is.null(tidy_data()))
-      return(show("table_tidy"))
-    hide("table_tidy")
+    show_hide(tidy_data(), "table_tidy")
   })
 
   observeEvent(input$no_download, {
@@ -122,7 +120,14 @@ mod_data_server <- function(input, output, session){
   })
 
   observeEvent(input$yes_download, {
-    print_console("download_text")
+    withCallingHandlers({
+      shinyjs::html("download_text", "")
+      download_data(input$dataset, session, "download_progress")
+    },
+    message = function(m) {
+      shinyjs::html(id = "download_text", html = HTML(paste(m$message, "<br>")),
+                    add = TRUE)
+    })
     removeModal()
     show("div_data_find")
   })
@@ -240,7 +245,7 @@ mod_data_server <- function(input, output, session){
     updateSelectInput(session, "wsgroup", selected = ws)
   })
 
-  output$view_table <- renderUI({
+  output$ui_table_raw <- renderUI({
     req(raw_data())
     if(is.character(raw_data())){
       return(showModal(error_modal(raw_data())))
@@ -248,8 +253,17 @@ mod_data_server <- function(input, output, session){
     ems_table_output(ns('table_raw'))
   })
 
+  output$ui_table_tidy <- renderUI({
+    req(tidy_data())
+    ems_table_output(ns('table_tidy'))
+  })
+
   output$table_raw <- DT::renderDT({
     ems_data_table(raw_data())
+  })
+
+  output$table_tidy <- DT::renderDT({
+    ems_data_table(tidy_data())
   })
 
   output$ui_download <- renderUI({
@@ -284,7 +298,7 @@ mod_data_server <- function(input, output, session){
   })
 
   output$table_tidy <- DT::renderDT({
-    # req(raw_data())
+    req(raw_data())
     ems_data_table(tidy_data())
   })
 

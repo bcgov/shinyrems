@@ -69,4 +69,10 @@ print_console <- function(id){
   })
 }
 
+show_hide <- function(data, id){
+  if(!is.null(data))
+    return(show(id))
+  hide(id)
+}
+
 

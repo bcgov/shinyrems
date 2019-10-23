@@ -127,5 +127,13 @@ ems_tidy <- function(data, mdl_action){
   wqbc::tidy_ems_data(data, mdl_action = mdl_action)
 }
 
+ems_clean <- function(data){
+  wqbc::clean_wqdata(data)
+}
+
+ems_standardize <- function(data, strict){
+  wqbc::standardize_wqdata(data, strict)
+}
+
 
 
