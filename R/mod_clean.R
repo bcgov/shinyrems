@@ -17,21 +17,11 @@ mod_clean_ui <- function(id){
   ns <- NS(id)
   sidebarLayout(
     sidebarPanel(class = "sidebar",
-                 h4("Tidy Data"),
-                 selectInput(ns("mdl_action"), label = "MDL Action",
-                             choices = c("zero", "mdl", "half", "na", "none"),
-                             selected = "zero"),
-                 h5("Clean Data")),
+                 shinyjs::hidden(button(ns("dl_clean"), "Download Clean Data"))),
     mainPanel(tabsetPanel(selected = "Table",
                           id = ns("tabset_data"),
-                          tabPanel(title = "Tidy",
-                                   ems_table_output(ns('table_tidy')),
-                                   downloadButton(ns("dl_tidy_handler"), label = NULL,
-                                                  style = "visibility: hidden;")),
-                          tabPanel(title = "Clean",
-                                   ems_table_output(ns('table_clean')),
-                                   downloadButton(ns("dl_clean_handler"), label = NULL,
-                                                  style = "visibility: hidden;")),
+                          tabPanel(title = "Table",
+                                   uiOutput(ns("ui_table_clean"))),
                           tabPanel(title = "Plot")
     ))
   )
@@ -43,34 +33,30 @@ mod_clean_ui <- function(id){
 #' @export
 #' @keywords internal
 
-mod_clean_server <- function(input, output, session, data){
+mod_clean_server <- function(input, output, session, stand_data){
   ns <- session$ns
 
-  get_data <- reactive({
-    data()
-  })
-
-  tidy_data <- reactive({
-    req(get_data())
-    ems_tidy(get_data(), input$mdl_action)
+  observe({
+    if(!is.null(clean_data()))
+      return(show("dl_clean"))
+    hide("dl_clean")
   })
 
   clean_data <- reactive({
-    req(tidy_data())
-    # ems_clean(tidy_data(), input)
+    req(stand_data())
+    ems_clean(stand_data())
   })
 
-  output$table_tidy <- DT::renderDT({
-    req(get_data())
-    ems_data_table(tidy_data())
+  output$ui_table_clean <- renderUI({
+    ems_table_output(ns('table_clean'))
   })
 
   output$table_clean <- DT::renderDT({
-    req(get_data())
+    req(clean_data())
     ems_data_table(clean_data())
   })
 
-  return(get_data)
+  return(clean_data)
 }
 
 ## To be copied in the UI
