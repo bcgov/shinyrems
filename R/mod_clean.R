@@ -24,7 +24,7 @@ mod_clean_ui <- function(id){
                                 choices = c("EMS_ID", "Station", "SAMPLE_STATE",
                                             "SAMPLE_CLASS", "SAMPLE_DESCRIPTOR",
                                             "LOCATION_TYPE"),
-                                selected = "Station"),
+                                selected = "EMS_ID"),
                  numericInput(ns("max_cv"), label = "Maximum CV", value = Inf),
                  h4("Automatic outlier detection"),
                  numericInput(ns("sds"), label = "Number of standard deviations",
@@ -70,7 +70,6 @@ mod_clean_server <- function(input, output, session, stand_data){
 
   clean_data <- reactive({
     req(stand_data())
-    req(input$by)
     withCallingHandlers({
       shinyjs::html("console_clean", "")
       ems_clean(stand_data(), by = input$by, sds = input$sds,
