@@ -59,16 +59,6 @@ show <- function(id){
   shinyjs::show(id, anim = TRUE)
 }
 
-print_console <- function(id){
-  withCallingHandlers({
-    shinyjs::html(id, "")
-    download_data(input$dataset, session, "download_progress")
-  },
-  message = function(m) {
-    shinyjs::html(id = id, html = m$message, add = TRUE)
-  })
-}
-
 show_hide <- function(data, id){
   if(!is.null(data))
     return(show(id))
