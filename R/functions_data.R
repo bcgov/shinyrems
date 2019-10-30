@@ -121,10 +121,10 @@ ems_tidy <- function(data, mdl_action){
 }
 
 ems_clean <- function(data, by, sds, ignore_undetected,
-                      large_only, delete_outliers, remove_blanks, max_cv){
+                      large_only, remove_blanks, max_cv){
   clean_wqdata2(data, by = by, max_cv = max_cv, sds = sds,
                 ignore_undetected = ignore_undetected,
-                large_only = large_only, delete_outliers = delete_outliers,
+                large_only = large_only, delete_outliers = FALSE,
                 remove_blanks = remove_blanks)
 }
 

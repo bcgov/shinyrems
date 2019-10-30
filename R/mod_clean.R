@@ -75,7 +75,6 @@ mod_clean_server <- function(input, output, session, stand_data){
       ems_clean(stand_data(), by = input$by, sds = input$sds,
                 ignore_undetected = input$ignore_undetected,
                 large_only = input$large_only,
-                delete_outliers = input$delete_outliers,
                 remove_blanks = input$remove_blanks,
                 max_cv = input$max_cv)},
       message = function(m) {
@@ -97,6 +96,13 @@ mod_clean_server <- function(input, output, session, stand_data){
     clean_rv$data <- add_outlier_brush(clean_rv$data, input$plot_brush)
   })
 
+  clean_data2 <- reactive({
+    if(input$delete_outliers){
+      return(clean_rv$data[!clean_rv$data$Outlier,])
+    }
+    clean_rv$data
+  })
+
   observe({
     req(clean_rv$data)
     req(clean_data())
@@ -110,13 +116,13 @@ mod_clean_server <- function(input, output, session, stand_data){
   })
 
   output$ui_table_clean <- renderUI({
-    req(clean_data())
+    req(clean_data2())
     ems_table_output(ns('table_clean'))
   })
 
   output$table_clean <- DT::renderDT({
-    req(clean_rv$data)
-    ems_data_table(clean_rv$data)
+    req(clean_data2())
+    ems_data_table(clean_data2())
   })
 
   output$ui_sample_state <- renderUI({
@@ -128,11 +134,11 @@ mod_clean_server <- function(input, output, session, stand_data){
   })
 
   output$plot_clean <- renderPlot({
-    req(clean_rv$data)
-    wqbc::plot_timeseries(clean_rv$data)
+    req(clean_data2())
+    wqbc::plot_timeseries(clean_data2())
   })
 
-  return(clean_data)
+  return(clean_data2)
 }
 
 ## To be copied in the UI
