@@ -78,8 +78,6 @@ mod_data_server <- function(input, output, session){
   ns <- session$ns
 
   ########## ---------- dataset ---------- ##########
-  ns <- session$ns
-
   observeEvent(input$dataset, {
     hide("div_data_find")
     hide("div_data_upload")
@@ -291,11 +289,6 @@ mod_data_server <- function(input, output, session){
   tidy_data <- reactive({
     req(raw_data())
     ems_tidy(raw_data(), input$mdl_action)
-  })
-
-  output$table_tidy <- DT::renderDT({
-    req(raw_data())
-    ems_data_table(tidy_data())
   })
 
   return(tidy_data)
