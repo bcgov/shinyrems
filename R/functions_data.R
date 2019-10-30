@@ -120,6 +120,12 @@ ems_tidy <- function(data, mdl_action){
   wqbc::tidy_ems_data(data, mdl_action = mdl_action)
 }
 
+maxcv <- function(max_cv){
+  if(is.na(max_cv))
+    return(Inf)
+  max_cv
+}
+
 ems_clean <- function(data, by, sds, ignore_undetected,
                       large_only, remove_blanks, max_cv){
   clean_wqdata2(data, by = by, max_cv = max_cv, sds = sds,
