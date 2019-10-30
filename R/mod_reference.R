@@ -32,7 +32,7 @@ mod_reference_ui <- function(id){
                               "Collection Methods", "Sample Classes",
                               "Species", "Units"),
                   selected = "Parameters"),
-      button(ns("download")),
+      button(ns("download"), label = "Download Table"),
       downloadButton(ns("download_handler"), label = NULL,
                      style = "visibility: hidden;"),
       br(), br(),
@@ -50,10 +50,12 @@ mod_reference_server <- function(input, output, session){
   ns <- session$ns
 
   table <- reactive({
-    ems_data_table(ems_reference_tables[[input$selectTable]])
+    ems_reference_tables[[input$selectTable]]
   })
 
-  output$table <- DT::renderDT({table()})
+  output$table <- DT::renderDT({
+    ems_data_table(table())
+    })
 
   observeEvent(input$download, {
     shinyjs::runjs(click_js(ns("download_handler")))
