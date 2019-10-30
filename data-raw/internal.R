@@ -22,9 +22,6 @@ lookup_2yr <- lookup(data_2yr)
 lookup_historic <- lookup(data_historic)
 lookup_demo <- lookup(shinyrems::ems_demo_data)
 
-lookup_2yr <- lookup_2yr[sample(1:nrow(lookup_2yr), 1000),]
-lookup_historic <- lookup_historic[sample(1:nrow(lookup_historic), 1000),]
-
 template_tidy <- list(EMS = list(example = 123,
                             type = "integer",
                             description = "EMS ID",
@@ -54,7 +51,15 @@ watershed_groups <- watershed_groups %>% mutate_if(is.factor, as.character)
 
 datasets <- c("2yr", "historic", "all", "demo", "upload")
 
+ems_reference_tables <- list("Collection Methods" = rems::ems_coll_methods,
+                             "Location Samples" = rems::ems_location_samples,
+                             "Parameters" = rems::ems_parameters,
+                             "Sample Classes" = rems::ems_sample_classes,
+                             "Species" = rems::ems_species,
+                             "Units" = rems::ems_units)
+
 usethis::use_data(lookup_2yr, lookup_historic, lookup_demo,
                   template_raw, template_tidy, watershed_groups,
-                  datasets, internal = TRUE, overwrite = TRUE)
+                  datasets, ems_reference_tables,
+                  internal = TRUE, overwrite = TRUE)
 
