@@ -17,12 +17,20 @@ mod_clean_ui <- function(id){
   ns <- NS(id)
   sidebarLayout(
     sidebarPanel(class = "sidebar",
-                 checkboxInput(ns("remove_blanks"), "Remove blanks", value = FALSE),
                  uiOutput(ns("ui_sample_state")),
-                 h4("Daily aggregation by columns"),
+                 checkboxInput(ns("remove_blanks"), "Remove blanks", value = FALSE),
+                 checkboxInput(ns("regular"),
+                               "Differentiate regular and replicate sample class",
+                               value = FALSE),
+                 checkboxInput(ns("depth"), "Differentiate upper and lower depths",
+                               value = FALSE),
+                 h4("Daily summary by"),
                  select_input_x(ns("by"), label = NULL,
-                                choices = c("EMS_ID", "Station", "SAMPLE_STATE",
-                                            "SAMPLE_CLASS", "SAMPLE_DESCRIPTOR",
+                                choices = c("EMS_ID", "Station",
+                                            "UPPER_DEPTH",
+                                            "LOWER_DEPTH",
+                                            "SAMPLE_STATE",
+                                            "SAMPLE_DESCRIPTOR",
                                             "LOCATION_TYPE"),
                                 selected = NULL),
                  numericInput(ns("max_cv"), label = "Maximum CV", value = Inf),
@@ -73,7 +81,9 @@ mod_clean_server <- function(input, output, session, stand_data){
     max_cv <- maxcv(input$max_cv)
     withCallingHandlers({
       shinyjs::html("console_clean", "")
-      ems_clean(stand_data(), by = input$by,
+      ems_clean(stand_data(),
+                regular = input$regular,
+                by = input$by,
                 sds = input$sds,
                 ignore_undetected = input$ignore_undetected,
                 large_only = input$large_only,
