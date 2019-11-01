@@ -117,7 +117,8 @@ ems_data_progress <- function(dataset, parameter,
 }
 
 ems_tidy <- function(data, mdl_action){
-  wqbc::tidy_ems_data(data, mdl_action = mdl_action)
+  wqbc::tidy_ems_data(data, mdl_action = mdl_action,
+                      cols = c("UPPER_DEPTH", "LOWER_DEPTH"))
 }
 
 maxcv <- function(max_cv){
@@ -126,8 +127,12 @@ maxcv <- function(max_cv){
   max_cv
 }
 
-ems_clean <- function(data, by, sds, ignore_undetected,
+ems_clean <- function(data, regular, by, sds, ignore_undetected,
                       large_only, remove_blanks, max_cv){
+  if(regular){
+    data$Regular <- reg_or_rep(data$SAMPLE_CLASS)
+    by <- c(by, "Regular")
+  }
   clean_wqdata2(data, by = by, max_cv = max_cv, sds = sds,
                 ignore_undetected = ignore_undetected,
                 large_only = large_only, delete_outliers = FALSE,
@@ -148,6 +153,20 @@ add_outlier_brush <- function(data, brush){
 add_outlier_table <- function(data, rows){
   data$Outlier[rows] <- TRUE
   data
+}
+
+is_regular <- function(x){
+  grepl("regular", x, ignore.case = TRUE)
+}
+
+is_replicate <- function(x){
+  grepl("replicate", x, ignore.case = TRUE)
+}
+
+reg_or_rep <- function(x){
+  dplyr::case_when(is_regular(x) ~ "Regular",
+                   is_replicate(x) ~ "Replicate",
+                   TRUE ~ NA_character_)
 }
 
 
