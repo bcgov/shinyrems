@@ -27,7 +27,7 @@ app_ui <- function() {
                tabPanel(title = "3. Clean data",
                         br(),
                         mod_clean_ui("clean_ui_1")),
-               tabPanel(title = "4. Guidelines",
+               tabPanel(title = "4. Results",
                         br(),
                         mod_results_ui("results_ui_1")),
                tabPanel(title = 'Reference Tables',

@@ -94,7 +94,6 @@ mod_data_server <- function(input, output, session){
       return(show("div_data_find"))
     }
     check <- check_data_progress(dataset)
-    # check <- c("done", which)
     if(check[1] != "done"){
       showModal(data_download_modal(check[1], check[2], ns))
       return()
@@ -157,7 +156,11 @@ mod_data_server <- function(input, output, session){
   raw_data <- reactive({
     if(input$dataset == "upload"){
       req(input$upload_data)
-      return(check_data_upload(input$upload_data, template()))
+      check <- check_data_upload(input$upload_data, template())
+      if(is.character(check)){
+        return(showModal(error_modal(check)))
+      }
+      return(check)
     }
     req(input$parameter)
     req(input$site)
@@ -241,9 +244,6 @@ mod_data_server <- function(input, output, session){
 
   output$ui_table_raw <- renderUI({
     req(raw_data())
-    if(is.character(raw_data())){
-      return(showModal(error_modal(raw_data())))
-    }
     ems_table_output(ns('table_raw'))
   })
 
@@ -279,16 +279,28 @@ mod_data_server <- function(input, output, session){
       readr::write_csv(tidy_data(), file)
     })
 
+  observe({
+    print(template())
+    # print(template_to_df(template()))
+  })
+
+  output$dl_template <- downloadHandler(
+    filename = function() "ems_template.csv",
+    content = function(file) {
+      readr::write_csv(template_to_df(template()), file)
+    }
+  )
+
   template <- reactive({
     type <- input$data_type
     if(type == "tidy")
       return(template_tidy)
-    template_raw
+    tidy_names_to_raw(template_tidy)
   })
 
   tidy_data <- reactive({
     req(raw_data())
-    ems_tidy(raw_data(), input$mdl_action)
+    ems_tidy(raw_data(), input$mdl_action, input$data_type, input$dataset)
   })
 
   return(tidy_data)

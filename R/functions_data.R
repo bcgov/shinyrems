@@ -116,7 +116,11 @@ ems_data_progress <- function(dataset, parameter,
                                  to_date = to_date)})
 }
 
-ems_tidy <- function(data, mdl_action){
+ems_tidy <- function(data, mdl_action, data_type, dataset){
+  if(dataset == "upload" && data_type == "tidy"){
+    data <- tidy_names_to_raw(data)
+  }
+  print(data)
   wqbc::tidy_ems_data(data, mdl_action = mdl_action,
                       cols = c("UPPER_DEPTH", "LOWER_DEPTH"))
 }
@@ -133,10 +137,12 @@ ems_clean <- function(data, regular, by, sds, ignore_undetected,
     data$Regular <- reg_or_rep(data$SAMPLE_CLASS)
     by <- c(by, "Regular")
   }
-  clean_wqdata2(data, by = by, max_cv = max_cv, sds = sds,
+  x <- try(clean_wqdata2(data, by = by, max_cv = max_cv, sds = sds,
                 ignore_undetected = ignore_undetected,
                 large_only = large_only, delete_outliers = FALSE,
-                remove_blanks = remove_blanks)
+                remove_blanks = remove_blanks), silent = TRUE)
+  if(is_try_error(x)) return(data.frame())
+  x
 }
 
 ems_standardize <- function(data, strict){
@@ -167,6 +173,14 @@ reg_or_rep <- function(x){
   dplyr::case_when(is_regular(x) ~ "Regular",
                    is_replicate(x) ~ "Replicate",
                    TRUE ~ NA_character_)
+}
+
+tidy_names_to_raw <- function(x, names = raw_names){
+  tmp <- sapply(names(x), function(y){
+    if(!(y %in% names(raw_names))) return(y)
+    raw_names[which(y == names(raw_names))] %>% setNames(NULL)
+  }, USE.NAMES = FALSE)
+  setNames(x, tmp)
 }
 
 

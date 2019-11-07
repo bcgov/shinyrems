@@ -46,6 +46,9 @@ check_data_upload <- function(data, template){
     return("Please submit a csv file.")
   }
   data <- readr::read_csv(data$datapath)
+  if("EMS_ID" %in% names(data)){
+    data$EMS_ID <- as.character(data$EMS_ID)
+  }
   x <- check_template(data, template)
   if(is.character(x)){
     return(x)
@@ -54,6 +57,7 @@ check_data_upload <- function(data, template){
 }
 
 check_template <- function(x, template){
+
   x <- try(checkr::check_data(x = x,
                               values = sapply(template, function(x) x$check, USE.NAMES = FALSE),
                               nrow = c(1L,.Machine$integer.max),

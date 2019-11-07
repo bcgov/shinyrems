@@ -35,8 +35,6 @@ clean_wqdata2 <- function (x, by = NULL, max_cv = Inf, sds = 10, ignore_undetect
     message("Cleaning water quality data...")
   res <- c("Date", "Variable", "Code", "Value", "Units", "DetectionLimit",
            "ResultLetter")
-  print(colnames(x))
-  print(by)
   wqbc:::check_by(by, colnames(x), res_names = res)
   x <- wqbc:::del_cols_not_in_y(x, c(res, by))
   if (is.null(by)) {
@@ -57,4 +55,5 @@ clean_wqdata2 <- function (x, by = NULL, max_cv = Inf, sds = 10, ignore_undetect
     message("Cleansed water quality data.")
   x
 }
+
 

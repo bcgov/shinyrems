@@ -16,7 +16,25 @@
 mod_results_ui <- function(id){
   ns <- NS(id)
   tagList(
-
+    sidebarLayout(
+      sidebarPanel(class = "sidebar",
+                   ),
+      mainPanel(tabsetPanel(selected = "Plot",
+                            id = ns("tabset_data"),
+                            # tabPanel(title = "Clean Data",
+                            #          uiOutput(ns("ui_table_clean"))),
+                            tabPanel(title = "Plot",
+                                     br(),
+                                     radioButtons(ns("plot_type"), label = "Plot type",
+                                                  choices = c("scatter", "timeseries", "boxplot"),
+                                                  selected = "scatter", inline = TRUE),
+                                     plotOutput(ns("plot"))),
+                            tabPanel(title = "Summary Table",
+                                     br(),
+                                     uiOutput(ns("ui_table_summary"))
+                                     )
+      ))
+    )
   )
 }
 
@@ -28,6 +46,14 @@ mod_results_ui <- function(id){
 
 mod_results_server <- function(input, output, session, data){
   ns <- session$ns
+
+  output$plot <- renderPlot({
+    switch(input$plot_type,
+           "scatter" = ems_scatter_plot(data()),
+           "timeseries" = ems_timeseries_plot(data()),
+           "boxplot" = ems_boxplot(data()),
+           NULL)
+  })
 }
 
 ## To be copied in the UI

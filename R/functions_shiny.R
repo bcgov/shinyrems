@@ -21,11 +21,8 @@ help_text <- function(x){
   p(x, style = "font-size: 11px; color: grey;")
 }
 
-button <- function(id, label = "Get Data (csv)", icon = "download", status = "primary"){
-  actionButton(inputId = id,
-               label = label,
-               icon = icon(icon),
-               class = glue::glue("btn action-button btn-sm btn-{status}"))
+button <- function(..., icon = "download", class = "btn-primary"){
+  downloadButton(..., icon = icon(icon), class = class)
 }
 
 select_input_x <- function(..., label = "Select sites:", choices, selected = choices[1]) {
