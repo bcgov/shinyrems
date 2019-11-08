@@ -263,8 +263,8 @@ mod_data_server <- function(input, output, session){
   output$ui_download <- renderUI({
     if(is.null(raw_data()) || input$dataset == "upload") return()
     if(input$tabset_data == "Raw Data")
-      return(button(ns('dl_raw'), label = "Download Raw Data"))
-    button(ns('dl_tidy'), label = "Download Tidy Data")
+      return(dl_button(ns('dl_raw'), label = "Download Raw Data"))
+    dl_button(ns('dl_tidy'), label = "Download Tidy Data")
   })
 
   output$dl_raw <- downloadHandler(
@@ -278,11 +278,6 @@ mod_data_server <- function(input, output, session){
     content = function(file) {
       readr::write_csv(tidy_data(), file)
     })
-
-  observe({
-    print(template())
-    # print(template_to_df(template()))
-  })
 
   output$dl_template <- downloadHandler(
     filename = function() "ems_template.csv",

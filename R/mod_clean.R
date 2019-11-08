@@ -29,7 +29,7 @@ mod_clean_ui <- function(id){
                  checkboxInput(ns("ignore_undetected"), "Ignore undetected", TRUE),
                  checkboxInput(ns("large_only"), "Large values only", TRUE),
                  checkboxInput(ns("delete_outliers"), "Detele outliers", FALSE),
-                 shinyjs::hidden(button(ns("dl_clean"), "Download Clean Data"))),
+                 shinyjs::hidden(dl_button(ns("dl_clean"), "Download Clean Data"))),
     mainPanel(tabsetPanel(selected = "Clean Data",
                           id = ns("tabset_data"),
                           tabPanel(title = "Clean Data",

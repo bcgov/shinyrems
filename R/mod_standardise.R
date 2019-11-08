@@ -18,7 +18,7 @@ mod_standardise_ui <- function(id){
   sidebarLayout(
     sidebarPanel(class = "sidebar",
                  checkboxInput(ns("strict"), "Strict matching", value = TRUE),
-                 shinyjs::hidden(button(ns("dl_stand"),
+                 shinyjs::hidden(dl_button(ns("dl_stand"),
                                         "Download Standardized Data"))),
     mainPanel(tabsetPanel(selected = "Standardized Data",
                           tabPanel(title = "Standardized Data",
