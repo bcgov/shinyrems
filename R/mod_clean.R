@@ -170,6 +170,12 @@ mod_clean_server <- function(input, output, session, stand_data){
     wqbc::plot_timeseries(clean_data2())
   })
 
+  output$dl_clean <- downloadHandler(
+    filename = function() "ems_clean_data.csv",
+    content = function(file) {
+      readr::write_csv(clean_data2(), file)
+    })
+
   return(clean_data2)
 }
 
