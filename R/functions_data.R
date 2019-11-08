@@ -116,13 +116,16 @@ ems_data_progress <- function(dataset, parameter,
                                  to_date = to_date)})
 }
 
-ems_tidy <- function(data, mdl_action, data_type, dataset){
+ems_tidy <- function(data, mdl_action, data_type, dataset, include_upper){
   if(dataset == "upload" && data_type == "tidy"){
     data <- tidy_names_to_raw(data)
   }
-  print(data)
+  cols <- character(0)
+  if(include_upper){
+    cols <- c("UPPER_DEPTH", "LOWER_DEPTH")
+  }
   wqbc::tidy_ems_data(data, mdl_action = mdl_action,
-                      cols = c("UPPER_DEPTH", "LOWER_DEPTH"))
+                      cols = cols)
 }
 
 maxcv <- function(max_cv){
