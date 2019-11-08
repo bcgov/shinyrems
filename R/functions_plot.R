@@ -31,7 +31,6 @@ multiple_units <- function(data){
 plot_scaffold <- function(data){
   data %<>% dplyr::mutate(Detected = detected(Value, DetectionLimit))
   data$Detected %<>% factor(levels = c(TRUE, FALSE))
-  data$Outlier %<>% factor(levels = c(TRUE, FALSE))
 
   gp <- ggplot2::ggplot(data, ggplot2::aes(x = Date, y = Value)) +
     ggplot2::scale_color_discrete(drop = FALSE) +
@@ -40,16 +39,14 @@ plot_scaffold <- function(data){
 
   if(!multiple_units(data)){
     gp <- gp +
-      ggplot2::facet_wrap(~Variable,
+      ggplot2::facet_wrap(~EMS_ID,
                  ncol = 1,
                  scales = "free_y") +
       ggplot2::ylab(unique(data$Units))
   } else {
     gp <- gp +
-      ggplot2::facet_wrap(~Variable, ncol = 1,
-                 scales = "free_y",
-                 strip.position = "left",
-                 labeller = make_labeller(data)) +
+      ggplot2::facet_grid(EMS_ID~Variable, ncol = 1,
+                 scales = "free_y") +
       ggplot2::ylab(NULL) +
       ggplot2::theme(strip.background = ggplot2::element_blank(),
             strip.placement = "outside")
@@ -72,12 +69,13 @@ ems_timeseries_plot <- function(data){
 ems_boxplot <- function(data){
   if(!multiple_units(data)){
     gp <- ggplot2::ggplot(data) +
+      facet_wrap(~EMS_ID) +
       ggplot2::geom_boxplot(ggplot2::aes(x = Variable, y = Value)) +
       ggplot2::ylab(make_label(data))
   } else {
     gp <- ggplot2::ggplot(data) +
       ggplot2::geom_boxplot(ggplot2::aes(x = factor(0), y = Value)) +
-      ggplot2::facet_wrap(~Variable, ncol = 1,
+      ggplot2::facet_wrap(EMS_ID~Variable, ncol = 1,
                  scales = "free_y",
                  strip.position = "left",
                  labeller = make_labeller(data)) +
@@ -90,6 +88,53 @@ ems_boxplot <- function(data){
   }
   gp
 }
+
+ems_plots <- function(data, plot_type){
+  lapply(unique(data$Units), function(x){
+    dat <- data %>% filter(Units == x)
+    dat %<>% dplyr::mutate(Detected = detected(Value, DetectionLimit))
+    dat$Detected %<>% factor(levels = c(TRUE, FALSE))
+
+    gp <- ggplot2::ggplot(dat, ggplot2::aes(x = Date, y = Value)) +
+      ggplot2::scale_color_discrete(drop = FALSE) +
+      ggplot2::scale_alpha_discrete(range = c(1, 1/3), drop = FALSE) +
+      ggplot2::expand_limits(y = 0) +
+      ggplot2::facet_wrap(~EMS_ID, ncol = 1,
+                          scales = "free_y") +
+      ggplot2::ylab(unique(dat$Units))
+
+    if(plot_type == "scatter")
+      return(gp + ggplot2::geom_point(size = 1, ggplot2::aes(alpha = Detected,
+                                                             color = Variable)))
+
+    if(plot_type == "timeseries")
+       return(gp + ggplot2::geom_point(size = 1, ggplot2::aes(alpha = Detected,
+                                                              color = Variable)) +
+              ggplot2::geom_line(size = 0.3, ggplot2::aes(color = Variable)))
+
+    gp + ggplot2::geom_boxplot(ggplot2::aes(x = Variable, y = Value))
+  }) %>% setNames(unique(data$Units))
+}
+
+# multiplot <- function(plots = NULL, file, cols=1) {
+#   library(grid)
+#
+#   numPlots = length(plots)
+#   layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+#                    ncol = cols, nrow = ceiling(numPlots/cols))
+#
+#   if(numPlots==1) return(print(plots[[1]]))
+#
+#   grid.newpage()
+#   pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+#
+#   for (i in 1:numPlots) {
+#     matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+#     print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+#                                     layout.pos.col = matchidx$col))
+#   }
+# }
+
 
 
 

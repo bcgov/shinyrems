@@ -18,17 +18,19 @@ mod_results_ui <- function(id){
   tagList(
     sidebarLayout(
       sidebarPanel(class = "sidebar",
-                   ),
+                   textInput(ns("plot_title"), "Plot title"),
+                   dl_button(ns("dl_table"), "Download Summary Table"),
+                   br2(),
+                   dl_button(ns("dl_plot"), "Download Plots"),
+                   uiOutput(ns("ui_dl_plot"))),
       mainPanel(tabsetPanel(selected = "Plot",
                             id = ns("tabset_data"),
-                            # tabPanel(title = "Clean Data",
-                            #          uiOutput(ns("ui_table_clean"))),
                             tabPanel(title = "Plot",
                                      br(),
                                      radioButtons(ns("plot_type"), label = "Plot type",
                                                   choices = c("scatter", "timeseries", "boxplot"),
                                                   selected = "scatter", inline = TRUE),
-                                     plotOutput(ns("plot"))),
+                                     uiOutput(ns("ui_plot"))),
                             tabPanel(title = "Summary Table",
                                      br(),
                                      uiOutput(ns("ui_table_summary"))
@@ -44,15 +46,52 @@ mod_results_ui <- function(id){
 #' @export
 #' @keywords internal
 
-mod_results_server <- function(input, output, session, data){
+mod_results_server <- function(input, output, session, clean_data){
   ns <- session$ns
 
-  output$plot <- renderPlot({
-    switch(input$plot_type,
-           "scatter" = ems_scatter_plot(data()),
-           "timeseries" = ems_timeseries_plot(data()),
-           "boxplot" = ems_boxplot(data()),
-           NULL)
+  output$dl_plot <- downloadHandler(
+    filename = function() "ems_plot.png",
+    content = function(file) {
+      readr::write_csv(raw_data(), file)
+    })
+
+  output$dl_table <- downloadHandler(
+    filename = function() "ems_summary_table.csv",
+    content = function(file) {
+      readr::write_csv(sumary_table(), file)
+    })
+
+  plots <- reactive({
+    ems_plots(clean_data(), input$plot_type)
+  })
+
+  create_tabs <- function(x, plots){
+    title <- names(plots)[x]
+    tabPanel(title = title,
+             br(), plotOutput(ns(paste0("plot_", x))))
+  }
+
+  create_tabs2 <- function(x){
+    tagList(
+      plotOutput(ns(paste0("plot_", x))),
+      br()
+    )
+  }
+
+  output$ui_plot <- renderUI({
+    lapply(seq_along(plots()), create_tabs2)
+  })
+
+  observe({
+    for (i in seq_along(plots())) {
+      local({
+        my_i <- i
+        plotname <- paste0("plot_", my_i)
+        output[[plotname]] <- renderPlot({
+          plots()[my_i]
+        })
+      })
+    }
   })
 }
 
