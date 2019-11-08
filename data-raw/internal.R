@@ -108,7 +108,7 @@ ems_reference_tables <- list("Collection Methods" = rems::ems_coll_methods,
                              "Units" = rems::ems_units)
 
 usethis::use_data(lookup_2yr, lookup_historic, lookup_demo,
-                  template_raw, template_tidy, watershed_groups,
+                  template_tidy, watershed_groups,
                   datasets, ems_reference_tables, raw_names,
                   internal = TRUE, overwrite = TRUE)
 
