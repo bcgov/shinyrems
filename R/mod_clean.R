@@ -32,7 +32,7 @@ mod_clean_ui <- function(id){
                                          value = 10),
                             checkboxInput(ns("ignore_undetected"), "Ignore undetected", TRUE),
                             checkboxInput(ns("large_only"), "Large values only", TRUE),
-                            checkboxInput(ns("delete_outliers"), "Detele outliers", FALSE))
+                            checkboxInput(ns("delete_outliers"), "Delete outliers", FALSE))
 
                  ),
                  shinyjs::hidden(dl_button(ns("dl_clean"), "Download Clean Data"))),
