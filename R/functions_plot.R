@@ -91,7 +91,7 @@ ems_boxplot <- function(data){
 
 ems_plots <- function(data, plot_type){
   lapply(unique(data$Units), function(x){
-    dat <- data %>% filter(Units == x)
+    dat <- data %>% dplyr::filter(Units == x)
     dat %<>% dplyr::mutate(Detected = detected(Value, DetectionLimit))
     dat$Detected %<>% factor(levels = c(TRUE, FALSE))
 
@@ -114,6 +114,13 @@ ems_plots <- function(data, plot_type){
 
     gp + ggplot2::geom_boxplot(ggplot2::aes(x = Variable, y = Value))
   }) %>% setNames(unique(data$Units))
+}
+
+ems_tables <- function(data){
+  lapply(unique(data$Units), function(x){
+    dat <- data %>% filter(Units == x)
+
+  })
 }
 
 # multiplot <- function(plots = NULL, file, cols=1) {
