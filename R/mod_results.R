@@ -65,21 +65,32 @@ mod_results_server <- function(input, output, session, clean_data){
     ems_plots(clean_data(), input$plot_type)
   })
 
-  create_tabs <- function(x, plots){
-    title <- names(plots)[x]
-    tabPanel(title = title,
-             br(), plotOutput(ns(paste0("plot_", x))))
-  }
+  tables <- reactive({
+    ems_tables(clean_data())
+  })
 
-  create_tabs2 <- function(x){
+  plot_outputs <- function(x){
     tagList(
       plotOutput(ns(paste0("plot_", x))),
       br()
     )
   }
 
+  table_outputs <- function(x){
+    tagList(
+      tagList(
+        tableOutput(ns(paste0("table_", x))),
+        br()
+      )
+    )
+  }
+
   output$ui_plot <- renderUI({
-    lapply(seq_along(plots()), create_tabs2)
+    lapply(seq_along(plots()), plot_outputs)
+  })
+
+  output$ui_table <- renderUI({
+    lapply(seq_along(plots()), table_outputs)
   })
 
   observe({
@@ -89,6 +100,18 @@ mod_results_server <- function(input, output, session, clean_data){
         plotname <- paste0("plot_", my_i)
         output[[plotname]] <- renderPlot({
           plots()[my_i]
+        })
+      })
+    }
+  })
+
+  observe({
+    for (i in seq_along(tables())) {
+      local({
+        my_i <- i
+        tablename <- paste0("table_", my_i)
+        output[[tablename]] <- renderTable({
+          tables()[my_i]
         })
       })
     }
