@@ -131,12 +131,8 @@ maxcv <- function(max_cv){
   max_cv
 }
 
-ems_clean <- function(data, regular, by, sds, ignore_undetected,
+ems_clean <- function(data, by, sds, ignore_undetected,
                       large_only, remove_blanks, max_cv){
-  if(regular){
-    data$Regular <- reg_or_rep(data$SAMPLE_CLASS)
-    by <- c(by, "Regular")
-  }
   x <- try(clean_wqdata2(data, by = by, max_cv = max_cv, sds = sds,
                 ignore_undetected = ignore_undetected,
                 large_only = large_only, delete_outliers = FALSE,
