@@ -21,8 +21,8 @@ data_download_modal <- function(check, which, ns){
   modalDialog(
   tagList(
     p(glue("{x} Would you like to download it?")),
-    button(ns("yes_download"), "Yes!", icon = icon(NULL)),
-    button(ns(id), "No", icon = icon(NULL)),
+    button(ns("yes_download"), "Yes!"),
+    button(ns(id), "No"),
     br2(),
     help_output(ns("download_text")),
     shinyWidgets::progressBar(
