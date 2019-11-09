@@ -31,8 +31,9 @@ mod_about_ui <- function(id){
     column(11,
            h4(paste("Welcome!")),
            br(),
-           h5("This app is an interface to the rems R package. For more information about rems, see the ",
-              a("GitHub page.", href = "https://github.com/bcgov/rems")),
+           h5("This app is an interface to the rems and wqbc R packages. For more information, see the ",
+              a("rems", href = "https://github.com/bcgov/rems"), "and",
+              a("wqbc", href = "https://github.com/bcgov/wqbc"), "GitHub pages."),
            actionLink(ns('info_citation'), "Citation info"),
            shinyjs::hidden(div(id = ns("div_citation"),
                       h6(HTML(paste("To cite package 'rems' in publications use:<br><br>
