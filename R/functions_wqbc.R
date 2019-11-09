@@ -1,3 +1,16 @@
+summarise_wqdata <- function(x){
+  checkr::check_colnames(x, c("EMS_ID", "Variable", "Units", "Value"))
+  x %>%
+    dplyr::group_by(EMS_ID, Variable, Units) %>%
+    dplyr::summarise(n = n(),
+                     min = min(Value, na.rm = TRUE),
+                     max = max(Value, na.rm = TRUE),
+                     mean = mean(Value, na.rm = TRUE),
+                     median = median(Value, na.rm = TRUE),
+                     sd = sd(Value, na.rm = TRUE),
+                     se = se(Value))
+}
+
 clean_wqdata2 <- function (x, by = NULL, max_cv = Inf, sds = 10, ignore_undetected = TRUE,
                            large_only = TRUE, delete_outliers = FALSE, remove_blanks = FALSE,
                            messages = getOption("wqbc.messages", default = TRUE)){

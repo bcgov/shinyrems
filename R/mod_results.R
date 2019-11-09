@@ -18,13 +18,11 @@ mod_results_ui <- function(id){
   tagList(
     sidebarLayout(
       sidebarPanel(class = "sidebar",
-                   textInput(ns("plot_title"), "Plot title"),
                    dl_button(ns("dl_table"), "Download Summary Table"),
                    br2(),
                    dl_button(ns("dl_plot"), "Download Plots"),
                    uiOutput(ns("ui_dl_plot"))),
       mainPanel(tabsetPanel(selected = "Plot",
-                            id = ns("tabset_data"),
                             tabPanel(title = "Plot",
                                      br(),
                                      radioButtons(ns("plot_type"), label = "Plot type",
@@ -33,7 +31,7 @@ mod_results_ui <- function(id){
                                      uiOutput(ns("ui_plot"))),
                             tabPanel(title = "Summary Table",
                                      br(),
-                                     uiOutput(ns("ui_table_summary"))
+                                     tableOutput(ns("table"))
                                      )
       ))
     )
@@ -65,8 +63,8 @@ mod_results_server <- function(input, output, session, clean_data){
     ems_plots(clean_data(), input$plot_type)
   })
 
-  tables <- reactive({
-    ems_tables(clean_data())
+  summary_table <- reactive({
+    ems_summary_table(clean_data())
   })
 
   plot_outputs <- function(x){
@@ -76,22 +74,26 @@ mod_results_server <- function(input, output, session, clean_data){
     )
   }
 
-  table_outputs <- function(x){
-    tagList(
-      tagList(
-        tableOutput(ns(paste0("table_", x))),
-        br()
-      )
-    )
-  }
+  output$table <- renderTable({
+    summary_table()
+  })
+
+  # table_outputs <- function(x){
+  #   tagList(
+  #     tagList(
+  #       tableOutput(ns(paste0("table_", x))),
+  #       br()
+  #     )
+  #   )
+  # }
 
   output$ui_plot <- renderUI({
     lapply(seq_along(plots()), plot_outputs)
   })
 
-  output$ui_table <- renderUI({
-    lapply(seq_along(plots()), table_outputs)
-  })
+  # output$ui_table <- renderUI({
+  #   lapply(seq_along(tables()), table_outputs)
+  # })
 
   observe({
     for (i in seq_along(plots())) {
@@ -105,17 +107,41 @@ mod_results_server <- function(input, output, session, clean_data){
     }
   })
 
-  observe({
-    for (i in seq_along(tables())) {
-      local({
-        my_i <- i
-        tablename <- paste0("table_", my_i)
-        output[[tablename]] <- renderTable({
-          tables()[my_i]
-        })
-      })
-    }
-  })
+  # observe({
+  #   for (i in seq_along(tables())) {
+  #     local({
+  #       my_i <- i
+  #       tablename <- paste0("table_", my_i)
+  #       output[[tablename]] <- renderTable({
+  #         tables()[my_i]
+  #       })
+  #     })
+  #   }
+  # })
+
+  output$dl_plot <- downloadHandler(
+    filename = function(){
+      "ems_plots.zip"
+    },
+    content = function(file){
+      fs <- c()
+      tmpdir <- tempdir()
+      setwd(tempdir())
+      for (i in seq_along(plots())) {
+        path <- paste0("plot_", i, ".png")
+        fs <- c(fs, path)
+        ggplot2::ggsave(path, plots()[[i]], device = "png")
+      }
+      zip(zipfile = file, files = fs)
+    },
+    contentType = "application/zip"
+  )
+
+  output$dl_table <- downloadHandler(
+    filename = function() "ems_summary_table.csv",
+    content = function(file) {
+      readr::write_csv(summary_table(), file)
+    })
 }
 
 ## To be copied in the UI

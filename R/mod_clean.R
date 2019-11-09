@@ -33,7 +33,6 @@ mod_clean_ui <- function(id){
                             checkboxInput(ns("ignore_undetected"), "Ignore undetected", TRUE),
                             checkboxInput(ns("large_only"), "Large values only", TRUE),
                             checkboxInput(ns("delete_outliers"), "Delete outliers", FALSE))
-
                  ),
                  shinyjs::hidden(dl_button(ns("dl_clean"), "Download Clean Data"))),
     mainPanel(tabsetPanel(selected = "Clean Data",
@@ -49,7 +48,7 @@ mod_clean_ui <- function(id){
                                      delay = 5000
                                    )),
                                    shinyjs::hidden(button(ns("clear_outliers"),
-                                                          label = "Clear selected outliers",
+                                                          label = "Undo outlier selection",
                                                           icon = icon(NULL)))),
                           tabPanel(title = "Messages",
                                    br(),

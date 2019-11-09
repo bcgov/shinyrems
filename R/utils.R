@@ -9,3 +9,8 @@ template_to_df <- function(template){
   }
   x[,-1]
 }
+
+se <- function(x){
+  sd(x, na.rm=TRUE) /
+    sqrt(length(x[!is.na(x)]))
+}
