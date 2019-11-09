@@ -22,7 +22,7 @@ mod_data_ui <- function(id){
         tabPanel(title = "Get Data",
                  br(),
                  radioButtons(ns("dataset"), label = "Select dataset",
-                              choices = datasets,
+                              choices = c("2yr", "demo", "upload"),
                               selected = "demo", inline = TRUE),
                  shinyjs::hidden(div(id = ns("div_data_find"),
                                      tags$label("Select site(s) or"),
@@ -296,6 +296,7 @@ mod_data_server <- function(input, output, session){
   )
 
   template <- reactive({
+    req(input$data_type)
     type <- input$data_type
     if(type == "tidy")
       return(template_tidy)
