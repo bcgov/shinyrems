@@ -61,7 +61,10 @@ mod_data_ui <- function(id){
                                label = "Include LOWER_DEPTH and UPPER_DEPTH columns",
                                value = TRUE)
       )),
-      uiOutput(ns("ui_download"))
+      br(),
+      shinyjs::hidden(dl_button(ns("dl_raw"), "Download Raw Data")),
+      br2(),
+      shinyjs::hidden(dl_button(ns("dl_tidy"), "Download Tidy Data"))
     ),
     mainPanel(
       tabsetPanel(selected = "Tidy Data",
@@ -85,6 +88,13 @@ mod_data_ui <- function(id){
 
 mod_data_server <- function(input, output, session){
   ns <- session$ns
+
+  observe({
+    show_hide(raw_data(), "dl_raw")
+  })
+  observe({
+    show_hide(tidy_data(), "dl_tidy")
+  })
 
   ########## ---------- dataset ---------- ##########
   observeEvent(input$dataset, {
@@ -267,13 +277,6 @@ mod_data_server <- function(input, output, session){
 
   output$table_tidy <- DT::renderDT({
     ems_data_table(tidy_data())
-  })
-
-  output$ui_download <- renderUI({
-    if(is.null(raw_data()) || input$dataset == "upload") return()
-    if(input$tabset_data == "Raw Data")
-      return(dl_button(ns('dl_raw'), label = "Download Raw Data"))
-    dl_button(ns('dl_tidy'), label = "Download Tidy Data")
   })
 
   output$dl_raw <- downloadHandler(
