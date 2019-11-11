@@ -18,6 +18,9 @@ mod_results_ui <- function(id){
   tagList(
     sidebarLayout(
       sidebarPanel(class = "sidebar",
+                   tags$label("Adjust plot start and end date"),
+                   help_text("This only changes the plot x-axis, not the summary statistics."),
+                   uiOutput(ns("ui_date_range")),
                    dl_button(ns("dl_table"), "Download Summary Table"),
                    br2(),
                    dl_button(ns("dl_plot"), "Download Plots"),
@@ -60,7 +63,8 @@ mod_results_server <- function(input, output, session, clean_data){
     })
 
   plots <- reactive({
-    ems_plots(clean_data(), input$plot_type)
+    req(input$date_range)
+    ems_plots(clean_data(), input$plot_type, input$date_range)
   })
 
   summary_table <- reactive({
@@ -118,6 +122,13 @@ mod_results_server <- function(input, output, session, clean_data){
   #     })
   #   }
   # })
+
+  output$ui_date_range <- renderUI({
+    date_range <- range(clean_data()$Date, na.rm = TRUE)
+      dateRangeInput(ns("date_range"), label = NULL,
+                     start = date_range[1], end = date_range[2])
+
+  })
 
   output$dl_plot <- downloadHandler(
     filename = function(){

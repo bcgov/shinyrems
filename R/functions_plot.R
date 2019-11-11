@@ -89,7 +89,7 @@ multiple_units <- function(data){
 #   gp
 # }
 
-ems_plots <- function(data, plot_type){
+ems_plots <- function(data, plot_type, date_range){
   lapply(unique(data$Units), function(x){
     dat <- data %>% dplyr::filter(Units == x)
     dat %<>% dplyr::mutate(Detected = detected(Value, DetectionLimit))
@@ -101,16 +101,21 @@ ems_plots <- function(data, plot_type){
       ggplot2::expand_limits(y = 0) +
       ggplot2::facet_wrap(~EMS_ID, ncol = 1,
                           scales = "free_y") +
-      ggplot2::ylab(unique(dat$Units))
+      ggplot2::ylab(unique(dat$Units)) +
+      ggplot2::theme(legend.position = "bottom")
 
     if(plot_type == "scatter")
       return(gp + ggplot2::geom_point(size = 1, ggplot2::aes(alpha = Detected,
-                                                             color = Variable)))
+                                                             color = Variable)) +
+               ggplot2::scale_x_date(limits = as.Date(date_range))
+      )
 
     if(plot_type == "timeseries")
        return(gp + ggplot2::geom_point(size = 1, ggplot2::aes(alpha = Detected,
                                                               color = Variable)) +
-              ggplot2::geom_line(size = 0.3, ggplot2::aes(color = Variable)))
+              ggplot2::geom_line(size = 0.3, ggplot2::aes(color = Variable)) +
+              ggplot2::scale_x_date(limits = as.Date(date_range))
+       )
 
     gp + ggplot2::geom_boxplot(ggplot2::aes(x = Variable, y = Value))
   }) %>% setNames(unique(data$Units))
