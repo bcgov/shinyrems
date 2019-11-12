@@ -1,7 +1,7 @@
-ems_leaflet <- function(watershed_groups, sites, selected_sites, site_type){
+ems_leaflet <- function(watershed_groups, sites, site_type){
 
   id <- site_col(site_type)
-  leaf <- leaflet() %>%
+  leaflet() %>%
     addProviderTiles("Esri.WorldImagery", group = "Satelite") %>%
     addProviderTiles(leaflet::providers$CartoDB.Positron, group = "Basemap") %>%
     addLayersControl(
@@ -29,17 +29,17 @@ ems_leaflet <- function(watershed_groups, sites, selected_sites, site_type){
                       layerId = sites[[id]],
                       label = sites[[id]])
 
-  if(is.null(selected_sites)) return(leaf)
-  selected <- sites[sites[[id]] %in% selected_sites,]
-
-   leaf %>%
-    addAwesomeMarkers(data = selected,
-                      icon = icon_red,
-                      lng = ~LONGITUDE,
-                      lat = ~LATITUDE,
-                      group = "Sites",
-                      layerId = selected[[id]],
-                      label = selected[[id]])
+  # if(is.null(selected_sites)) return(leaf)
+  # selected <- sites[sites[[id]] %in% selected_sites,]
+  #
+  #  leaf %>%
+  #   addAwesomeMarkers(data = selected,
+  #                     icon = icon_red,
+  #                     lng = ~LONGITUDE,
+  #                     lat = ~LATITUDE,
+  #                     group = "Sites",
+  #                     layerId = selected[[id]],
+  #                     label = selected[[id]])
 
 }
 

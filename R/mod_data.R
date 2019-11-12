@@ -38,9 +38,9 @@ mod_data_ui <- function(id){
                                                   selected = "Parameter Name", inline = TRUE),
                                      uiOutput(ns("ui_parameter")),
                                      uiOutput(ns("ui_date")),
-                                     selectInput(ns("mdl_action"), label = "MDL Action",
-                                                 choices = c("zero", "mdl", "half", "na", "none"),
-                                                 selected = "zero"),
+                                     uiOutput(ns("ui_sample_state")),
+                                     uiOutput(ns("ui_sample_class")),
+                                     uiOutput(ns("ui_mdl_action")),
                                      br(),
                                      dl_button(ns("dl_raw"), "Download Raw Data"),
                                      br2(),
@@ -165,11 +165,37 @@ mod_data_server <- function(input, output, session){
       return(check)
     }
     if(is.null(input$site) || is.null(input$parameter))
-      return(template_to_empty(tidy_names_to_raw(template_tidy)))
+      return(empty_raw)
     req(input$date_range)
     ems_data_progress(input$dataset, input$parameter, input$site,
                       input$date_range[1], input$date_range[2],
                       input$site_type, input$param_type, lookup())
+  })
+
+  template <- reactive({
+    req(input$data_type)
+    type <- input$data_type
+    if(type == "tidy")
+      return(template_tidy)
+    tidy_names_to_raw(template_tidy)
+  })
+
+  tidy_data <- reactive({
+    req(raw_data())
+    include_depth <- TRUE
+    if(all_depth_na(raw_data())){
+      include_depth <- FALSE
+    }
+    ems_tidy(raw_data(), input$mdl_action,
+             input$data_type, input$dataset,
+             include_depth)
+  })
+
+  filter_data <- reactive({
+    req(tidy_data())
+    tidy_data() %>%
+      dplyr::filter(SAMPLE_STATE %in% input$sample_state) %>%
+      dplyr::filter(SAMPLE_CLASS %in% input$sample_class)
   })
 
   output$ui_map_site <- renderUI({
@@ -221,7 +247,7 @@ mod_data_server <- function(input, output, session){
   })
 
   output$leaf <- leaflet::renderLeaflet({
-    ems_leaflet(watershed_groups, get_site_locations(), input$site, input$site_type)
+    ems_leaflet(watershed_groups, get_site_locations(), input$site_type)
   })
 
   observe({
@@ -231,9 +257,47 @@ mod_data_server <- function(input, output, session){
 
   observeEvent(input$leaf_marker_click, {
     sites <- c(input$leaf_marker_click$id, input$site)
-
     updateSelectizeInput(session, "map_site", selected = sites)
     updateSelectizeInput(session, "site", selected = sites)
+  })
+
+  observe({
+    req(input$tabset_data == "Site Map")
+    sites <- get_site_locations()
+    id <- site_col(input$site_type)
+
+    if(is.null(input$site))
+      return(
+        leafletProxy('leaf') %>%
+          leaflet::removeShape("Sites") %>%
+          addAwesomeMarkers(data = sites,
+                            icon = icon_blue,
+                            lng = ~LONGITUDE,
+                            lat = ~LATITUDE,
+                            group = "Sites",
+                            layerId = sites[[id]],
+                            label = sites[[id]])
+      )
+
+    lookup <- lookup_location()
+    selected <- lookup[lookup[[id]] %in% input$site,]
+
+    leafletProxy('leaf') %>%
+      leaflet::removeShape("Sites") %>%
+      addAwesomeMarkers(data = sites,
+                        icon = icon_blue,
+                        lng = ~LONGITUDE,
+                        lat = ~LATITUDE,
+                        group = "Sites",
+                        layerId = sites[[id]],
+                        label = sites[[id]]) %>%
+      addAwesomeMarkers(data = selected,
+                        icon = icon_red,
+                        lng = ~LONGITUDE,
+                        lat = ~LATITUDE,
+                        group = "Sites",
+                        layerId = selected[[id]],
+                        label = selected[[id]])
   })
 
   observeEvent(input$map_site, ignoreNULL = FALSE, {
@@ -286,25 +350,34 @@ mod_data_server <- function(input, output, session){
     }
   )
 
-  template <- reactive({
-    req(input$data_type)
-    type <- input$data_type
-    if(type == "tidy")
-      return(template_tidy)
-    tidy_names_to_raw(template_tidy)
+  output$ui_sample_state <- renderUI({
+    req(input$parameter)
+    req(input$site)
+    x <- sort(unique(tidy_data()$SAMPLE_STATE))
+    select_input_x(ns("sample_state"),
+                   label = "Select values of SAMPLE_STATE to include",
+                   choices = x,
+                   selected = x)
   })
 
-  tidy_data <- reactive({
-    req(raw_data())
-    include_depth <- TRUE
-    if(all_depth_na(raw_data())){
-      include_depth <- FALSE
-    }
-    ems_tidy(raw_data(), input$mdl_action,
-             input$data_type, input$dataset,
-             include_depth)
+  output$ui_sample_class <- renderUI({
+    req(input$parameter)
+    req(input$site)
+    x <- sort(unique(tidy_data()$SAMPLE_CLASS))
+    select_input_x(ns("sample_class"),
+                   label = "Select values of SAMPLE_CLASS to include",
+                   choices = x,
+                   selected = x)
   })
 
-  return(tidy_data)
+  output$ui_mdl_action <- renderUI({
+    req(input$parameter)
+    req(input$site)
+    selectInput(ns("mdl_action"), label = "MDL Action",
+                choices = c("zero", "mdl", "half", "na", "none"),
+                selected = "zero")
+  })
+
+  return(filter_data)
 }
 
