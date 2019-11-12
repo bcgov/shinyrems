@@ -248,12 +248,55 @@ mod_data_server <- function(input, output, session){
 
   observeEvent(input$leaf_marker_click, {
     sites <- c(input$leaf_marker_click$id, input$site)
+
     updateSelectizeInput(session, "map_site", selected = sites)
     updateSelectizeInput(session, "site", selected = sites)
   })
 
-  observeEvent(input$map_site, {
-    updateSelectizeInput(session, "site", selected = input$map_site)
+  observeEvent(input$site, ignoreNULL = FALSE, {
+    sites <- get_site_locations()
+    id <- site_col(input$site_type)
+
+    if(is.null(input$site))
+      return(
+        leafletProxy('leaf') %>%
+          leaflet::removeShape("Sites") %>%
+          addAwesomeMarkers(data = sites,
+                           icon = icon_blue,
+                           lng = ~LONGITUDE,
+                           lat = ~LATITUDE,
+                           group = "Sites",
+                           layerId = sites[[id]],
+                           label = sites[[id]])
+      )
+
+    lookup <- lookup_location()
+    selected <- lookup[lookup[[id]] %in% input$site,]
+
+    leafletProxy('leaf') %>%
+      leaflet::removeShape("Sites") %>%
+      addAwesomeMarkers(data = sites,
+                       icon = icon_blue,
+                       lng = ~LONGITUDE,
+                       lat = ~LATITUDE,
+                       group = "Sites",
+                       layerId = sites[[id]],
+                       label = sites[[id]]) %>%
+      addAwesomeMarkers(data = selected,
+                       icon = icon_red,
+                       lng = ~LONGITUDE,
+                       lat = ~LATITUDE,
+                       group = "Sites",
+                       layerId = selected[[id]],
+                       label = selected[[id]])
+  })
+
+  observeEvent(input$map_site, ignoreNULL = FALSE, {
+    site <- input$map_site
+    if(is.null(site)){
+      site <- ""
+    }
+    updateSelectizeInput(session, "site", selected = site)
   })
 
   observeEvent(input$leaf_shape_click, {

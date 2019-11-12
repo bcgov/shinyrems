@@ -1,8 +1,8 @@
 site_map <- function(ns){
   tagList(
-    help_text("Click a marker to add to selected sites.
-          Select from dropdown or click polygon to zoom
-                to watershed group."),
+    help_text("Click a marker to add to selected sites. Selected sites
+    are shown in red. Select from dropdown or click polygon to zoom
+                to watershed group. "),
     uiOutput(ns("ui_wsgroup")),
     shinycssloaders::withSpinner(leaflet::leafletOutput(ns("leaf"))),
     br(),

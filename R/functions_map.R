@@ -13,7 +13,7 @@ ems_leaflet <- function(watershed_groups, sites, site_type){
     addPolygons(data = watershed_groups,
                 group = "Watershed Groups",
                 fillOpacity = 0.1, color = "black",
-                fillColor = "blue",
+                fillColor = "black",
                 weight = 1.5,
                 layerId = ~WATERSHED_GROUP_NAME,
                 label = ~WATERSHED_GROUP_NAME,
@@ -22,7 +22,8 @@ ems_leaflet <- function(watershed_groups, sites, site_type){
                                                     bringToFront = FALSE,
                                                     fillOpacity = 0.3,
                                                     fillColor = "blue")) %>%
-    addMarkers(data = sites,
+    addAwesomeMarkers(data = sites,
+                      icon = icon_blue,
                lng = ~LONGITUDE,
                lat = ~LATITUDE,
                group = "Sites",
@@ -35,4 +36,8 @@ zoom_to <- function(id, ws){
   leafletProxy(id) %>%
     setView(lng = ws$lng_center, lat = ws$lat_center, zoom = 8L)
 }
+
+icon_blue <- makeAwesomeIcon(icon= 'flag', markerColor = 'blue', iconColor = 'black')
+icon_red <- makeAwesomeIcon(icon= 'flag', markerColor = 'red', iconColor = 'black')
+
 
