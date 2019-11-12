@@ -47,10 +47,6 @@ template_tidy <- list(EMS_ID = list(example = "0124784",
                                       type = "character",
                                       description = "Variable.",
                                       check = c("")),
-                      Code = list(example = "AL-D",
-                                  type = "character",
-                                  description = "Parameter code.",
-                                  check = c("")),
                       Value = list(example = 1.1,
                                    type = "numeric",
                                    description = "Value of measurement.",
@@ -66,31 +62,7 @@ template_tidy <- list(EMS_ID = list(example = "0124784",
                       ResultLetter = list(example = "<",
                                           type = "character",
                                           description = "Relationship to detection limit.",
-                                          check = c("<", ">", "M", NA)),
-                      SAMPLE_STATE = list(example = "Fresh Water",
-                                          type = "character",
-                                          description = "Sample state.",
-                                          check = c("", NA)),
-                      SAMPLE_CLASS = list(example = "Regular",
-                                          type = "character",
-                                          description = "Sample class.",
-                                          check = c("", NA)),
-                      SAMPLE_DESCRIPTOR = list(example = "General",
-                                          type = "character",
-                                          description = "Sample descriptor.",
-                                          check = c("", NA)),
-                      LOCATION_TYPE = list(example = "RIVER,STREAM OR CREEK",
-                                          type = "character",
-                                          description = "Location type.",
-                                          check = c("", NA)),
-                      UPPER_DEPTH = list(example = 0.1,
-                                           type = "numeric",
-                                           description = "Upper Depth.",
-                                           check = c(1, NA)),
-                      LOWER_DEPTH = list(example = 0.1,
-                                         type = "numeric",
-                                         description = "Lower Depth.",
-                                         check = c(1, NA)))
+                                          check = c("<", ">", "M", NA)))
 
 raw_names <- c(EMS_ID = "EMS_ID", Station = "MONITORING_LOCATION",
                DateTime = "COLLECTION_START", Variable = "PARAMETER",
@@ -100,6 +72,9 @@ raw_names <- c(EMS_ID = "EMS_ID", Station = "MONITORING_LOCATION",
 
 datasets <- c("2yr", "historic", "all", "demo", "upload")
 
+empty_raw <- setNames(data.frame(matrix(ncol = length(names(data_2yr)),
+                                        nrow = 0)), names(data_2yr))
+
 ems_reference_tables <- list("Collection Methods" = rems::ems_coll_methods,
                              "Location Samples" = rems::ems_location_samples,
                              "Parameters" = rems::ems_parameters,
@@ -108,7 +83,7 @@ ems_reference_tables <- list("Collection Methods" = rems::ems_coll_methods,
                              "Units" = rems::ems_units)
 
 usethis::use_data(lookup_2yr, lookup_historic, lookup_demo,
-                  template_tidy, watershed_groups,
+                  template_tidy, watershed_groups, empty_raw,
                   datasets, ems_reference_tables, raw_names,
                   internal = TRUE, overwrite = TRUE)
 
