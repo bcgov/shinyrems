@@ -18,9 +18,6 @@ mod_data_ui <- function(id){
 
   sidebarLayout(
     sidebarPanel(
-      tabsetPanel(
-        tabPanel(title = "Get Data",
-                 br(),
                  radioButtons(ns("dataset"), label = "Select dataset",
                               choices = c("2yr", "demo", "upload"),
                               selected = "demo", inline = TRUE),
@@ -40,7 +37,14 @@ mod_data_ui <- function(id){
                                                   choices = c("Parameter Name", "Parameter Code"),
                                                   selected = "Parameter Name", inline = TRUE),
                                      uiOutput(ns("ui_parameter")),
-                                     uiOutput(ns("ui_date")))),
+                                     uiOutput(ns("ui_date")),
+                                     selectInput(ns("mdl_action"), label = "MDL Action",
+                                                 choices = c("zero", "mdl", "half", "na", "none"),
+                                                 selected = "zero"),
+                                     br(),
+                                     dl_button(ns("dl_raw"), "Download Raw Data"),
+                                     br2(),
+                                     dl_button(ns("dl_tidy"), "Download Tidy Data"))),
                  shinyjs::hidden(div(id = ns("div_data_upload"),
                                      radioButtons(ns("data_type"), label = "Data format",
                                                   choices = c("Tidied EMS Data" = "tidy",
@@ -52,20 +56,6 @@ mod_data_ui <- function(id){
                                                placeholder = "Upload your own dataset",
                                                accept = c('.csv')),
                                      button(ns('dl_template'), label = "Download Template")))),
-        tabPanel(title = "Tidy Data",
-                 br(),
-                 selectInput(ns("mdl_action"), label = "MDL Action",
-                             choices = c("zero", "mdl", "half", "na", "none"),
-                             selected = "zero"),
-                 checkboxInput(ns("include_depth"),
-                               label = "Include LOWER_DEPTH and UPPER_DEPTH columns",
-                               value = TRUE)
-      )),
-      br(),
-      shinyjs::hidden(dl_button(ns("dl_raw"), "Download Raw Data")),
-      br2(),
-      shinyjs::hidden(dl_button(ns("dl_tidy"), "Download Tidy Data"))
-    ),
     mainPanel(
       tabsetPanel(selected = "Tidy Data",
                   id = ns("tabset_data"),
@@ -88,13 +78,6 @@ mod_data_ui <- function(id){
 
 mod_data_server <- function(input, output, session){
   ns <- session$ns
-
-  observe({
-    show_hide(raw_data(), "dl_raw")
-  })
-  observe({
-    show_hide(tidy_data(), "dl_tidy")
-  })
 
   ########## ---------- dataset ---------- ##########
   observeEvent(input$dataset, {
@@ -181,8 +164,8 @@ mod_data_server <- function(input, output, session){
       }
       return(check)
     }
-    req(input$parameter)
-    req(input$site)
+    if(is.null(input$site) || is.null(input$parameter))
+      return(template_to_empty(tidy_names_to_raw(template_tidy)))
     req(input$date_range)
     ems_data_progress(input$dataset, input$parameter, input$site,
                       input$date_range[1], input$date_range[2],
@@ -313,8 +296,13 @@ mod_data_server <- function(input, output, session){
 
   tidy_data <- reactive({
     req(raw_data())
+    include_depth <- TRUE
+    if(all_depth_na(raw_data())){
+      include_depth <- FALSE
+    }
     ems_tidy(raw_data(), input$mdl_action,
-             input$data_type, input$dataset, input$include_depth)
+             input$data_type, input$dataset,
+             include_depth)
   })
 
   return(tidy_data)
