@@ -238,7 +238,7 @@ mod_data_server <- function(input, output, session){
   })
 
   output$leaf <- leaflet::renderLeaflet({
-    ems_leaflet(watershed_groups, get_site_locations(), input$site_type)
+    ems_leaflet(watershed_groups, get_site_locations(), input$site, input$site_type)
   })
 
   observe({
@@ -251,44 +251,6 @@ mod_data_server <- function(input, output, session){
 
     updateSelectizeInput(session, "map_site", selected = sites)
     updateSelectizeInput(session, "site", selected = sites)
-  })
-
-  observeEvent(input$site, ignoreNULL = FALSE, {
-    sites <- get_site_locations()
-    id <- site_col(input$site_type)
-
-    if(is.null(input$site))
-      return(
-        leafletProxy('leaf') %>%
-          leaflet::removeShape("Sites") %>%
-          addAwesomeMarkers(data = sites,
-                           icon = icon_blue,
-                           lng = ~LONGITUDE,
-                           lat = ~LATITUDE,
-                           group = "Sites",
-                           layerId = sites[[id]],
-                           label = sites[[id]])
-      )
-
-    lookup <- lookup_location()
-    selected <- lookup[lookup[[id]] %in% input$site,]
-
-    leafletProxy('leaf') %>%
-      leaflet::removeShape("Sites") %>%
-      addAwesomeMarkers(data = sites,
-                       icon = icon_blue,
-                       lng = ~LONGITUDE,
-                       lat = ~LATITUDE,
-                       group = "Sites",
-                       layerId = sites[[id]],
-                       label = sites[[id]]) %>%
-      addAwesomeMarkers(data = selected,
-                       icon = icon_red,
-                       lng = ~LONGITUDE,
-                       lat = ~LATITUDE,
-                       group = "Sites",
-                       layerId = selected[[id]],
-                       label = selected[[id]])
   })
 
   observeEvent(input$map_site, ignoreNULL = FALSE, {
