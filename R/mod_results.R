@@ -18,19 +18,27 @@ mod_results_ui <- function(id){
   tagList(
     sidebarLayout(
       sidebarPanel(class = "sidebar",
-                   tags$label("Adjust plot start and end date"),
-                   help_text("This only changes the plot x-axis, not the summary statistics."),
-                   uiOutput(ns("ui_date_range")),
+                   tabsetPanel(
+                     tabPanel(title = "Plot controls",
+                              br(),
+                              tags$label("Adjust plot start and end date"),
+                              help_text("This only changes the plot x-axis, not the summary statistics."),
+                              uiOutput(ns("ui_date_range")),
+                              radioButtons(ns("plot_type"), label = "Plot type",
+                                           choices = c("scatter", "timeseries", "boxplot"),
+                                           selected = "scatter", inline = TRUE)),
+                     tabPanel(title = "Rename Sites",
+                              br(),
+                              uiOutput(ns("ui_rename")),
+                              button(ns("finalise"), label = "Rename"))
+                   ),
+                   br2(),
                    dl_button(ns("dl_table"), "Download Summary Table"),
                    br2(),
-                   dl_button(ns("dl_plot"), "Download Plots"),
-                   uiOutput(ns("ui_dl_plot"))),
+                   dl_button(ns("dl_plot"), "Download Plots")),
       mainPanel(tabsetPanel(selected = "Plot",
                             tabPanel(title = "Plot",
                                      br(),
-                                     radioButtons(ns("plot_type"), label = "Plot type",
-                                                  choices = c("scatter", "timeseries", "boxplot"),
-                                                  selected = "scatter", inline = TRUE),
                                      uiOutput(ns("ui_plot"))),
                             tabPanel(title = "Summary Table",
                                      br(),
@@ -50,25 +58,13 @@ mod_results_ui <- function(id){
 mod_results_server <- function(input, output, session, clean_data){
   ns <- session$ns
 
-  output$dl_plot <- downloadHandler(
-    filename = function() "ems_plot.png",
-    content = function(file) {
-      readr::write_csv(raw_data(), file)
-    })
-
-  output$dl_table <- downloadHandler(
-    filename = function() "ems_summary_table.csv",
-    content = function(file) {
-      readr::write_csv(sumary_table(), file)
-    })
-
   plots <- reactive({
     req(input$date_range)
-    ems_plots(clean_data(), input$plot_type, input$date_range)
+    ems_plots(clean_rv$data, input$plot_type, input$date_range)
   })
 
   summary_table <- reactive({
-    ems_summary_table(clean_data())
+    ems_summary_table(clean_rv$data)
   })
 
   plot_outputs <- function(x){
@@ -153,6 +149,34 @@ mod_results_server <- function(input, output, session, clean_data){
     content = function(file) {
       readr::write_csv(summary_table(), file)
     })
+
+  clean_rv <- reactiveValues(data = NULL)
+  observe({
+    data <- clean_data()
+    data$Site_Renamed <- data$EMS_ID
+    clean_rv$data <- data
+  })
+
+  observeEvent(input$finalise, {
+    sites <- unique(clean_data()$EMS_ID)
+    data <- clean_data()
+    for(i in sites){
+      x <- input[[i]]
+      data$Site_Renamed[data$EMS_ID == i] <- x
+    }
+    clean_rv$data <- data
+  })
+
+  rename <- function(site, ns){
+    tagList(
+      textInput(ns(site), label = paste("rename", site, "to"))
+    )
+  }
+
+  output$ui_rename <- renderUI({
+    sites <- unique(clean_data()$EMS_ID)
+    lapply(sites, rename, ns)
+  })
 }
 
 ## To be copied in the UI

@@ -1,14 +1,26 @@
 summarise_wqdata <- function(x){
-  checkr::check_colnames(x, c("EMS_ID", "Variable", "Units", "Value"))
-  x %>%
-    dplyr::group_by(EMS_ID, Variable, Units) %>%
-    dplyr::summarise(n = n(),
-                     min = min(Value, na.rm = TRUE),
-                     max = max(Value, na.rm = TRUE),
-                     mean = mean(Value, na.rm = TRUE),
-                     median = median(Value, na.rm = TRUE),
-                     sd = sd(Value, na.rm = TRUE),
-                     se = se(Value))
+  checkr::check_colnames(x, c("Site_Renamed", "Variable", "Units", "Value"))
+  dt <- data.table::data.table(x)
+  if(identical(x$EMS_ID, x$Site_Renamed)){
+    data <- dt[, .(n = .N,
+                   min = min(Value, na.rm = TRUE),
+                   max = max(Value, na.rm = TRUE),
+                   mean = mean(Value, na.rm = TRUE),
+                   median = median(Value, na.rm = TRUE),
+                   sd = sd(Value, na.rm = TRUE),
+                   se = se(Value)),
+               .(EMS_ID, Variable, Units)]
+  } else {
+    data <- dt[, .(n = .N,
+                   min = min(Value, na.rm = TRUE),
+                   max = max(Value, na.rm = TRUE),
+                   mean = mean(Value, na.rm = TRUE),
+                   median = median(Value, na.rm = TRUE),
+                   sd = sd(Value, na.rm = TRUE),
+                   se = se(Value)),
+               .(Site_Renamed, Variable, Units)]
+  }
+  as.data.frame(data)
 }
 
 clean_wqdata2 <- function (x, by = NULL, max_cv = Inf, sds = 10, ignore_undetected = TRUE,

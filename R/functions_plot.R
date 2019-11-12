@@ -99,7 +99,7 @@ ems_plots <- function(data, plot_type, date_range){
       ggplot2::scale_color_discrete(drop = FALSE) +
       ggplot2::scale_alpha_discrete(range = c(1, 1/3), drop = FALSE) +
       ggplot2::expand_limits(y = 0) +
-      ggplot2::facet_wrap(~EMS_ID, ncol = 1,
+      ggplot2::facet_wrap(~Site_Renamed, ncol = 1,
                           scales = "free_y") +
       ggplot2::ylab(unique(dat$Units)) +
       ggplot2::theme(legend.position = "bottom")
