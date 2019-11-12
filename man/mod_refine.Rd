@@ -7,7 +7,7 @@
 \usage{
 mod_clean_ui(id)
 
-mod_clean_server(input, output, session, tidy_data)
+mod_clean_server(input, output, session, stand_data)
 }
 \arguments{
 \item{id}{shiny id}

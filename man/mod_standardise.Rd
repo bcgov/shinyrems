@@ -7,7 +7,7 @@
 \usage{
 mod_standardise_ui(id)
 
-mod_standardise_server(input, output, session)
+mod_standardise_server(input, output, session, tidy_data)
 }
 \arguments{
 \item{id}{shiny id}
