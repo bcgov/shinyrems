@@ -5,8 +5,7 @@ site_map <- function(ns){
                 to watershed group. "),
     uiOutput(ns("ui_wsgroup")),
     shinycssloaders::withSpinner(leaflet::leafletOutput(ns("leaf"))),
-    br(),
-    uiOutput(ns("ui_map_site"))
+    br()
   )
 }
 

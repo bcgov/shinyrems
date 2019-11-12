@@ -198,14 +198,6 @@ mod_data_server <- function(input, output, session){
       dplyr::filter(SAMPLE_CLASS %in% input$sample_class)
   })
 
-  output$ui_map_site <- renderUI({
-    select_input_x(ns("map_site"),
-                   label = "Selected Site(s)",
-                   choices = input$site,
-                   selected = input$site,
-                   width = 400)
-  })
-
   output$ui_wsgroup <- renderUI({
     selectInput(ns("wsgroup"), label = "Zoom to watershed group",
                 choices = c(sort(watershed_groups$WATERSHED_GROUP_NAME), ""),
@@ -257,7 +249,6 @@ mod_data_server <- function(input, output, session){
 
   observeEvent(input$leaf_marker_click, {
     sites <- c(input$leaf_marker_click$id, input$site)
-    updateSelectizeInput(session, "map_site", selected = sites)
     updateSelectizeInput(session, "site", selected = sites)
   })
 
@@ -298,14 +289,6 @@ mod_data_server <- function(input, output, session){
                         group = "Sites",
                         layerId = selected[[id]],
                         label = selected[[id]])
-  })
-
-  observeEvent(input$map_site, ignoreNULL = FALSE, {
-    site <- input$map_site
-    if(is.null(site)){
-      site <- ""
-    }
-    updateSelectizeInput(session, "site", selected = site)
   })
 
   observeEvent(input$leaf_shape_click, {
