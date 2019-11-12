@@ -20,8 +20,6 @@ mod_clean_ui <- function(id){
                  tabsetPanel(
                    tabPanel(title = "Clean Data",
                             br(),
-                            uiOutput(ns("ui_sample_state")),
-                            uiOutput(ns("ui_sample_class")),
                             checkboxInput(ns("remove_blanks"), "Remove blanks", value = TRUE),
                             uiOutput(ns("ui_by")),
                             numericInput(ns("max_cv"), label = "Maximum CV", value = Inf),
@@ -70,24 +68,6 @@ mod_clean_server <- function(input, output, session, stand_data){
     show_hide(clean_data(), "dl_clean")
   })
 
-  output$ui_sample_state <- renderUI({
-    req(stand_data())
-    x <- sort(unique(stand_data()$SAMPLE_STATE))
-    select_input_x(ns("sample_state"),
-                   label = "Select values of SAMPLE_STATE to include",
-                   choices = x,
-                   selected = x)
-  })
-
-  output$ui_sample_class <- renderUI({
-    req(stand_data())
-    x <- sort(unique(stand_data()$SAMPLE_CLASS))
-    select_input_x(ns("sample_class"),
-                   label = "Select values of SAMPLE_CLASS to include",
-                   choices = x,
-                   selected = x)
-  })
-
   output$ui_by <- renderUI({
     req(stand_data())
     selected <- intersect(names(stand_data()),
@@ -104,9 +84,6 @@ mod_clean_server <- function(input, output, session, stand_data){
     req(stand_data())
     data <- stand_data()
     max_cv <- maxcv(input$max_cv)
-    data <- stand_data() %>%
-      dplyr::filter(SAMPLE_STATE %in% input$sample_state) %>%
-      dplyr::filter(SAMPLE_CLASS %in% input$sample_class)
 
     withCallingHandlers({
       shinyjs::html("console_clean", "")
