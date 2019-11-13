@@ -81,7 +81,6 @@ mod_data_server <- function(input, output, session){
 
   ########## ---------- dataset ---------- ##########
   observeEvent(input$dataset, {
-    print(input$dataset)
     hide("div_data_find")
     hide("div_data_upload")
     showTab("tabset_data", target = "Site Map", session = session)
