@@ -72,8 +72,27 @@ raw_names <- c(EMS_ID = "EMS_ID", Station = "MONITORING_LOCATION",
 
 datasets <- c("2yr", "historic", "all", "demo", "upload")
 
-empty_raw <- setNames(data.frame(matrix(ncol = length(names(data_2yr)),
-                                        nrow = 0)), names(data_2yr))
+empty_df <- function(data){
+  setNames(data.frame(matrix(ncol = length(names(data)),
+                             nrow = 0)), names(data))
+}
+
+empty_raw <- empty_df(data_2yr)
+
+tidy <- rems::get_ems_data(dont_update = TRUE) %>%
+  rems::filter_ems_data(emsid = c("0121580"), parameter = c("pH")) %>%
+  wqbc::tidy_ems_data()
+
+standard <- tidy %>%
+  wqbc::standardize_wqdata()
+
+clean <- standard %>%
+  wqbc::clean_wqdata()
+
+empty_tidy <- empty_df(tidy)
+empty_standard <- empty_df(standard)
+empty_clean <- empty_df(clean %>% select(-Outlier))
+empty_outlier <- empty_df(clean)
 
 ems_reference_tables <- list("Collection Methods" = rems::ems_coll_methods,
                              "Location Samples" = rems::ems_location_samples,
@@ -84,6 +103,7 @@ ems_reference_tables <- list("Collection Methods" = rems::ems_coll_methods,
 
 usethis::use_data(lookup_2yr, lookup_historic, lookup_demo,
                   template_tidy, watershed_groups, empty_raw,
+                  empty_tidy, empty_standard, empty_clean, empty_outlier,
                   datasets, ems_reference_tables, raw_names,
                   internal = TRUE, overwrite = TRUE)
 

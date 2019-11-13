@@ -124,8 +124,12 @@ ems_tidy <- function(data, mdl_action, data_type, dataset, include_depth = TRUE)
   if(include_depth){
     cols <- c("UPPER_DEPTH", "LOWER_DEPTH")
   }
+  x <- try({
   wqbc::tidy_ems_data(data, mdl_action = mdl_action,
                       cols = cols)
+  }, silent = TRUE)
+  if(is_try_error(x)) return(empty_tidy)
+  x
 }
 
 all_depth_na <- function(data){
@@ -146,7 +150,7 @@ ems_aggregate <- function(data, by, remove_blanks, max_cv, FUN){
     last <- setdiff(names(data), c(first, "Outlier"))
     data[, c(first, last)]
     }, silent = TRUE)
-  if(is_try_error(x)) return(data.frame())
+  if(is_try_error(x)) return(empty_clean)
   x
 }
 
@@ -157,12 +161,16 @@ ems_outlier <- function(x, by = NULL, max_cv = Inf, sds = 10, ignore_undetected 
                          ignore_undetected = ignore_undetected,
                          large_only = large_only, delete_outliers = TRUE,
                          remove_blanks = remove_blanks, FUN = FUN), silent = TRUE)
-  if(is_try_error(x)) return(data.frame())
+  if(is_try_error(x)) return(empty_outlier)
   x
 }
 
 ems_standardize <- function(data, strict){
+  x <- try({
   wqbc::standardize_wqdata(data, strict)
+  }, silent = TRUE)
+  if(is_try_error(x)) return(empty_standard)
+  x
 }
 
 add_outlier_brush <- function(data, brush){

@@ -24,12 +24,7 @@ mod_outlier_ui <- function(id){
                    checkboxInput(ns("large_only"), "Large values only", TRUE),
                    checkboxInput(ns("delete_outliers"), "Remove outliers from plot", FALSE)),
       mainPanel(
-                                     help_text("Click and drag mouse over plot to manually select outliers.
-                                             Table in 'Clean Data' tab will be automatically updated."),
-                                     plotOutput(ns("plot_clean"), brush = brushOpts(
-                                       id = ns("plot_brush"),
-                                       delay = 5000
-                                     )),
+                                     uiOutput(ns("ui_plot")),
                                      shinyjs::hidden(button(ns("clear_outliers"),
                                                             label = "Undo outlier selection",
                                                             icon = icon(NULL))))
@@ -47,7 +42,6 @@ mod_outlier_server <- function(input, output, session, params){
   ns <- session$ns
 
   outlier_data <- reactive({
-    req(params)
     withCallingHandlers({
       shinyjs::html("console_clean", "")
         ems_outlier(
@@ -94,8 +88,19 @@ mod_outlier_server <- function(input, output, session, params){
     outlier_rv$data <- outlier_data()
   })
 
+  output$ui_plot <- renderUI({
+    if(nrow(outlier_data2()) < 1) return()
+    tagList(
+      help_text("Click and drag mouse over plot to manually select outliers.
+                                             Table in 'Clean Data' tab will be automatically updated."),
+      plotOutput(ns("plot_clean"), brush = brushOpts(
+        id = ns("plot_brush"),
+        delay = 5000
+      ))
+    )
+  })
+
   output$plot_clean <- renderPlot({
-    req(outlier_data2())
     wqbc::plot_timeseries(outlier_data2())
   })
 

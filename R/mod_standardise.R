@@ -18,8 +18,7 @@ mod_standardise_ui <- function(id){
   sidebarLayout(
     sidebarPanel(class = "sidebar",
                  checkboxInput(ns("strict"), "Strict matching", value = TRUE),
-                 shinyjs::hidden(dl_button(ns("dl_stand"),
-                                        "Download Standardized Data"))),
+                 dl_button(ns("dl_stand"), "Download Standardized Data")),
     mainPanel(tabsetPanel(selected = "Standardized Data",
                           tabPanel(title = "Standardized Data",
                                    uiOutput(ns("ui_table_stand"))),
@@ -40,18 +39,12 @@ mod_standardise_server <- function(input, output, session, tidy_data){
   ns <- session$ns
 
   stand_data <- reactive({
-    req(tidy_data())
-    if(nrow(tidy_data()) < 1) return()
     withCallingHandlers({
       shinyjs::html("console_stand", "")
       ems_standardize(tidy_data(), input$strict)},
     message = function(m) {
       shinyjs::html(id = "console_stand", html = HTML(paste(m$message, "<br>")), add = TRUE)
     })
-  })
-
-  observe({
-    show_hide(stand_data(), "dl_stand")
   })
 
   output$dl_stand <- downloadHandler(
@@ -61,7 +54,6 @@ mod_standardise_server <- function(input, output, session, tidy_data){
     })
 
   output$ui_table_stand <- renderUI({
-    req(stand_data())
     ems_table_output(ns('table_stand'))
   })
 

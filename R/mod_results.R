@@ -21,8 +21,6 @@ mod_results_ui <- function(id){
                    tabsetPanel(
                      tabPanel(title = "Plot controls",
                               br(),
-                              tags$label("Adjust plot start and end date"),
-                              help_text("This only changes the plot x-axis, not the summary statistics."),
                               uiOutput(ns("ui_date_range")),
                               radioButtons(ns("plot_type"), label = "Plot type",
                                            choices = c("scatter", "timeseries", "boxplot"),
@@ -78,22 +76,9 @@ mod_results_server <- function(input, output, session, clean_data){
     summary_table()
   })
 
-  # table_outputs <- function(x){
-  #   tagList(
-  #     tagList(
-  #       tableOutput(ns(paste0("table_", x))),
-  #       br()
-  #     )
-  #   )
-  # }
-
   output$ui_plot <- renderUI({
     lapply(seq_along(plots()), plot_outputs)
   })
-
-  # output$ui_table <- renderUI({
-  #   lapply(seq_along(tables()), table_outputs)
-  # })
 
   observe({
     for (i in seq_along(plots())) {
@@ -107,23 +92,15 @@ mod_results_server <- function(input, output, session, clean_data){
     }
   })
 
-  # observe({
-  #   for (i in seq_along(tables())) {
-  #     local({
-  #       my_i <- i
-  #       tablename <- paste0("table_", my_i)
-  #       output[[tablename]] <- renderTable({
-  #         tables()[my_i]
-  #       })
-  #     })
-  #   }
-  # })
-
   output$ui_date_range <- renderUI({
+    if(nrow(clean_data()) < 1) return()
     date_range <- range(clean_data()$Date, na.rm = TRUE)
+    tagList(
+      tags$label("Adjust plot start and end date"),
+      help_text("This only changes the plot x-axis, not the summary statistics."),
       dateRangeInput(ns("date_range"), label = NULL,
                      start = date_range[1], end = date_range[2])
-
+    )
   })
 
   output$dl_plot <- downloadHandler(
