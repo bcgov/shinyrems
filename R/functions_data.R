@@ -138,12 +138,25 @@ maxcv <- function(max_cv){
   max_cv
 }
 
-ems_clean <- function(data, by, sds, ignore_undetected,
-                      large_only, remove_blanks, max_cv){
+ems_aggregate <- function(data, by, remove_blanks, max_cv, FUN){
+  x <- try({
+    data <- clean_wqdata2(data, by = by, max_cv = max_cv,
+                remove_blanks = remove_blanks, FUN = FUN)
+    first <- c("Variable", "Date", by, "Value", "Units")
+    last <- setdiff(names(data), c(first, "Outlier"))
+    data[, c(first, last)]
+    }, silent = TRUE)
+  if(is_try_error(x)) return(data.frame())
+  x
+}
+
+ems_outlier <- function(x, by = NULL, max_cv = Inf, sds = 10, ignore_undetected = TRUE,
+                        large_only = TRUE, remove_blanks = FALSE,
+                        FUN = "mean"){
   x <- try(clean_wqdata2(data, by = by, max_cv = max_cv, sds = sds,
-                ignore_undetected = ignore_undetected,
-                large_only = large_only, delete_outliers = FALSE,
-                remove_blanks = remove_blanks), silent = TRUE)
+                         ignore_undetected = ignore_undetected,
+                         large_only = large_only, delete_outliers = TRUE,
+                         remove_blanks = remove_blanks, FUN = FUN), silent = TRUE)
   if(is_try_error(x)) return(data.frame())
   x
 }
@@ -159,24 +172,10 @@ add_outlier_brush <- function(data, brush){
   x
 }
 
-add_outlier_table <- function(data, rows){
-  data$Outlier[rows] <- TRUE
-  data
-}
-
-is_regular <- function(x){
-  grepl("regular", x, ignore.case = TRUE)
-}
-
-is_replicate <- function(x){
-  grepl("replicate", x, ignore.case = TRUE)
-}
-
-reg_or_rep <- function(x){
-  dplyr::case_when(is_regular(x) ~ "Regular",
-                   is_replicate(x) ~ "Replicate",
-                   TRUE ~ NA_character_)
-}
+# add_outlier_table <- function(data, rows){
+#   data$Outlier[rows] <- TRUE
+#   data
+# }
 
 tidy_names_to_raw <- function(x, names = raw_names){
   tmp <- sapply(names(x), function(y){

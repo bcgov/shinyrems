@@ -18,44 +18,44 @@ mod_data_ui <- function(id){
 
   sidebarLayout(
     sidebarPanel(
-                 radioButtons(ns("dataset"), label = "Select dataset",
-                              choices = c("2yr", "demo", "upload"),
-                              selected = "demo", inline = TRUE),
-                 shinyjs::hidden(div(id = ns("div_data_find"),
-                                     tags$label("Select site(s) or"),
-                                     actionLink(ns("search_map"), label = "find sites on map"),
-                                     checkboxInput(ns("check_permit"),
-                                                   label = "Filter by Permit Number",
-                                                   value = FALSE),
-                                     uiOutput(ns("ui_permit")),
-                                     radioButtons(ns("site_type"), label = NULL,
-                                                  choices = c("Monitoring Location", "EMS ID"),
-                                                  selected = "Monitoring Location", inline = TRUE),
-                                     uiOutput(ns("ui_site")),
-                                     tags$label("Select Parameter(s)"),
-                                     radioButtons(ns("param_type"), label = NULL,
-                                                  choices = c("Parameter Name", "Parameter Code"),
-                                                  selected = "Parameter Name", inline = TRUE),
-                                     uiOutput(ns("ui_parameter")),
-                                     uiOutput(ns("ui_date")),
-                                     uiOutput(ns("ui_sample_state")),
-                                     uiOutput(ns("ui_sample_class")),
-                                     uiOutput(ns("ui_mdl_action")),
-                                     br(),
-                                     dl_button(ns("dl_raw"), "Download Raw Data"),
-                                     br2(),
-                                     dl_button(ns("dl_tidy"), "Download Tidy Data"))),
-                 shinyjs::hidden(div(id = ns("div_data_upload"),
-                                     radioButtons(ns("data_type"), label = "Data format",
-                                                  choices = c("Tidied EMS Data" = "tidy",
-                                                              "Raw EMS Data" = "raw"),
-                                                  selected = "tidy"),
-                                     fileInput(ns("upload_data"),
-                                               buttonLabel = span(tagList(icon("upload"), "csv")),
-                                               label = "",
-                                               placeholder = "Upload your own dataset",
-                                               accept = c('.csv')),
-                                     button(ns('dl_template'), label = "Download Template")))),
+      radioButtons(ns("dataset"), label = "Select dataset",
+                   choices = c("2yr", "demo", "upload"),
+                   selected = "demo", inline = TRUE),
+      shinyjs::hidden(div(id = ns("div_data_find"),
+                          tags$label("Select site(s) or"),
+                          actionLink(ns("search_map"), label = "find sites on map"),
+                          checkboxInput(ns("check_permit"),
+                                        label = "Filter by Permit Number",
+                                        value = FALSE),
+                          uiOutput(ns("ui_permit")),
+                          radioButtons(ns("site_type"), label = NULL,
+                                       choices = c("Monitoring Location", "EMS ID"),
+                                       selected = "Monitoring Location", inline = TRUE),
+                          uiOutput(ns("ui_site")),
+                          tags$label("Select Parameter(s)"),
+                          radioButtons(ns("param_type"), label = NULL,
+                                       choices = c("Parameter Name", "Parameter Code"),
+                                       selected = "Parameter Name", inline = TRUE),
+                          uiOutput(ns("ui_parameter")),
+                          uiOutput(ns("ui_date")),
+                          uiOutput(ns("ui_sample_state")),
+                          uiOutput(ns("ui_sample_class")),
+                          uiOutput(ns("ui_mdl_action")),
+                          br(),
+                          dl_button(ns("dl_raw"), "Download Raw Data"),
+                          br2(),
+                          dl_button(ns("dl_tidy"), "Download Tidy Data"))),
+      shinyjs::hidden(div(id = ns("div_data_upload"),
+                          radioButtons(ns("data_type"), label = "Data format",
+                                       choices = c("Tidied EMS Data" = "tidy",
+                                                   "Raw EMS Data" = "raw"),
+                                       selected = "tidy"),
+                          fileInput(ns("upload_data"),
+                                    buttonLabel = span(tagList(icon("upload"), "csv")),
+                                    label = "",
+                                    placeholder = "Upload your own dataset",
+                                    accept = c('.csv')),
+                          button(ns('dl_template'), label = "Download Template")))),
     mainPanel(
       tabsetPanel(selected = "Tidy Data",
                   id = ns("tabset_data"),
@@ -81,6 +81,7 @@ mod_data_server <- function(input, output, session){
 
   ########## ---------- dataset ---------- ##########
   observeEvent(input$dataset, {
+    print(input$dataset)
     hide("div_data_find")
     hide("div_data_upload")
     showTab("tabset_data", target = "Site Map", session = session)
@@ -90,7 +91,7 @@ mod_data_server <- function(input, output, session){
       return({
         show("div_data_upload")
         hideTab("tabset_data", target = "Site Map", session = session)
-        })
+      })
     }
     if(dataset == "demo"){
       return(show("div_data_find"))
@@ -234,22 +235,40 @@ mod_data_server <- function(input, output, session){
                    min = dates[1], max = dates[2])
   })
 
+  output$ui_sample_state <- renderUI({
+    req(input$parameter)
+    req(input$site)
+    x <- sort(unique(tidy_data()$SAMPLE_STATE))
+    select_input_x(ns("sample_state"),
+                   label = "Select values of SAMPLE_STATE to include",
+                   choices = x,
+                   selected = x)
+  })
+
+  output$ui_sample_class <- renderUI({
+    req(input$parameter)
+    req(input$site)
+    x <- sort(unique(tidy_data()$SAMPLE_CLASS))
+    select_input_x(ns("sample_class"),
+                   label = "Select values of SAMPLE_CLASS to include",
+                   choices = x,
+                   selected = x)
+  })
+
+  output$ui_mdl_action <- renderUI({
+    req(input$parameter)
+    req(input$site)
+    selectInput(ns("mdl_action"), label = "MDL Action",
+                choices = c("zero", "mdl", "half", "na", "none"),
+                selected = "zero")
+  })
+
   observeEvent(input$search_map, {
     updateTabsetPanel(session, "tabset_data", selected = "Site Map")
   })
 
   output$leaf <- leaflet::renderLeaflet({
     ems_leaflet(watershed_groups, get_site_locations(), input$site_type)
-  })
-
-  observe({
-    req(input$wsgroup)
-    zoom_to("leaf", input$wsgroup)
-  })
-
-  observeEvent(input$leaf_marker_click, {
-    sites <- c(input$leaf_marker_click$id, input$site)
-    updateSelectizeInput(session, "site", selected = sites)
   })
 
   observe({
@@ -289,6 +308,16 @@ mod_data_server <- function(input, output, session){
                         group = "Sites",
                         layerId = selected[[id]],
                         label = selected[[id]])
+  })
+
+  observe({
+    req(input$wsgroup)
+    zoom_to("leaf", input$wsgroup)
+  })
+
+  observeEvent(input$leaf_marker_click, {
+    sites <- c(input$leaf_marker_click$id, input$site)
+    updateSelectizeInput(session, "site", selected = sites)
   })
 
   observeEvent(input$leaf_shape_click, {
@@ -332,34 +361,6 @@ mod_data_server <- function(input, output, session){
       readr::write_csv(template_to_df(template()), file)
     }
   )
-
-  output$ui_sample_state <- renderUI({
-    req(input$parameter)
-    req(input$site)
-    x <- sort(unique(tidy_data()$SAMPLE_STATE))
-    select_input_x(ns("sample_state"),
-                   label = "Select values of SAMPLE_STATE to include",
-                   choices = x,
-                   selected = x)
-  })
-
-  output$ui_sample_class <- renderUI({
-    req(input$parameter)
-    req(input$site)
-    x <- sort(unique(tidy_data()$SAMPLE_CLASS))
-    select_input_x(ns("sample_class"),
-                   label = "Select values of SAMPLE_CLASS to include",
-                   choices = x,
-                   selected = x)
-  })
-
-  output$ui_mdl_action <- renderUI({
-    req(input$parameter)
-    req(input$site)
-    selectInput(ns("mdl_action"), label = "MDL Action",
-                choices = c("zero", "mdl", "half", "na", "none"),
-                selected = "zero")
-  })
 
   return(filter_data)
 }

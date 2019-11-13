@@ -1,0 +1,110 @@
+# Module UI
+
+#' @title   mod_outlier_ui and mod_outlier_server
+#' @description  A shiny Module.
+#'
+#' @param id shiny id
+#' @param input internal
+#' @param output internal
+#' @param session internal
+#'
+#' @rdname mod_outlier
+#'
+#' @keywords internal
+#' @export
+#' @importFrom shiny NS tagList
+mod_outlier_ui <- function(id){
+  ns <- NS(id)
+  tagList(
+    sidebarLayout(
+      sidebarPanel(class = "sidebar",
+                   numericInput(ns("sds"), label = "Number of standard deviations",
+                                value = 10),
+                   checkboxInput(ns("ignore_undetected"), "Ignore undetected", TRUE),
+                   checkboxInput(ns("large_only"), "Large values only", TRUE),
+                   checkboxInput(ns("delete_outliers"), "Remove outliers from plot", FALSE)),
+      mainPanel(
+                                     help_text("Click and drag mouse over plot to manually select outliers.
+                                             Table in 'Clean Data' tab will be automatically updated."),
+                                     plotOutput(ns("plot_clean"), brush = brushOpts(
+                                       id = ns("plot_brush"),
+                                       delay = 5000
+                                     )),
+                                     shinyjs::hidden(button(ns("clear_outliers"),
+                                                            label = "Undo outlier selection",
+                                                            icon = icon(NULL))))
+      )
+    )
+}
+
+# Module Server
+
+#' @rdname mod_outlier
+#' @export
+#' @keywords internal
+
+mod_outlier_server <- function(input, output, session, params){
+  ns <- session$ns
+
+  outlier_data <- reactive({
+    req(params)
+    withCallingHandlers({
+      shinyjs::html("console_clean", "")
+        ems_outlier(
+          by = params()$by,
+          max_cv = params()$max_cv,
+          remove_blanks = params()$remove_blanks,
+          FUN = params()$fun,
+          sds = input$sds,
+          ignore_undetected = input$ignore_undetected,
+          large_only = input$large_only)},
+      message = function(m) {
+        shinyjs::html(id = "console_clean", html = HTML(paste(m$message, "<br>")), add = TRUE)
+      })
+  })
+
+  outlier_rv <- reactiveValues(data = NULL)
+  observe({
+    outlier_rv$data <- outlier_data()
+  })
+
+  # observeEvent(input$table_clean_rows_selected, {
+  #   clean_rv$data <- add_outlier_table(clean_rv$data, input$table_clean_rows_selected)
+  # })
+
+  observeEvent(input$plot_brush, {
+    outlier_rv$data <- add_outlier_brush(outlier_rv$data, input$plot_brush)
+  })
+
+  outlier_data2 <- reactive({
+    if(input$delete_outliers){
+      return(outlier_rv$data[!outlier_rv$data$Outlier,])
+    }
+    outlier_rv$data
+  })
+
+  observe({
+    req(outlier_rv$data)
+    if(all(outlier_rv$data$Outlier == outlier_data()$Outlier))
+      return(shinyjs::hide("clear_outliers"))
+    shinyjs::show("clear_outliers")
+  })
+
+  observeEvent(input$clear_outliers, {
+    outlier_rv$data <- outlier_data()
+  })
+
+  output$plot_clean <- renderPlot({
+    req(outlier_data2())
+    wqbc::plot_timeseries(outlier_data2())
+  })
+
+  return(outlier_data2)
+}
+
+## To be copied in the UI
+# mod_outlier_ui("outlier_ui_1")
+
+## To be copied in the server
+# callModule(mod_outlier_server, "outlier_ui_1")
+

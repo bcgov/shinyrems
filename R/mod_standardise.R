@@ -61,8 +61,7 @@ mod_standardise_server <- function(input, output, session, tidy_data){
     })
 
   output$ui_table_stand <- renderUI({
-    req(stand_data)
-    ems_data_table(stand_data())
+    req(stand_data())
     ems_table_output(ns('table_stand'))
   })
 
