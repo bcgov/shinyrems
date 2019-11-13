@@ -15,11 +15,16 @@ lookup <- function(data){
                    TO_DATE = max(COLLECTION_START, na.rm = TRUE)),
                .(EMS_ID, MONITORING_LOCATION, PERMIT,
                  PARAMETER_CODE, PARAMETER, LONGITUDE, LATITUDE)]
-  as.data.frame(lookup)
+  df <- as.data.frame(lookup)
+  df$MONITORING_LOCATION <- iconv(df$MONITORING_LOCATION,
+                                  from = 'UTF-8', to = 'ASCII//TRANSLIT')
+  df$PARAMETER <- iconv(df$PARAMETER,
+                                  from = 'UTF-8', to = 'ASCII//TRANSLIT')
+  df
 }
 
 lookup_2yr <- lookup(data_2yr)
-lookup_historic <- lookup(data_historic)
+lookup_historic2 <- lookup(data_historic)
 lookup_demo <- lookup(shinyrems::ems_demo_data)
 
 watershed_groups <- st_read("~/Poisson/Data/spatial/fwa/gdb/FWA_BC.gdb", layer = "FWA_WATERSHED_GROUPS_POLY")

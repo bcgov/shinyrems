@@ -19,7 +19,7 @@ mod_data_ui <- function(id){
   sidebarLayout(
     sidebarPanel(
       radioButtons(ns("dataset"), label = "Select dataset",
-                   choices = c("2yr", "demo", "upload"),
+                   choices = datasets,
                    selected = "demo", inline = TRUE),
       shinyjs::hidden(div(id = ns("div_data_find"),
                           tags$label("Select site(s) or"),
@@ -210,9 +210,13 @@ mod_data_server <- function(input, output, session){
                    selected = "")
   })
 
+  fix_txt <- function(x){
+    gsub("\x92", "'", x)
+  }
+
   output$ui_site <- renderUI({
-    select_input_x(ns("site"), label = NULL,
-                   choices = c(get_sites(), ""),
+      select_input_x(ns("site"), label = NULL,
+                   choices = get_sites(),
                    selected = "")
   })
 
