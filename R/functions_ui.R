@@ -19,7 +19,7 @@ data_download_modal <- function(check, which, ns){
 
   modalDialog(
   tagList(
-    p(glue("{x} Would you like to download it?")),
+    p(glue("{x} Would you like to download it? (this might take a while...)")),
     button(ns("yes_download"), "Yes!"),
     button(ns(id), "No"),
     br2(),
