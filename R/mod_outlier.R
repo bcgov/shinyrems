@@ -38,23 +38,37 @@ mod_outlier_ui <- function(id){
 #' @export
 #' @keywords internal
 
-mod_outlier_server <- function(input, output, session, params){
+mod_outlier_server <- function(input, output, session, params, stand_data){
   ns <- session$ns
 
   outlier_data <- reactive({
-    withCallingHandlers({
-      shinyjs::html("console_clean", "")
-        ems_outlier(
-          by = params()$by,
-          max_cv = params()$max_cv,
-          remove_blanks = params()$remove_blanks,
-          FUN = params()$fun,
-          sds = input$sds,
-          ignore_undetected = input$ignore_undetected,
-          large_only = input$large_only)},
-      message = function(m) {
-        shinyjs::html(id = "console_clean", html = HTML(paste(m$message, "<br>")), add = TRUE)
-      })
+    max_cv <- maxcv(params$max_cv())
+    print(max_cv)
+    if(nrow(stand_data()) < 1) return()
+    ems_outlier(
+            x = stand_data(),
+            by = params$by(),
+            max_cv = max_cv,
+            remove_blanks = params$remove_blanks(),
+            FUN = params$fun(),
+            sds = input$sds,
+            ignore_undetected = input$ignore_undetected,
+            large_only = input$large_only)
+    # print(x)
+    # withCallingHandlers({
+    #   shinyjs::html("console_clean", "")
+    #     ems_outlier(
+    #       x = stand_data(),
+    #       by = params$by(),
+    #       max_cv = max_cv,
+    #       remove_blanks = params$remove_blanks(),
+    #       FUN = params$fun(),
+    #       sds = input$sds,
+    #       ignore_undetected = input$ignore_undetected,
+    #       large_only = input$large_only)},
+    #   message = function(m) {
+    #     shinyjs::html(id = "console_clean", html = HTML(paste(m$message, "<br>")), add = TRUE)
+    #   })
   })
 
   outlier_rv <- reactiveValues(data = NULL)
@@ -89,6 +103,7 @@ mod_outlier_server <- function(input, output, session, params){
   })
 
   output$ui_plot <- renderUI({
+    print(outlier_data2())
     if(nrow(outlier_data2()) < 1) return()
     tagList(
       help_text("Click and drag mouse over plot to manually select outliers.
