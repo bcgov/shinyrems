@@ -43,9 +43,7 @@ mod_outlier_server <- function(input, output, session, params, stand_data){
 
   outlier_data <- reactive({
     req(stand_data())
-    # if(nrow(stand_data()) < 1) return()
     req(params$by())
-    waiter::show_butler()
     max_cv <- maxcv(params$max_cv())
     x <- ems_outlier(
       x = stand_data(),
@@ -56,7 +54,6 @@ mod_outlier_server <- function(input, output, session, params, stand_data){
       sds = input$sds,
       ignore_undetected = input$ignore_undetected,
       large_only = input$large_only)
-    waiter::hide_butler()
     x
   })
 
