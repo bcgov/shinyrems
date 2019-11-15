@@ -39,7 +39,7 @@ mod_data_ui <- function(id){
                           uiOutput(ns("ui_parameter")),
                           uiOutput(ns("ui_date")),
                           uiOutput(ns("ui_get")),
-                          br2(),
+                          br(),
                           uiOutput(ns("ui_sample_state")),
                           uiOutput(ns("ui_sample_class")),
                           uiOutput(ns("ui_mdl_action")),
@@ -353,7 +353,7 @@ mod_data_server <- function(input, output, session){
   output$dl_raw <- downloadHandler(
     filename = function() "ems_raw_data.csv",
     content = function(file) {
-      readr::write_csv(raw_data(), file)
+      readr::write_csv(raw_rv$data, file)
     })
 
   output$dl_tidy <- downloadHandler(
