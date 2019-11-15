@@ -62,7 +62,6 @@ mod_clean_server <- function(input, output, session, stand_data){
   )
 
   clean_data <- reactive({
-    if(nrow(stand_data()) < 1) return()
     waiter::show_butler()
     withCallingHandlers({
       shinyjs::html("console_clean", "")

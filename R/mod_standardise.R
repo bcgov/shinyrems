@@ -39,7 +39,6 @@ mod_standardise_server <- function(input, output, session, tidy_data){
   ns <- session$ns
 
   stand_data <- reactive({
-    if(nrow(tidy_data()) < 1) return()
     waiter::show_butler()
     withCallingHandlers({
       shinyjs::html("console_stand", "")

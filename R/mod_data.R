@@ -205,7 +205,7 @@ mod_data_server <- function(input, output, session){
   })
 
   filter_data <- reactive({
-    req(tidy_data())
+    if(nrow(tidy_data()) < 1) return(empty_tidy)
     tidy_data() %>%
       dplyr::filter(SAMPLE_STATE %in% input$sample_state) %>%
       dplyr::filter(SAMPLE_CLASS %in% input$sample_class)
