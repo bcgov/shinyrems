@@ -15,6 +15,7 @@ app_ui <- function() {
 
   tagList(
     shinyjs::useShinyjs(),
+    waiter::use_butler(),
     css_navbar(text_selected_color = "#5bc0de"),
     # css_hide_errors(),
     navbarPage(title =  "EMS Database", selected = '1. Get data',

@@ -24,12 +24,12 @@ mod_outlier_ui <- function(id){
                    checkboxInput(ns("large_only"), "Large values only", TRUE),
                    checkboxInput(ns("delete_outliers"), "Remove outliers from plot", FALSE)),
       mainPanel(
-                                     uiOutput(ns("ui_plot")),
-                                     shinyjs::hidden(button(ns("clear_outliers"),
-                                                            label = "Undo outlier selection",
-                                                            icon = icon(NULL))))
-      )
+        uiOutput(ns("ui_plot")),
+        shinyjs::hidden(button(ns("clear_outliers"),
+                               label = "Undo outlier selection",
+                               icon = icon(NULL))))
     )
+  )
 }
 
 # Module Server
@@ -42,33 +42,22 @@ mod_outlier_server <- function(input, output, session, params, stand_data){
   ns <- session$ns
 
   outlier_data <- reactive({
+    req(stand_data())
+    # if(nrow(stand_data()) < 1) return()
+    req(params$by())
+    waiter::show_butler()
     max_cv <- maxcv(params$max_cv())
-    print(max_cv)
-    if(nrow(stand_data()) < 1) return()
-    ems_outlier(
-            x = stand_data(),
-            by = params$by(),
-            max_cv = max_cv,
-            remove_blanks = params$remove_blanks(),
-            FUN = params$fun(),
-            sds = input$sds,
-            ignore_undetected = input$ignore_undetected,
-            large_only = input$large_only)
-    # print(x)
-    # withCallingHandlers({
-    #   shinyjs::html("console_clean", "")
-    #     ems_outlier(
-    #       x = stand_data(),
-    #       by = params$by(),
-    #       max_cv = max_cv,
-    #       remove_blanks = params$remove_blanks(),
-    #       FUN = params$fun(),
-    #       sds = input$sds,
-    #       ignore_undetected = input$ignore_undetected,
-    #       large_only = input$large_only)},
-    #   message = function(m) {
-    #     shinyjs::html(id = "console_clean", html = HTML(paste(m$message, "<br>")), add = TRUE)
-    #   })
+    x <- ems_outlier(
+      x = stand_data(),
+      by = params$by(),
+      max_cv = max_cv,
+      remove_blanks = params$remove_blanks(),
+      FUN = params$fun(),
+      sds = input$sds,
+      ignore_undetected = input$ignore_undetected,
+      large_only = input$large_only)
+    waiter::hide_butler()
+    x
   })
 
   outlier_rv <- reactiveValues(data = NULL)
@@ -116,7 +105,10 @@ mod_outlier_server <- function(input, output, session, params, stand_data){
   })
 
   output$plot_clean <- renderPlot({
-    wqbc::plot_timeseries(outlier_data2())
+    waiter::show_butler()
+    p <- wqbc::plot_timeseries(outlier_data2())
+    waiter::hide_butler()
+    p
   })
 
   return(outlier_data2)

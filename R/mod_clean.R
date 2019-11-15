@@ -46,7 +46,7 @@ mod_clean_server <- function(input, output, session, stand_data){
   ns <- session$ns
 
   output$ui_by <- renderUI({
-    req(stand_data())
+    if(nrow(stand_data()) < 1) return()
     selected <- intersect(names(stand_data()),
                      c("EMS_ID", "UPPER_DEPTH", "LOWER_DEPTH"))
     optional <- intersect(names(stand_data()),
@@ -62,18 +62,20 @@ mod_clean_server <- function(input, output, session, stand_data){
   )
 
   clean_data <- reactive({
-    shiny::withProgress(message = paste("Cleaning data..."),
-                        value = 0.5, {
+    if(nrow(stand_data()) < 1) return()
+    waiter::show_butler()
     withCallingHandlers({
       shinyjs::html("console_clean", "")
-      ems_aggregate(stand_data(),
+      x <- ems_aggregate(stand_data(),
                 by = input$by,
                 remove_blanks = input$remove_blanks,
                 max_cv = max_cv(),
                 FUN = input$fun)},
       message = function(m) {
         shinyjs::html(id = "console_clean", html = HTML(paste(m$message, "<br>")), add = TRUE)
-      })})
+      })
+    waiter::hide_butler()
+    x
   })
 
   output$ui_table_clean <- renderUI({

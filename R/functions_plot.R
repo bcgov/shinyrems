@@ -18,7 +18,7 @@ multiple_units <- function(data){
   length(unique(data$Units)) > 1
 }
 
-ems_plots <- function(data, plot_type, date_range){
+ems_plots <- function(data, plot_type, geom, date_range){
   lapply(unique(data$Units), function(x){
     dat <- data %>% dplyr::filter(Units == x)
     dat %<>% dplyr::mutate(Detected = detected(Value, DetectionLimit))
@@ -26,28 +26,29 @@ ems_plots <- function(data, plot_type, date_range){
 
     gp <- ggplot2::ggplot(dat, ggplot2::aes(x = Date, y = Value)) +
       ggplot2::scale_color_discrete(drop = FALSE) +
-      ggplot2::scale_alpha_discrete(range = c(1, 1/3), drop = FALSE) +
+      # ggplot2::scale_alpha_discrete(range = c(1, 1/3), drop = FALSE) +
       ggplot2::expand_limits(y = 0) +
-      ggplot2::facet_wrap(~Site_Renamed, ncol = 1,
+      ggplot2::facet_wrap(~Variable, ncol = 1,
                           scales = "free_y") +
       ggplot2::ylab(unique(dat$Units)) +
       ggplot2::theme(legend.position = "bottom")
 
-    if(plot_type == "scatter")
-      return(gp + ggplot2::geom_point(size = 1, ggplot2::aes(alpha = Detected,
-                                                             color = Variable)) +
-               ggplot2::scale_x_date(limits = as.Date(date_range))
-      )
+    if(plot_type == "scatter"){
+      if("show points" %in% geom){
+        gp <- gp + ggplot2::geom_point(size = 1.5, ggplot2::aes(shape = Detected,
+                                                        color = Site_Renamed)) +
+          ggplot2::scale_x_date(limits = as.Date(date_range))
+      }
+      if("show lines" %in% geom){
+        gp <- gp + ggplot2::geom_line(size = 0.3, ggplot2::aes(color = Site_Renamed))
+      }
+    }
 
-    if(plot_type == "timeseries")
-       return(gp + ggplot2::geom_point(size = 1, ggplot2::aes(alpha = Detected,
-                                                              color = Variable)) +
-              ggplot2::geom_line(size = 0.3, ggplot2::aes(color = Variable)) +
-              ggplot2::scale_x_date(limits = as.Date(date_range))
-       )
-
-    gp + ggplot2::geom_boxplot(ggplot2::aes(x = Variable, y = Value))
-  }) %>% setNames(unique(data$Units))
+    if(plot_type == "boxplot"){
+      gp + ggplot2::geom_boxplot(ggplot2::aes(x = Variable, y = Value))
+    }
+    gp
+   }) %>% setNames(unique(data$Units))
 }
 
 ems_summary_table <- function(data){

@@ -46,3 +46,16 @@ help_output <- function(id){
   div(textOutput(id),
       style = "color: grey;")
 }
+
+plot_outputs <- function(x, ns){
+  tagList(
+    plotOutput(ns(paste0("plot_", x))),
+    br()
+  )
+}
+
+rename_inputs <- function(site, ns){
+  tagList(
+    textInput(ns(site), label = paste("rename", site, "to"))
+  )
+}

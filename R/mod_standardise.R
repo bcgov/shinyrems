@@ -39,12 +39,16 @@ mod_standardise_server <- function(input, output, session, tidy_data){
   ns <- session$ns
 
   stand_data <- reactive({
+    if(nrow(tidy_data()) < 1) return()
+    waiter::show_butler()
     withCallingHandlers({
       shinyjs::html("console_stand", "")
-      ems_standardize(tidy_data(), input$strict)},
+      x <- ems_standardize(tidy_data(), input$strict)},
     message = function(m) {
       shinyjs::html(id = "console_stand", html = HTML(paste(m$message, "<br>")), add = TRUE)
     })
+    waiter::hide_butler()
+    x
   })
 
   output$dl_stand <- downloadHandler(

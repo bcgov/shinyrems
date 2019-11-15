@@ -167,9 +167,12 @@ mod_data_server <- function(input, output, session){
     if(is.null(input$site) || is.null(input$parameter))
       return(empty_raw)
     req(input$date_range)
-    ems_data_progress(input$dataset, input$parameter, input$site,
+    waiter::show_butler()
+    x <- ems_data_progress(input$dataset, input$parameter, input$site,
                       input$date_range[1], input$date_range[2],
                       input$site_type, input$param_type, lookup())
+    waiter::hide_butler()
+    x
   })
 
   template <- reactive({
@@ -210,13 +213,9 @@ mod_data_server <- function(input, output, session){
                    selected = "")
   })
 
-  fix_txt <- function(x){
-    gsub("\x92", "'", x)
-  }
-
   output$ui_site <- renderUI({
       select_input_x(ns("site"), label = NULL,
-                   choices = get_sites(),
+                   choices = c(get_sites(), ""),
                    selected = "")
   })
 

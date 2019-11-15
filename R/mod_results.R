@@ -23,8 +23,11 @@ mod_results_ui <- function(id){
                               br(),
                               uiOutput(ns("ui_date_range")),
                               radioButtons(ns("plot_type"), label = "Plot type",
-                                           choices = c("scatter", "timeseries", "boxplot"),
-                                           selected = "scatter", inline = TRUE)),
+                                           choices = c("scatter", "boxplot"),
+                                           selected = "scatter", inline = TRUE),
+                              shinyjs::hidden(checkboxGroupInput(ns("geom"), label = NULL,
+                                                 choices = c("show lines", "show points"),
+                                                 selected = c("show points", "show lines"), inline = TRUE))),
                      tabPanel(title = "Rename Sites",
                               br(),
                               uiOutput(ns("ui_rename")),
@@ -56,31 +59,37 @@ mod_results_ui <- function(id){
 mod_results_server <- function(input, output, session, clean_data){
   ns <- session$ns
 
+  observe({
+    if(input$plot_type == "scatter"){
+      show("geom")
+    } else {
+      hide("geom")
+    }
+  })
+
   plots <- reactive({
     req(input$date_range)
-    ems_plots(clean_rv$data, input$plot_type, input$date_range)
+    ems_plots(clean_rv$data, input$plot_type, input$geom, input$date_range)
   })
 
   summary_table <- reactive({
-    ems_summary_table(clean_rv$data)
+    waiter::show_butler()
+    x <- ems_summary_table(clean_rv$data)
+    waiter::hide_butler()
+    x
   })
-
-  plot_outputs <- function(x){
-    tagList(
-      plotOutput(ns(paste0("plot_", x))),
-      br()
-    )
-  }
 
   output$table <- renderTable({
     summary_table()
   })
 
   output$ui_plot <- renderUI({
-    lapply(seq_along(plots()), plot_outputs)
+    lapply(seq_along(plots()), plot_outputs, ns)
   })
 
   observe({
+    req(plots())
+    waiter::show_butler()
     for (i in seq_along(plots())) {
       local({
         my_i <- i
@@ -90,14 +99,17 @@ mod_results_server <- function(input, output, session, clean_data){
         })
       })
     }
+    waiter::hide_butler()
   })
 
   output$ui_date_range <- renderUI({
+    req(clean_data())
     if(nrow(clean_data()) < 1) return()
     date_range <- range(clean_data()$Date, na.rm = TRUE)
     tagList(
       tags$label("Adjust plot start and end date"),
-      help_text("This only changes the plot x-axis, not the summary statistics."),
+      help_text("This only changes the plot x-axis,
+                not the underlying data and summary table."),
       dateRangeInput(ns("date_range"), label = NULL,
                      start = date_range[1], end = date_range[2])
     )
@@ -144,15 +156,9 @@ mod_results_server <- function(input, output, session, clean_data){
     clean_rv$data <- data
   })
 
-  rename <- function(site, ns){
-    tagList(
-      textInput(ns(site), label = paste("rename", site, "to"))
-    )
-  }
-
   output$ui_rename <- renderUI({
     sites <- unique(clean_data()$EMS_ID)
-    lapply(sites, rename, ns)
+    lapply(sites, rename_inputs, ns)
   })
 }
 

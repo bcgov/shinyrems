@@ -107,13 +107,11 @@ ems_data_progress <- function(dataset, parameter,
 
   parameter <- translate_parameter(parameter, lookup, param_type)
   site <- translate_site(site, lookup, site_type)
-  shiny::withProgress(message = paste("Retrieving data..."),
-                      value = 0.5, {
                         ems_data(dataset = dataset,
                                  param_code = parameter,
                                  emsid = site,
                                  from_date = from_date,
-                                 to_date = to_date)})
+                                 to_date = to_date)
 }
 
 ems_tidy <- function(data, mdl_action, data_type, dataset, include_depth = TRUE){
