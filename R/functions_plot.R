@@ -18,7 +18,10 @@ multiple_units <- function(data){
   length(unique(data$Units)) > 1
 }
 
-ems_plots <- function(data, plot_type, geom, date_range){
+ems_plots <- function(data, plot_type, geom, date_range,
+                      point_size, line_size,
+                      facet, colour){
+
   lapply(unique(data$Units), function(x){
     dat <- data %>% dplyr::filter(Units == x)
     dat %<>% dplyr::mutate(Detected = detected(Value, DetectionLimit))
@@ -26,21 +29,21 @@ ems_plots <- function(data, plot_type, geom, date_range){
 
     gp <- ggplot2::ggplot(dat, ggplot2::aes(x = Date, y = Value)) +
       ggplot2::scale_color_discrete(drop = FALSE) +
-      # ggplot2::scale_alpha_discrete(range = c(1, 1/3), drop = FALSE) +
       ggplot2::expand_limits(y = 0) +
-      ggplot2::facet_wrap(~Variable, ncol = 1,
+      ggplot2::facet_wrap(facet, ncol = 1,
                           scales = "free_y") +
       ggplot2::ylab(unique(dat$Units)) +
       ggplot2::theme(legend.position = "bottom")
 
     if(plot_type == "scatter"){
       if("show points" %in% geom){
-        gp <- gp + ggplot2::geom_point(size = 1.5, ggplot2::aes(shape = Detected,
-                                                        color = Site_Renamed)) +
+        gp <- gp + ggplot2::geom_point(size = point_size,
+                                       ggplot2::aes_string(shape = "Detected",
+                                                    color = colour)) +
           ggplot2::scale_x_date(limits = as.Date(date_range))
       }
       if("show lines" %in% geom){
-        gp <- gp + ggplot2::geom_line(size = 0.3, ggplot2::aes(color = Site_Renamed))
+        gp <- gp + ggplot2::geom_line(size = line_size, ggplot2::aes_string(color = colour))
       }
     }
 

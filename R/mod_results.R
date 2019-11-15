@@ -18,23 +18,23 @@ mod_results_ui <- function(id){
   tagList(
     sidebarLayout(
       sidebarPanel(class = "sidebar",
-                   tabsetPanel(
-                     tabPanel(title = "Plot controls",
-                              br(),
-                              uiOutput(ns("ui_date_range")),
-                              radioButtons(ns("plot_type"), label = "Plot type",
-                                           choices = c("scatter", "boxplot"),
-                                           selected = "scatter", inline = TRUE),
-                              shinyjs::hidden(checkboxGroupInput(ns("geom"), label = NULL,
-                                                 choices = c("show lines", "show points"),
-                                                 selected = c("show points", "show lines"), inline = TRUE))),
-                     tabPanel(title = "Rename Sites",
-                              br(),
-                              uiOutput(ns("ui_rename")),
-                              button(ns("finalise"), label = "Rename"))
+                   uiOutput(ns("ui_date_range")),
+                   uiOutput(ns("ui_type")),
+                   fillRow(height = 75,
+                     numericInput(ns("point_size"), label = "Point size", value = 1.5,
+                                  min = 0.1, max = 10),
+                     numericInput(ns("line_size"), label = "Line size", value = 0.3,
+                                  min = 0.1, max = 10)
                    ),
+                   fillRow(height = 75,
+                           uiOutput(ns("ui_facet")),
+                           uiOutput(ns("ui_colour"))),
+                   actionLink(ns("rename"), "Rename sites"),
+                   shinyjs::hidden(div(
+                     uiOutput(ns("ui_rename"))
+                   )),
                    br2(),
-                   dl_button(ns("dl_table"), "Download Summary Table"),
+                   dl_button(ns("dl_table"), "Download Table"),
                    br2(),
                    dl_button(ns("dl_plot"), "Download Plots")),
       mainPanel(tabsetPanel(selected = "Plot",
@@ -60,6 +60,7 @@ mod_results_server <- function(input, output, session, clean_data){
   ns <- session$ns
 
   observe({
+    req(input$plot_type)
     if(input$plot_type == "scatter"){
       show("geom")
     } else {
@@ -69,7 +70,12 @@ mod_results_server <- function(input, output, session, clean_data){
 
   plots <- reactive({
     req(input$date_range)
-    ems_plots(clean_rv$data, input$plot_type, input$geom, input$date_range)
+    req(input$facet)
+    req(input$colour)
+    ems_plots(clean_rv$data, input$plot_type,
+              input$geom, input$date_range,
+              input$point_size, input$line_size,
+              input$facet, input$colour)
   })
 
   summary_table <- reactive({
@@ -113,6 +119,34 @@ mod_results_server <- function(input, output, session, clean_data){
       dateRangeInput(ns("date_range"), label = NULL,
                      start = date_range[1], end = date_range[2])
     )
+  })
+
+  output$ui_type <- renderUI({
+    tagList(
+      radioButtons(ns("plot_type"), label = "Plot type",
+                   choices = c("scatter", "boxplot"),
+                   selected = "scatter", inline = TRUE),
+      shinyjs::hidden(checkboxGroupInput(ns("geom"), label = NULL,
+                                         choices = c("show lines", "show points"),
+                                         selected = c("show points", "show lines"),
+                                         inline = TRUE))
+    )
+  })
+
+  output$ui_facet <- renderUI({
+    data <- clean_rv$data
+    x <- sort(intersect(names(data), c("Variable", "EMS_ID")))
+    selectInput(ns("facet"), "Facet by",
+                choices = x,
+                selected = "Variable")
+  })
+
+  output$ui_colour <- renderUI({
+    data <- clean_rv$data
+    x <- sort(intersect(names(data), c("Variable", "EMS_ID", "EMS_ID_Renamed")))
+    selectInput(ns("colour"), "Colour by",
+                choices = x,
+                selected = x[1])
   })
 
   output$dl_plot <- downloadHandler(
