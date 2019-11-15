@@ -157,6 +157,7 @@ ems_aggregate <- function(data, by, remove_blanks, max_cv, FUN){
 ems_outlier <- function(x, by = NULL, max_cv = Inf, sds = 10, ignore_undetected = TRUE,
                         large_only = TRUE, remove_blanks = FALSE,
                         FUN = "mean"){
+  x <- try({
   clean_wqdata2(x = x,
                 by = by,
                 max_cv = max_cv,
@@ -164,8 +165,9 @@ ems_outlier <- function(x, by = NULL, max_cv = Inf, sds = 10, ignore_undetected 
                 ignore_undetected = ignore_undetected,
                 large_only = large_only,
                 remove_blanks = remove_blanks,
-                FUN = FUN)
-
+                FUN = FUN)})
+    if(is_try_error(x)) return(NULL)
+    x
 }
 
 ems_standardize <- function(data, strict){

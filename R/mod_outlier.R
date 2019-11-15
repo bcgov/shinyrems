@@ -103,7 +103,7 @@ mod_outlier_server <- function(input, output, session, params, stand_data){
   })
 
   output$ui_plot <- renderUI({
-    print(outlier_data2())
+    req(outlier_data2())
     if(nrow(outlier_data2()) < 1) return()
     tagList(
       help_text("Click and drag mouse over plot to manually select outliers.
