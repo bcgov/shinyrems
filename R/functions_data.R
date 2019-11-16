@@ -11,30 +11,10 @@
 # See the License for the specific language governing permissions and limitations under the License.
 
 ########## ---------- lookups ---------- ##########
-run_mode_lookup <- function(run_mode){
-  switch(run_mode,
-         "2yr" = lookup_2yr,
-         "historic" = lookup_historic,
-         "demo" = lookup_demo)
-}
-
-run_mode_lookup_location <- function(run_mode){
-  switch(run_mode,
-         "2yr" = lookup_2yr_location,
-         "historic" = lookup_historic_location,
-         "demo" = lookup_demo_location)
-}
-
 site_col <- function(site_type){
   if(site_type == "EMS ID")
     return("EMS_ID")
   "MONITORING_LOCATION"
-}
-
-param_col <- function(param_type){
-  if(param_type == "Parameter Code")
-    return("PARAMETER_CODE")
-  "PARAMETER"
 }
 
 permit_sites <- function(permits, lookup, site_type){
@@ -45,20 +25,24 @@ permit_sites <- function(permits, lookup, site_type){
   sort(unique(lookup[[x]]))
 }
 
-site_parameters <- function(sites, lookup, site_type, param_type){
+site_parameters <- function(sites, lookup, site_type, param_strict){
   x <- site_col(site_type)
-  y <- param_col(param_type)
-  unique(lookup[[y]][lookup[[x]] %in% sites])
+  if(param_strict == "in ANY of selected sites"){
+    return(unique(lookup[["PARAMETER"]][lookup[[x]] %in% sites]))
+  }
+  l <- lapply(sites, function(y){
+    unique(lookup[["PARAMETER"]][lookup[[x]] %in% y])
+  })
+  Reduce(intersect, l)
 }
 
 permits <- function(lookup){
   sort(setdiff(unique(lookup$PERMIT), NA_character_))
 }
 
-date_range <- function(sites, parameters, lookup, site_type, param_type){
+date_range <- function(sites, parameters, lookup, site_type){
   x <- site_col(site_type)
-  y <- param_col(param_type)
-  data <- lookup[lookup[[x]] %in% sites & lookup[[y]] %in% parameters,]
+  data <- lookup[lookup[[x]] %in% sites & lookup[["PARAMETER"]] %in% parameters,]
   as.Date(c(min(data$FROM_DATE, na.rm = TRUE), max(data$TO_DATE, na.rm = TRUE)))
 }
 
@@ -67,51 +51,41 @@ translate_site <- function(x, lookup, site_type){
   lookup$EMS_ID[lookup[[col]] %in% x]
 }
 
-translate_parameter <- function(x, lookup, param_type){
-  col <- param_col(param_type)
-  lookup$PARAMETER_CODE[lookup[[col]] %in% x]
-}
-
 ########## ---------- fetching data ---------- ##########
-filter_historic_data <- function(..., check_db = FALSE){
-  rems::read_historic_data(..., check_db = FALSE)
-}
-
-filter_2yr_data <- function(...){
-  rems::filter_ems_data(...)
-}
-
-combine_data <- function(x, ...){
-  rems::bind_ems_data(
-    filter_historic_data(...),
-    filter_2yr_data(x = x, ...)
-  )
-}
-
 ems_data_which <- function(which){
   rems::get_ems_data(which = which,
                      dont_update = TRUE, force = TRUE)
 }
 
-ems_data <- function(dataset, ...){
+ems_data <- function(dataset, emsid, parameter, from_date, to_date){
   switch(dataset,
-         "demo" = filter_2yr_data(x = shinyrems::ems_demo_data, ...),
-         "2yr" = filter_2yr_data(x = ems_data_which("2yr"), ...),
-         "historic" = filter_historic_data(...),
-         combine_data(x = ems_data_which("2yr"), ...))
-}
-
-ems_data_progress <- function(dataset, parameter,
-                              site, from_date, to_date,
-                              site_type, param_type, lookup){
-
-  parameter <- translate_parameter(parameter, lookup, param_type)
-  site <- translate_site(site, lookup, site_type)
-                        ems_data(dataset = dataset,
-                                 param_code = parameter,
-                                 emsid = site,
+         "demo" = rems::filter_ems_data(x = shinyrems::ems_demo_data,
+                                        emsid = emsid,
+                                        parameter = parameter,
+                                        from_date = from_date,
+                                        to_date = to_date),
+         "2yr" = rems::filter_ems_data(x = ems_data_which("2yr"),
+                                       emsid = emsid,
+                                       parameter = parameter,
+                                       from_date = from_date,
+                                       to_date = to_date),
+         "historic" = rems::read_historic_data(emsid = emsid,
+                                               parameter = parameter,
+                                               from_date = from_date,
+                                               to_date = to_date,
+                                               check_db = FALSE),
+         rems::bind_ems_data(
+           rems::read_historic_data(emsid = emsid,
+                                    parameter = parameter,
+                                    from_date = from_date,
+                                    to_date = to_date,
+                                    check_db = FALSE),
+           rems::filter_ems_data(x = ems_data_which("2yr"),
+                                 emsid = emsid,
+                                 parameter = parameter,
                                  from_date = from_date,
                                  to_date = to_date)
+         ))
 }
 
 ems_tidy <- function(data, mdl_action, data_type, dataset, include_depth = TRUE){
@@ -130,24 +104,14 @@ ems_tidy <- function(data, mdl_action, data_type, dataset, include_depth = TRUE)
   x
 }
 
-all_depth_na <- function(data){
-  all(is.na(data$LOWER_DEPTH)) && all(is.na(data$UPPER_DEPTH))
-}
-
-maxcv <- function(max_cv){
-  if(is.na(max_cv))
-    return(Inf)
-  max_cv
-}
-
 ems_aggregate <- function(data, by, remove_blanks, max_cv, FUN){
   x <- try({
     data <- clean_wqdata2(data, by = by, max_cv = max_cv,
-                remove_blanks = remove_blanks, FUN = FUN)
+                          remove_blanks = remove_blanks, FUN = FUN)
     first <- c("Variable", "Date", by, "Value", "Units")
     last <- setdiff(names(data), c(first, "Outlier"))
     data[, c(first, last)]
-    }, silent = TRUE)
+  }, silent = TRUE)
   if(is_try_error(x)) return(empty_clean)
   x
 }
@@ -156,24 +120,34 @@ ems_outlier <- function(x, by = NULL, max_cv = Inf, sds = 10, ignore_undetected 
                         large_only = TRUE, remove_blanks = FALSE,
                         FUN = "mean"){
   x <- try({
-  clean_wqdata2(x = x,
-                by = by,
-                max_cv = max_cv,
-                sds = sds,
-                ignore_undetected = ignore_undetected,
-                large_only = large_only,
-                remove_blanks = remove_blanks,
-                FUN = FUN)})
-    if(is_try_error(x)) return(NULL)
-    x
+    clean_wqdata2(x = x,
+                  by = by,
+                  max_cv = max_cv,
+                  sds = sds,
+                  ignore_undetected = ignore_undetected,
+                  large_only = large_only,
+                  remove_blanks = remove_blanks,
+                  FUN = FUN)})
+  if(is_try_error(x)) return(NULL)
+  x
 }
 
 ems_standardize <- function(data, strict){
   x <- try({
-  wqbc::standardize_wqdata(data, strict)
+    wqbc::standardize_wqdata(data, strict)
   }, silent = TRUE)
   if(is_try_error(x)) return(empty_standard)
   x
+}
+
+all_depth_na <- function(data){
+  all(is.na(data$LOWER_DEPTH)) && all(is.na(data$UPPER_DEPTH))
+}
+
+maxcv <- function(max_cv){
+  if(is.na(max_cv))
+    return(Inf)
+  max_cv
 }
 
 add_outlier_brush <- function(data, brush){

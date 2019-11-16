@@ -20,23 +20,20 @@ check_data <- function(which){
   "done"
 }
 
-check_data_progress <- function(which){
+check_data_which <- function(which){
   if(which == "all"){
-    return(withProgress({
+    return({
       check <- check_data("2yr")
       which <- "2yr"
       if(check == "done"){
         check <- check_data("historic")
         which <- "historic"
       }
-      c(check, which)},
-      value = 0.5,
-      message = "checking for data updates ..."))
+      c(check, which)
+    })
   }
-  withProgress({check <- check_data(which)
-  c(check, which)},
-               value = 0.5,
-               message = "checking for data updates ...")
+  check <- check_data(which)
+  c(check, which)
 }
 
 check_data_upload <- function(data, template){
@@ -55,7 +52,6 @@ check_data_upload <- function(data, template){
 }
 
 check_template <- function(x, template){
-
   x <- try(checkr::check_data(x = x,
                               values = sapply(template, function(x) x$check, USE.NAMES = FALSE),
                               nrow = c(1L,.Machine$integer.max),

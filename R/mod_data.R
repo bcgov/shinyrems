@@ -33,9 +33,10 @@ mod_data_ui <- function(id){
                                        selected = "Monitoring Location", inline = TRUE),
                           uiOutput(ns("ui_site")),
                           tags$label("Select Parameter(s)"),
-                          radioButtons(ns("param_type"), label = NULL,
-                                       choices = c("Parameter Name", "Parameter Code"),
-                                       selected = "Parameter Name", inline = TRUE),
+                          radioButtons(ns("param_strict"), label = NULL,
+                                       choices = c("in ANY of selected sites",
+                                                   "in ALL of selected sites"),
+                                       selected = "in ANY of selected sites"),
                           uiOutput(ns("ui_parameter")),
                           uiOutput(ns("ui_date")),
                           uiOutput(ns("ui_get")),
@@ -98,7 +99,11 @@ mod_data_server <- function(input, output, session){
     if(dataset == "demo"){
       return(show("div_data_find"))
     }
-    check <- check_data_progress(dataset)
+    withProgress({
+      check <- check_data_which(dataset)
+    },
+    value = 0.5,
+    message = "checking for data updates ...")
     if(check[1] != "done"){
       showModal(data_download_modal(check[1], check[2], ns))
       return()
@@ -116,9 +121,12 @@ mod_data_server <- function(input, output, session){
 
   observeEvent(input$get, {
     waiter::show_butler()
-    raw_rv$data <- ems_data_progress(input$dataset, input$parameter, input$site,
-                                     input$date_range[1], input$date_range[2],
-                                     input$site_type, input$param_type, lookup())
+    emsid <- translate_site(input$site, lookup(), input$site_type)
+    raw_rv$data <- ems_data(dataset = input$dataset,
+                            parameter = input$parameter,
+                            emsid = emsid,
+                            from_date = input$date_range[1],
+                            to_date = input$date_range[2])
     waiter::hide_butler()
   })
 
@@ -182,7 +190,10 @@ mod_data_server <- function(input, output, session){
   })
 
   get_parameters <- reactive({
-    site_parameters(input$site, lookup(), input$site_type, input$param_type)
+    site_parameters(input$site,
+                    lookup(),
+                    input$site_type,
+                    input$param_strict)
   })
 
   template <- reactive({
@@ -239,8 +250,8 @@ mod_data_server <- function(input, output, session){
   output$ui_date <- renderUI({
     req(input$parameter)
     req(input$site)
-    dates <- date_range(input$site, input$parameter, lookup(),
-                        input$site_type, input$param_type)
+    dates <- date_range(input$site, input$parameter,
+                        lookup(), input$site_type)
     dateRangeInput(ns("date_range"),
                    label = "Get any available data between dates:",
                    start = dates[1], end = dates[2],
