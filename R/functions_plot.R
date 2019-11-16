@@ -74,7 +74,11 @@ plot_outlier <- function(data, by, point_size){
     ggplot2::expand_limits(y = 0)
 
   if("EMS_ID" %in% by){
-    gp <- gp + ggplot2::facet_grid(Variable~EMS_ID, scales = "free")
+    if(length(unique(data$Variable)) == 1){
+      gp <- gp + ggplot2::facet_grid(EMS_ID~Variable, scales = "free")
+    } else {
+      gp <- gp + ggplot2::facet_grid(Variable~EMS_ID, scales = "free")
+    }
   } else {
     gp <- gp + ggplot2::facet_wrap(~Variable, scales = "free", ncol = 1)
   }
