@@ -20,12 +20,15 @@ multiple_units <- function(data){
 
 ems_plots <- function(data, plot_type, geom, date_range,
                       point_size, line_size,
-                      facet, colour){
+                      facet, colour, timeframe){
 
   lapply(unique(data$Units), function(x){
     dat <- data %>% dplyr::filter(Units == x)
     dat %<>% dplyr::mutate(Detected = detected(Value, DetectionLimit))
     dat$Detected %<>% factor(levels = c(TRUE, FALSE))
+    dat %<>% dplyr::filter(Date >= as.Date(date_range[1]),
+                    Date <= as.Date(date_range[2]))
+    dat$Timeframe <- factor(get_timeframe(dat$Date, timeframe))
 
     gp <- ggplot2::ggplot(dat, ggplot2::aes(x = Date, y = Value)) +
       ggplot2::scale_color_discrete(drop = FALSE) +
@@ -39,8 +42,7 @@ ems_plots <- function(data, plot_type, geom, date_range,
       if("show points" %in% geom){
         gp <- gp + ggplot2::geom_point(size = point_size,
                                        ggplot2::aes_string(shape = "Detected",
-                                                    color = colour)) +
-          ggplot2::scale_x_date(limits = as.Date(date_range))
+                                                    color = colour))
       }
       if("show lines" %in% geom){
         gp <- gp + ggplot2::geom_line(size = line_size, ggplot2::aes_string(color = colour))
@@ -48,10 +50,24 @@ ems_plots <- function(data, plot_type, geom, date_range,
     }
 
     if(plot_type == "boxplot"){
-      gp + ggplot2::geom_boxplot(ggplot2::aes(x = Variable, y = Value))
+      gp <- gp + ggplot2::geom_boxplot(ggplot2::aes_string(x = "Timeframe",
+                                                y = "Value",
+                                                fill = colour)) +
+        ggplot2::xlab(timeframe)
     }
     gp
    }) %>% setNames(unique(data$Units))
+}
+
+get_timeframe <- function(date, x = "Year"){
+  date <- dttr2::dtt_date(date)
+  if(x == "Year")
+    return(dttr2::dtt_year(date))
+  if(x == "Year-Month")
+    return(substr(date, 1, 7))
+  if(x == "Month")
+    return(dttr2::dtt_month(date))
+  dttr2::dtt_season(date)
 }
 
 ems_summary_table <- function(data){

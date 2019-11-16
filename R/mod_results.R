@@ -63,8 +63,10 @@ mod_results_server <- function(input, output, session, clean_data){
     req(input$plot_type)
     if(input$plot_type == "scatter"){
       show("geom")
+      hide("timeframe")
     } else {
       hide("geom")
+      show("timeframe")
     }
   })
 
@@ -75,7 +77,7 @@ mod_results_server <- function(input, output, session, clean_data){
     ems_plots(clean_rv$data, input$plot_type,
               input$geom, input$date_range,
               input$point_size, input$line_size,
-              input$facet, input$colour)
+              input$facet, input$colour, input$timeframe)
   })
 
   summary_table <- reactive({
@@ -129,7 +131,10 @@ mod_results_server <- function(input, output, session, clean_data){
       shinyjs::hidden(checkboxGroupInput(ns("geom"), label = NULL,
                                          choices = c("show lines", "show points"),
                                          selected = c("show points", "show lines"),
-                                         inline = TRUE))
+                                         inline = TRUE)),
+      shinyjs::hidden(selectInput(ns("timeframe"), label = "Group by time window",
+                                  choices = c("Year", "Year-Month", "Month", "Season"),
+                                  selected = c("Year")))
     )
   })
 
