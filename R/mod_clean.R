@@ -46,10 +46,11 @@ mod_clean_server <- function(input, output, session, stand_data){
   ns <- session$ns
 
   output$ui_by <- renderUI({
-    if(nrow(stand_data()) < 1) return()
-    selected <- intersect(names(stand_data()),
+    data <- stand_data()
+    if(nrow(data) < 1) return()
+    selected <- intersect(names(data),
                      c("EMS_ID", "UPPER_DEPTH", "LOWER_DEPTH"))
-    optional <- intersect(names(stand_data()),
+    optional <- intersect(names(data),
                           c("SAMPLE_STATE", "SAMPLE_CLASS"))
 
     select_input_x(ns("by"), label = "Aggregation columns",
