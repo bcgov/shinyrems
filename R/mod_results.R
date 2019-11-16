@@ -30,9 +30,8 @@ mod_results_ui <- function(id){
                            uiOutput(ns("ui_facet")),
                            uiOutput(ns("ui_colour"))),
                    actionLink(ns("rename"), "Rename sites"),
-                   shinyjs::hidden(div(
-                     uiOutput(ns("ui_rename"))
-                   )),
+                   br(),
+                   uiOutput(ns("ui_rename")),
                    br2(),
                    dl_button(ns("dl_table"), "Download Table"),
                    br2(),
@@ -148,7 +147,7 @@ mod_results_server <- function(input, output, session, clean_data){
 
   output$ui_colour <- renderUI({
     data <- clean_rv$data
-    x <- sort(intersect(names(data), c("Variable", "EMS_ID", "EMS_ID_Renamed")))
+    x <- sort(intersect(names(data), c("Variable", "EMS_ID")))
     selectInput(ns("colour"), "Colour by",
                 choices = x,
                 selected = x[1])
@@ -181,23 +180,29 @@ mod_results_server <- function(input, output, session, clean_data){
   clean_rv <- reactiveValues(data = NULL)
   observe({
     data <- clean_data()
-    data$Site_Renamed <- data$EMS_ID
+    data$EMS_ID_Renamed <- data$EMS_ID
     clean_rv$data <- data
   })
 
   observeEvent(input$finalise, {
-    sites <- unique(clean_data()$EMS_ID)
-    data <- clean_data()
+    data <- clean_rv$data
+    sites <- unique(data$EMS_ID)
     for(i in sites){
       x <- input[[i]]
-      data$Site_Renamed[data$EMS_ID == i] <- x
+      data$EMS_ID_Renamed[data$EMS_ID == i] <- x
     }
     clean_rv$data <- data
   })
 
+  observeEvent(input$rename, {
+    shinyjs::toggle("div_rename", anim = TRUE, animType = "slide")
+  })
+
   output$ui_rename <- renderUI({
-    sites <- unique(clean_data()$EMS_ID)
-    lapply(sites, rename_inputs, ns)
+    sites <- unique(clean_rv$data$EMS_ID)
+    shinyjs::hidden(div(id = ns("div_rename"),
+        lapply(sites, rename_inputs, ns),
+        button(ns("finalise"), "Rename")))
   })
 }
 

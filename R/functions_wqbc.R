@@ -1,7 +1,7 @@
 summarise_wqdata <- function(x){
-  checkr::check_colnames(x, c("Site_Renamed", "Variable", "Units", "Value"))
+  checkr::check_colnames(x, c("EMS_ID_Renamed", "Variable", "Units", "Value"))
   dt <- data.table::data.table(x)
-  if(identical(x$EMS_ID, x$Site_Renamed)){
+  if(identical(x$EMS_ID, x$EMS_ID_Renamed)){
     data <- dt[, .(n = .N,
                    min = min(Value, na.rm = TRUE),
                    max = max(Value, na.rm = TRUE),
@@ -18,7 +18,7 @@ summarise_wqdata <- function(x){
                    median = median(Value, na.rm = TRUE),
                    sd = sd(Value, na.rm = TRUE),
                    se = se(Value)),
-               .(Site_Renamed, Variable, Units)]
+               .(EMS_ID_Renamed, Variable, Units)]
   }
   as.data.frame(data)
 }
