@@ -32,9 +32,7 @@ mod_reference_ui <- function(id){
                               "Collection Methods", "Sample Classes",
                               "Species", "Units"),
                   selected = "Parameters"),
-      button(ns("download"), label = "Download Table"),
-      downloadButton(ns("download_handler"), label = NULL,
-                     style = "visibility: hidden;"),
+      dl_button(ns("download"), label = "Download Table"),
       br(), br(),
       ems_table_output(ns("table"))
     )
@@ -57,11 +55,7 @@ mod_reference_server <- function(input, output, session){
     ems_data_table(table())
     })
 
-  observeEvent(input$download, {
-    shinyjs::runjs(click_js(ns("download_handler")))
-  })
-
-  output$download_handler <- downloadHandler(
+  output$download <- downloadHandler(
     filename = function(){
       x <- gsub(" ", "", input$selectTable)
       glue::glue("ems_{x}.csv")
