@@ -28,19 +28,6 @@ ems_leaflet <- function(watershed_groups, sites, site_type){
                       group = "Sites",
                       layerId = sites[[id]],
                       label = sites[[id]])
-
-  # if(is.null(selected_sites)) return(leaf)
-  # selected <- sites[sites[[id]] %in% selected_sites,]
-  #
-  #  leaf %>%
-  #   addAwesomeMarkers(data = selected,
-  #                     icon = icon_red,
-  #                     lng = ~LONGITUDE,
-  #                     lat = ~LATITUDE,
-  #                     group = "Sites",
-  #                     layerId = selected[[id]],
-  #                     label = selected[[id]])
-
 }
 
 zoom_to <- function(id, ws){
@@ -49,7 +36,7 @@ zoom_to <- function(id, ws){
     setView(lng = ws$lng_center, lat = ws$lat_center, zoom = 8L)
 }
 
-icon_blue <- makeAwesomeIcon(icon= 'flag', markerColor = 'blue', iconColor = 'black')
-icon_red <- makeAwesomeIcon(icon= 'flag', markerColor = 'red', iconColor = 'black')
+icon_blue <- makeAwesomeIcon(icon = 'flag', markerColor = 'blue', iconColor = 'black')
+icon_red <- makeAwesomeIcon(icon = 'flag', markerColor = 'red', iconColor = 'black')
 
 

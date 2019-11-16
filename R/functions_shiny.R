@@ -10,10 +10,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
-click_js <- function(id){
-  glue::glue("document.getElementById('{id}').click();")
-}
-
 br2 <- function() tagList(br(), br())
 br3 <- function() tagList(br(), br(), br())
 
@@ -58,12 +54,6 @@ hide <- function(id, anim = TRUE){
 
 show <- function(id, anim = TRUE){
   shinyjs::show(id, anim = anim)
-}
-
-show_hide <- function(data, id, anim = FALSE){
-  if(!is.null(data))
-    return(show(id, anim))
-  hide(id, anim)
 }
 
 
