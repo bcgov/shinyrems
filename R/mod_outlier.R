@@ -22,7 +22,9 @@ mod_outlier_ui <- function(id){
                                 value = 10),
                    checkboxInput(ns("ignore_undetected"), "Ignore undetected", TRUE),
                    checkboxInput(ns("large_only"), "Large values only", TRUE),
-                   checkboxInput(ns("delete_outliers"), "Remove outliers from plot", FALSE)),
+                   checkboxInput(ns("delete_outliers"), "Remove outliers from plot", FALSE),
+                   numericInput(ns("point_size"), label = "Point Size",
+                                value = 1.3, min = 0, max = 10)),
       mainPanel(
         uiOutput(ns("ui_plot")),
         shinyjs::hidden(button(ns("clear_outliers"),
@@ -103,12 +105,18 @@ mod_outlier_server <- function(input, output, session, params, stand_data){
 
   output$plot_clean <- renderPlot({
     waiter::show_butler()
-    p <- wqbc::plot_timeseries(outlier_data2())
+    p <- plot_outlier(outlier_data2(), params$by(), input$point_size)
     waiter::hide_butler()
     p
   })
 
-  return(outlier_data2)
+  outlier_data3 <- reactive({
+    req(outlier_data2())
+    outlier_data2() %>%
+      dplyr::filter(!Outlier)
+  })
+
+  return(outlier_data3)
 }
 
 ## To be copied in the UI

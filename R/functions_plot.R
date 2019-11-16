@@ -24,7 +24,8 @@ ems_plots <- function(data, plot_type, geom, date_range,
 
   lapply(unique(data$Units), function(x){
     dat <- data %>% dplyr::filter(Units == x)
-    dat %<>% dplyr::mutate(Detected = detected(Value, DetectionLimit))
+    dat %<>% dplyr::mutate(Detected = detected(Value, DetectionLimit),
+                           EMS_ID = EMS_ID_Renamed)
     dat$Detected %<>% factor(levels = c(TRUE, FALSE))
     dat %<>% dplyr::filter(Date >= as.Date(date_range[1]),
                     Date <= as.Date(date_range[2]))
@@ -57,6 +58,27 @@ ems_plots <- function(data, plot_type, geom, date_range,
     }
     gp
    }) %>% setNames(unique(data$Units))
+}
+
+plot_outlier <- function(data, by, point_size){
+  data %<>% dplyr::mutate(Detected = detected(Value, DetectionLimit))
+  data$Detected %<>% factor(levels = c(TRUE, FALSE))
+  data$Outlier %<>% factor(levels = c(TRUE, FALSE))
+  gp <- ggplot2::ggplot(data, ggplot2::aes_string(x = "Date",
+                                                  y = "Value",
+                                                  color = "Outlier",
+                                                  shape = "Detected")) +
+    ggplot2::geom_point(ggplot2::aes_string(),
+                          size = point_size) +
+    ggplot2::scale_color_discrete(drop = FALSE) +
+    ggplot2::expand_limits(y = 0)
+
+  if("EMS_ID" %in% by){
+    gp <- gp + ggplot2::facet_grid(Variable~EMS_ID, scales = "free")
+  } else {
+    gp <- gp + ggplot2::facet_wrap(~Variable, scales = "free", ncol = 1)
+  }
+  gp
 }
 
 get_timeframe <- function(date, x = "Year"){
