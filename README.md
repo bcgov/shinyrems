@@ -26,7 +26,11 @@ remotes::install_github("bcgov/shinyrems")
 
 ## Usage
 
-To run the app, simply type `shinyrems::run_app())` into the console.
+`shinyrems` ships with an Rstudio addin. If you are using Rstudio, you
+can run the app by selecting Shinyrems app from the addins dropdown
+menu.
+
+Alternatively, type `shinyrems::run_app())` into the console.
 
 ## Contribution
 
