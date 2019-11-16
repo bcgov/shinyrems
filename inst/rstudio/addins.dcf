@@ -1,0 +1,5 @@
+Name: Shinyrems app
+Description: Visualize, analyze and retrieve data from the EMS database.
+Binding: shinyrems_addin
+Interactive: true
+
