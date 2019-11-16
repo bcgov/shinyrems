@@ -249,6 +249,7 @@ mod_data_server <- function(input, output, session){
 
   output$ui_sample_state <- renderUI({
     if(nrow(tidy_data()) < 1) return()
+    req(input$parameter)
     x <- sort(unique(tidy_data()$SAMPLE_STATE))
     select_input_x(ns("sample_state"),
                    label = "Select values of SAMPLE_STATE to include",
@@ -258,6 +259,7 @@ mod_data_server <- function(input, output, session){
 
   output$ui_sample_class <- renderUI({
     if(nrow(tidy_data()) < 1) return()
+    req(input$parameter)
     x <- sort(unique(tidy_data()$SAMPLE_CLASS))
     select_input_x(ns("sample_class"),
                    label = "Select values of SAMPLE_CLASS to include",
@@ -267,6 +269,7 @@ mod_data_server <- function(input, output, session){
 
   output$ui_mdl_action <- renderUI({
     if(nrow(tidy_data()) < 1) return()
+    req(input$parameter)
     selectInput(ns("mdl_action"), label = "MDL Action",
                 choices = c("zero", "mdl", "half", "na", "none"),
                 selected = "zero")
