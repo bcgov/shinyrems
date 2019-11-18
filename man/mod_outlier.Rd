@@ -7,7 +7,7 @@
 \usage{
 mod_outlier_ui(id)
 
-mod_outlier_server(input, output, session, params)
+mod_outlier_server(input, output, session, params, stand_data)
 }
 \arguments{
 \item{id}{shiny id}

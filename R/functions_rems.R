@@ -48,7 +48,6 @@ get_ems_data2 <- function (which = "2yr", n = Inf, cols = "wq", force = FALSE,
   rems_data_from_cache(which, cols)
 }
 
-
 update_cache2 <- function (which, n, cols,
                            shiny_progress, shiny_session, shiny_id) {
   file_meta <- rems:::get_file_metadata(which)

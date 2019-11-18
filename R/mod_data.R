@@ -283,7 +283,13 @@ mod_data_server <- function(input, output, session){
     req(input$parameter)
     selectInput(ns("mdl_action"), label = "MDL Action",
                 choices = c("zero", "mdl", "half", "na", "none"),
-                selected = "zero")
+                selected = "zero") %>%
+      embed_help("info_mdl", ns, info$mdl_action)
+
+  })
+
+  observeEvent(input$info_mdl, {
+    shinyjs::toggle("div_info_mdl", anim = TRUE)
   })
 
   observeEvent(input$search_map, {

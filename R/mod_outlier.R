@@ -18,8 +18,9 @@ mod_outlier_ui <- function(id){
   tagList(
     sidebarLayout(
       sidebarPanel(class = "sidebar",
-                   numericInput(ns("sds"), label = "Number of standard deviations",
-                                value = 10),
+                   numericInput(ns("sds"), label = "Standard deviations",
+                                value = 10) %>%
+                     embed_help("info_sds", ns, info$sds),
                    checkboxInput(ns("ignore_undetected"), "Ignore undetected", TRUE),
                    checkboxInput(ns("large_only"), "Large values only", TRUE),
                    checkboxInput(ns("delete_outliers"), "Remove outliers from plot", FALSE),
@@ -114,6 +115,10 @@ mod_outlier_server <- function(input, output, session, params, stand_data){
     req(outlier_data2())
     outlier_data2() %>%
       dplyr::filter(!Outlier)
+  })
+
+  observeEvent(input$info_sds, {
+    shinyjs::toggle("div_info_sds", anim = TRUE)
   })
 
   return(outlier_data3)

@@ -22,9 +22,8 @@ mod_clean_ui <- function(id){
                  radioButtons(ns("fun"), label = "Aggreggation function",
                               choices = c("mean", "median", "max"),
                               selected = "max", inline = TRUE),
-                 tags$label("Maximum CV"),
-                 help_text("Leave blank for Inf"),
-                 numericInput(ns("max_cv"), label = NULL, value = Inf),
+                 numericInput(ns("max_cv"), label = "Maximum CV", value = Inf) %>%
+                   embed_help("info_maxcv", ns, info$max_cv),
                  dl_button(ns("dl_clean"), "Download Clean Data")),
     mainPanel(tabsetPanel(selected = "Clean Data",
                           id = ns("tabset_data"),
@@ -91,6 +90,10 @@ mod_clean_server <- function(input, output, session, stand_data){
     content = function(file) {
       readr::write_csv(clean_data(), file)
     })
+
+  observeEvent(input$info_maxcv, {
+    shinyjs::toggle("div_info_maxcv", anim = TRUE)
+  })
 
   return(
     list(
