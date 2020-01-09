@@ -21,12 +21,6 @@ mod_results_ui <- function(id){
                    uiOutput(ns("ui_date_range")),
                    uiOutput(ns("ui_type")),
                    fillRow(height = 75,
-                     numericInput(ns("point_size"), label = "Point size", value = 1.5,
-                                  min = 0.1, max = 10),
-                     numericInput(ns("line_size"), label = "Line size", value = 0.3,
-                                  min = 0.1, max = 10)
-                   ),
-                   fillRow(height = 75,
                            uiOutput(ns("ui_facet")),
                            uiOutput(ns("ui_colour"))),
                    actionLink(ns("rename"), "Rename sites"),
@@ -61,10 +55,10 @@ mod_results_server <- function(input, output, session, clean_data){
   observe({
     req(input$plot_type)
     if(input$plot_type == "scatter"){
-      show("geom")
+      show("div_geom")
       hide("timeframe")
     } else {
-      hide("geom")
+      hide("div_geom")
       show("timeframe")
     }
   })
@@ -127,10 +121,17 @@ mod_results_server <- function(input, output, session, clean_data){
       radioButtons(ns("plot_type"), label = "Plot type",
                    choices = c("scatter", "boxplot"),
                    selected = "scatter", inline = TRUE),
-      shinyjs::hidden(checkboxGroupInput(ns("geom"), label = NULL,
+      shinyjs::hidden(div(id = ns("div_geom"),
+        checkboxGroupInput(ns("geom"), label = NULL,
                                          choices = c("show lines", "show points"),
                                          selected = c("show points", "show lines"),
-                                         inline = TRUE)),
+                                         inline = TRUE),
+        fillRow(height = 75,
+                numericInput(ns("point_size"), label = "Point size", value = 1.5,
+                             min = 0.1, max = 10),
+                numericInput(ns("line_size"), label = "Line size", value = 0.3,
+                             min = 0.1, max = 10)
+        ))),
       shinyjs::hidden(selectInput(ns("timeframe"), label = "Group by time window",
                                   choices = c("Year", "Year-Month", "Month", "Season"),
                                   selected = c("Year")))
