@@ -14,7 +14,6 @@
 #'
 #'
 #' @export
-run_app <- function() {
-
+run_ems_app <- function() {
   shiny::runApp(system.file("app", package = "shinyrems"), launch.browser = TRUE)
 }
