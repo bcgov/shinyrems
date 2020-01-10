@@ -15,9 +15,10 @@
 #' @param dataset A string indicating which dataset the app should use.
 #' Possible choices are:
 #' "demo" (loads a small demo dataset that does not require any downloading);
-#' "2yr" (loads and prompts download/update of recent EMS data from 2018-01-01 onwards);
+#' "2yr" (loads and prompts download/update of recent 2 years of data (from 2018-01-01 onwards));
+#' "4yr" (loads and prompts download/update of recent 4 years of EMS data (from 2016-01-01 onwards));
 #' "historic" (loads and prompts download/update of historic EMS data from 1964-01-01 to 2018-01-02);
-#' "all" (loads both recent and historic data).
+#' "all" (loads both recent and historic data);
 #' "upload" (allows user to upload their own dataset in either tidied or raw format).
 #'
 #'

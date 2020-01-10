@@ -11,7 +11,6 @@
 # See the License for the specific language governing permissions and limitations under the License.
 
 app_ui <- function() {
-  run_mode <- "2yr"
 
   tagList(
     shinyjs::useShinyjs(),

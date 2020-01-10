@@ -1,6 +1,7 @@
 get_lookup <- function(dataset){
   switch(dataset,
          "2yr" = get_which_lookup(dataset),
+         "4yr" = get_which_lookup(dataset),
          "historic" = lookup_historic,
          "demo" = lookup_demo,
          "all" = get_all_lookup())
