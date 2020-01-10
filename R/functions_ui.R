@@ -9,31 +9,6 @@ site_map <- function(ns){
   )
 }
 
-data_download_modal <- function(check, which, ns){
-  x <- glue("There is a newer version of the {which} dataset available.")
-  id <- "no_update"
-  if(check == "download"){
-    x <- glue("You don't have the {which} dataset.")
-    id <- "no_download"
-  }
-
-  modalDialog(
-  tagList(
-    p(glue("{x} Would you like to download it? (this might take a while...)")),
-    button(ns("yes_download"), "Yes!"),
-    button(ns(id), "No"),
-    br2(),
-    help_output(ns("download_text")),
-    shinyWidgets::progressBar(
-      id = ns("download_progress"),
-      value = 0,
-      title = "",
-      display_pct = TRUE
-    )
-  ), title = NULL, footer = NULL
-  )
-}
-
 error_modal <- function(x){
   modalDialog(title = "Please fix the following error and resubmit:",
               footer = modalButton(label = "Got it"),

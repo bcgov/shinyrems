@@ -10,6 +10,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
+pretty_dataset <- function(x){
+  switch(x,
+         "2yr" = "2 Year",
+         "historic" = "Historic",
+         "demo" = "Demo",
+         "upload" = "Upload",
+         "all" = "All Years")
+}
+
 ########## ---------- lookups ---------- ##########
 site_col <- function(site_type){
   if(site_type == "EMS ID")

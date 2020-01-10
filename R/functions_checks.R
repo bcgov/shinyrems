@@ -10,30 +10,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
-check_data <- function(which){
-  cache_date <- rems::get_cache_date(which)
-  if(is.infinite(cache_date))
-    return("download")
-  file_meta <- rems:::get_file_metadata(which)
-  if(cache_date < file_meta[["server_date"]])
-    return("update")
-  "done"
+check_ems_data <- function(which){
+  message(glue("checking for most recent {which} dataset..."))
+  if(!rems:::._remsCache_$exists(which)){
+    rems::get_ems_data(which, ask = TRUE, check_only = FALSE)
+  }
+  rems::get_ems_data(which, ask = FALSE, check_only = TRUE)
 }
 
-check_data_which <- function(which){
-  if(which == "all"){
-    return({
-      check <- check_data("2yr")
-      which <- "2yr"
-      if(check == "done"){
-        check <- check_data("historic")
-        which <- "historic"
-      }
-      c(check, which)
-    })
-  }
-  check <- check_data(which)
-  c(check, which)
+check_historic_data <- function(){
+  message("checking for historic data...")
+  rems::download_historic_data(ask = TRUE)
 }
 
 check_data_upload <- function(data, template){

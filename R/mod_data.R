@@ -18,9 +18,7 @@ mod_data_ui <- function(id){
 
   sidebarLayout(
     sidebarPanel(
-      radioButtons(ns("dataset"), label = "Select dataset",
-                   choices = datasets,
-                   selected = "demo", inline = TRUE),
+      uiOutput(ns("ui_dataset")),
       shinyjs::hidden(div(id = ns("div_data_find"),
                           tags$label("Select site(s) or"),
                           actionLink(ns("search_map"), label = "find sites on map"),
@@ -82,31 +80,23 @@ mod_data_ui <- function(id){
 mod_data_server <- function(input, output, session){
   ns <- session$ns
 
+  dataset <- getShinyOption("dataset", "demo")
+  output$ui_dataset <- renderUI({
+    h4(p("Dataset:", pretty_dataset(dataset)))
+  })
+
   ########## ---------- dataset ---------- ##########
-  observeEvent(input$dataset, {
+  observe({
     raw_rv$data <- empty_raw
     hide("div_data_find")
     hide("div_data_upload")
     showTab("tabset_data", target = "Site Map", session = session)
     updateTabsetPanel(session, "tabset_data", selected = "Data")
-    dataset <- input$dataset
     if(dataset == "upload"){
       return({
         show("div_data_upload")
         hideTab("tabset_data", target = "Site Map", session = session)
       })
-    }
-    if(dataset == "demo"){
-      return(show("div_data_find"))
-    }
-    withProgress({
-      check <- check_data_which(dataset)
-    },
-    value = 0.5,
-    message = "checking for data updates ...")
-    if(check[1] != "done"){
-      showModal(data_download_modal(check[1], check[2], ns))
-      return()
     }
     show("div_data_find")
   })
@@ -122,7 +112,7 @@ mod_data_server <- function(input, output, session){
   observeEvent(input$get, {
     waiter::show_butler()
     emsid <- translate_site(input$site, lookup(), input$site_type)
-    raw_rv$data <- ems_data(dataset = input$dataset,
+    raw_rv$data <- ems_data(dataset = dataset,
                             parameter = input$parameter,
                             emsid = emsid,
                             from_date = input$date_range[1],
@@ -131,7 +121,7 @@ mod_data_server <- function(input, output, session){
   })
 
   observe({
-    if(input$dataset == "upload"){
+    if(dataset == "upload"){
       req(input$upload_data)
       check <- check_data_upload(input$upload_data, template())
       if(is.character(check)){
@@ -141,32 +131,8 @@ mod_data_server <- function(input, output, session){
     }
   })
 
-  observeEvent(input$no_download, {
-    updateRadioButtons(session, "dataset", selected = "demo")
-    removeModal()
-    show("div_data_find")
-  })
-
-  observeEvent(input$no_update, {
-    removeModal()
-    show("div_data_find")
-  })
-
-  observeEvent(input$yes_download, {
-    withCallingHandlers({
-      shinyjs::html("download_text", "")
-      download_data(input$dataset, session, "download_progress")
-    },
-    message = function(m) {
-      shinyjs::html(id = "download_text", html = HTML(paste(m$message, "<br>")),
-                    add = TRUE)
-    })
-    removeModal()
-    show("div_data_find")
-  })
-
   lookup <- reactive({
-    get_lookup(input$dataset)
+    get_lookup(dataset)
   })
 
   lookup_location <- reactive({
@@ -211,7 +177,7 @@ mod_data_server <- function(input, output, session){
       include_depth <- FALSE
     }
     ems_tidy(raw_rv$data, input$mdl_action,
-             input$data_type, input$dataset,
+             input$data_type, dataset,
              include_depth)
   })
 
