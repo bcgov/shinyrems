@@ -13,6 +13,7 @@
 pretty_dataset <- function(x){
   switch(x,
          "2yr" = "2 Year",
+         "4yr" = "4 Year",
          "historic" = "Historic",
          "demo" = "Demo",
          "upload" = "Upload",
