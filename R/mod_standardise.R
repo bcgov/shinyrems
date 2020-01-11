@@ -11,8 +11,6 @@
 #' @rdname mod_standardise
 #'
 #' @keywords internal
-#' @export
-#' @importFrom shiny NS tagList
 mod_standardise_ui <- function(id){
   ns <- NS(id)
   sidebarLayout(

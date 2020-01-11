@@ -11,8 +11,6 @@
 #' @rdname mod_refine
 #'
 #' @keywords internal
-#' @export
-#' @importFrom shiny NS tagList
 mod_clean_ui <- function(id){
   ns <- NS(id)
   sidebarLayout(

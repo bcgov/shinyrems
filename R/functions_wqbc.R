@@ -2,7 +2,6 @@ summarise_wqdata <- function(x){
   checkr::check_colnames(x, c("EMS_ID_Renamed", "Variable", "Units", "Value"))
   dt <- dplyr::as_tibble(x)
   if(identical(x$EMS_ID, x$EMS_ID_Renamed)){
-    print(dt)
     data <- dt %>%
       dplyr::group_by(EMS_ID, Variable, Units) %>%
       dplyr::summarise(n = dplyr::n(),

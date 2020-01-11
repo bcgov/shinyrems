@@ -11,8 +11,6 @@
 #' @rdname mod_outlier
 #'
 #' @keywords internal
-#' @export
-#' @importFrom shiny NS tagList
 mod_outlier_ui <- function(id){
   ns <- NS(id)
   tagList(
