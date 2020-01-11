@@ -1,6 +1,6 @@
 summarise_wqdata <- function(x){
   checkr::check_colnames(x, c("EMS_ID_Renamed", "Variable", "Units", "Value"))
-  dt <- dtplyr::lazy_dt(x)
+  dt <- x
   if(identical(x$EMS_ID, x$EMS_ID_Renamed)){
     data <- dt %>%
       dplyr::group_by(dplyr::.data$EMS_ID,
