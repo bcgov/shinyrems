@@ -113,7 +113,6 @@ mod_outlier_server <- function(input, output, session, params, stand_data){
 
   outlier_data3 <- reactive({
     req(outlier_data2())
-    print(outlier_data2())
     x <- outlier_data2()
     x[!x$Outlier,]
   })

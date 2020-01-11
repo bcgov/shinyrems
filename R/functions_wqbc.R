@@ -1,31 +1,30 @@
 summarise_wqdata <- function(x){
   checkr::check_colnames(x, c("EMS_ID_Renamed", "Variable", "Units", "Value"))
-  dt <- x
+  dt <- dplyr::as_tibble(x)
   if(identical(x$EMS_ID, x$EMS_ID_Renamed)){
+    print(dt)
     data <- dt %>%
-      dplyr::group_by(dplyr::.data$EMS_ID,
-                      dplyr::.data$Variable,
-                      dplyr::.data$Units) %>%
+      dplyr::group_by(EMS_ID, Variable, Units) %>%
       dplyr::summarise(n = dplyr::n(),
-                       min = min(dplyr::.data$Value, na.rm = TRUE),
-                       max = max(dplyr::.data$Value, na.rm = TRUE),
-                       mean = mean(dplyr::.data$Value, na.rm = TRUE),
-                       median = median(dplyr::.data$Value, na.rm = TRUE),
-                       sd = sd(dplyr::.data$Value, na.rm = TRUE),
-                       se = se(dplyr::.data$Value)) %>%
+                       min = min(Value, na.rm = TRUE),
+                       max = max(Value, na.rm = TRUE),
+                       mean = mean(Value, na.rm = TRUE),
+                       median = median(Value, na.rm = TRUE),
+                       sd = sd(Value, na.rm = TRUE),
+                       se = se(Value)) %>%
       dplyr::ungroup()
   } else {
     data <- dt %>%
-      dplyr::group_by(dplyr::.data$EMS_ID_Renamed,
-                      dplyr::.data$Variable,
-                      dplyr::.data$Units) %>%
+      dplyr::group_by(EMS_ID_Renamed,
+                      Variable,
+                      Units) %>%
       dplyr::summarise(n = dplyr::n(),
-                       min = min(dplyr::.data$Value, na.rm = TRUE),
-                       max = max(dplyr::.data$Value, na.rm = TRUE),
-                       mean = mean(dplyr::.data$Value, na.rm = TRUE),
-                       median = median(dplyr::.data$Value, na.rm = TRUE),
-                       sd = sd(dplyr::.data$Value, na.rm = TRUE),
-                       se = se(dplyr::.data$Value)) %>%
+                       min = min(Value, na.rm = TRUE),
+                       max = max(Value, na.rm = TRUE),
+                       mean = mean(Value, na.rm = TRUE),
+                       median = median(Value, na.rm = TRUE),
+                       sd = sd(Value, na.rm = TRUE),
+                       se = se(Value)) %>%
       dplyr::ungroup()
   }
   dplyr::as_tibble(data)
