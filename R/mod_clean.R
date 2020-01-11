@@ -73,6 +73,7 @@ mod_clean_server <- function(input, output, session, stand_data){
       message = function(m) {
         shinyjs::html(id = "console_clean", html = HTML(paste(m$message, "<br>")), add = TRUE)
       })
+    # print(x)
     waiter::hide_butler()
     x
   })

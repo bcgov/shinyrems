@@ -23,15 +23,14 @@ ems_plots <- function(data, plot_type, geom, date_range,
                       facet, colour, timeframe){
 
   lapply(unique(data$Units), function(x){
-    dat <- data %>% dplyr::filter(Units == x)
-    dat %<>% dplyr::mutate(Detected = detected(Value, DetectionLimit),
-                           EMS_ID = EMS_ID_Renamed)
+    dat <- data[data$Units == x,]
+    dat$Detected <- detected(data$Value, data$DetectionLimit)
+    dat$EMS_ID <- data$EMS_ID_Renamed
     dat$Detected %<>% factor(levels = c(TRUE, FALSE))
-    dat %<>% dplyr::filter(Date >= as.Date(date_range[1]),
-                    Date <= as.Date(date_range[2]))
+    dat <- dat[dat$Date >= as.Date(date_range[1]) & dat$Date <= as.Date(date_range[2]),]
     dat$Timeframe <- factor(get_timeframe(dat$Date, timeframe))
 
-    gp <- ggplot2::ggplot(dat, ggplot2::aes(x = Date, y = Value)) +
+    gp <- ggplot2::ggplot(dat, ggplot2::aes_string(x = "Date", y = "Value")) +
       ggplot2::scale_color_discrete(drop = FALSE) +
       ggplot2::expand_limits(y = 0) +
       ggplot2::facet_wrap(facet, ncol = 1,
@@ -61,7 +60,7 @@ ems_plots <- function(data, plot_type, geom, date_range,
 }
 
 plot_outlier <- function(data, by, point_size){
-  data %<>% dplyr::mutate(Detected = detected(Value, DetectionLimit))
+  data$Detected <- detected(data$Value, data$DetectionLimit)
   data$Detected %<>% factor(levels = c(TRUE, FALSE))
   data$Outlier %<>% factor(levels = c(TRUE, FALSE))
   gp <- ggplot2::ggplot(data, ggplot2::aes_string(x = "Date",
@@ -98,22 +97,5 @@ get_timeframe <- function(date, x = "Year"){
 
 ems_summary_table <- function(data){
   summarise_wqdata(data)
-}
-
-download_plots <- function(plots, path){
-  if(length(plots) > 1)
-    return({
-      for(i in unique(names(plots))){
-        dir.create(i)
-      }
-      for(i in plots){
-        ggplot2::ggsave(path, plot = i, device = "png",
-                        width = get_width(), height = get_height(), dpi = get_dpi())
-      }
-      zip(path, names(plots))
-      for(i in names(plots)){
-        unlink(i, recursive = TRUE)
-      }
-    })
 }
 

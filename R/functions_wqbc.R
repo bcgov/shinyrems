@@ -1,26 +1,34 @@
 summarise_wqdata <- function(x){
   checkr::check_colnames(x, c("EMS_ID_Renamed", "Variable", "Units", "Value"))
-  dt <- data.table::data.table(x)
+  dt <- dtplyr::lazy_dt(x)
   if(identical(x$EMS_ID, x$EMS_ID_Renamed)){
-    data <- dt[, .(n = .N,
-                   min = min(Value, na.rm = TRUE),
-                   max = max(Value, na.rm = TRUE),
-                   mean = mean(Value, na.rm = TRUE),
-                   median = median(Value, na.rm = TRUE),
-                   sd = sd(Value, na.rm = TRUE),
-                   se = se(Value)),
-               .(EMS_ID, Variable, Units)]
+    data <- dt %>%
+      dplyr::group_by(dplyr::.data$EMS_ID,
+                      dplyr::.data$Variable,
+                      dplyr::.data$Units) %>%
+      dplyr::summarise(n = dplyr::n(),
+                       min = min(dplyr::.data$Value, na.rm = TRUE),
+                       max = max(dplyr::.data$Value, na.rm = TRUE),
+                       mean = mean(dplyr::.data$Value, na.rm = TRUE),
+                       median = median(dplyr::.data$Value, na.rm = TRUE),
+                       sd = sd(dplyr::.data$Value, na.rm = TRUE),
+                       se = se(dplyr::.data$Value)) %>%
+      dplyr::ungroup()
   } else {
-    data <- dt[, .(n = .N,
-                   min = min(Value, na.rm = TRUE),
-                   max = max(Value, na.rm = TRUE),
-                   mean = mean(Value, na.rm = TRUE),
-                   median = median(Value, na.rm = TRUE),
-                   sd = sd(Value, na.rm = TRUE),
-                   se = se(Value)),
-               .(EMS_ID_Renamed, Variable, Units)]
+    data <- dt %>%
+      dplyr::group_by(dplyr::.data$EMS_ID_Renamed,
+                      dplyr::.data$Variable,
+                      dplyr::.data$Units) %>%
+      dplyr::summarise(n = dplyr::n(),
+                       min = min(dplyr::.data$Value, na.rm = TRUE),
+                       max = max(dplyr::.data$Value, na.rm = TRUE),
+                       mean = mean(dplyr::.data$Value, na.rm = TRUE),
+                       median = median(dplyr::.data$Value, na.rm = TRUE),
+                       sd = sd(dplyr::.data$Value, na.rm = TRUE),
+                       se = se(dplyr::.data$Value)) %>%
+      dplyr::ungroup()
   }
-  as.data.frame(data)
+  dplyr::as_tibble(data)
 }
 
 clean_wqdata2 <- function (x, by = NULL, max_cv = Inf, sds = 10, ignore_undetected = TRUE,

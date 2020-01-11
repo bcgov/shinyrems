@@ -182,10 +182,9 @@ mod_data_server <- function(input, output, session){
   })
 
   filter_data <- reactive({
-    if(nrow(tidy_data()) < 1) return(empty_tidy)
-    tidy_data() %>%
-      dplyr::filter(SAMPLE_STATE %in% input$sample_state) %>%
-      dplyr::filter(SAMPLE_CLASS %in% input$sample_class)
+    x <- tidy_data()
+    if(nrow(x) < 1) return(empty_tidy)
+    x[x$SAMPLE_STATE %in% input$sample_state & x$SAMPLE_CLASS %in% input$sample_class,]
   })
 
   output$ui_wsgroup <- renderUI({

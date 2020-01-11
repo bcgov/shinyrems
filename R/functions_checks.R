@@ -23,6 +23,11 @@ check_historic_data <- function(){
   rems::download_historic_data(ask = TRUE)
 }
 
+check_all_data <- function(){
+  check_ems_data("2yr")
+  check_historic_data()
+}
+
 check_data_upload <- function(data, template){
   if(!grepl(".csv", data$name, fixed = TRUE)) {
     return("Please submit a csv file.")

@@ -10,7 +10,10 @@ get_lookup <- function(dataset){
 get_all_lookup <- function(){
   lookup_2yr <- get_which_lookup("2yr")
   lookup_historic <- lookup_historic
-  as.data.frame(unique(data.table::data.table(rbind(lookup_2yr, lookup_historic))))
+  rbind(lookup_2yr, lookup_historic) %>%
+    dtplyr::lazy_dt() %>%
+    dplyr::distinct() %>%
+    dplyr::as_tibble()
 }
 
 get_which_lookup <- function(which){
@@ -22,10 +25,12 @@ get_which_lookup <- function(which){
 }
 
 get_lookup_location <- function(data){
-  x <- c("EMS_ID", "MONITORING_LOCATION", "PERMIT",
-         "LATITUDE", "LONGITUDE")
-  data <- data.table::data.table(data)
-  as.data.frame(unique(data, by = x)[, ..x])
+  data %>%
+    dtplyr::lazy_dt() %>%
+    dplyr::distinct(dplyr::.data$EMS_ID, dplyr::.data$MONITORING_LOCATION,
+                    dplyr::.data$PERMIT, dplyr::.data$LATITUDE,
+                    dplyr::.data$LONGITUDE) %>%
+    dplyr::as_tibble()
 }
 
 

@@ -24,14 +24,14 @@ Imports:
     shinycssloaders,
     DT,
     checkr,
-    rlang,
     glue,
     magrittr,
     wqbc,
     shinyhttr,
     shinyWidgets,
-    data.table,
-    dttr2
+    dttr2,
+    waiter,
+    dtplyr
 Suggests:
     testthat (>= 2.1.0),
     usethis

@@ -10,8 +10,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
-#' @import leaflet shiny glue data.table
+#' @import leaflet shiny glue
+#' @importFrom stats median sd setNames
+#' @importFrom utils zip
 #' @importFrom magrittr %<>% %>%
 #' @importFrom shinycssloaders withSpinner
-#' @importFrom rlang .data !! sym
 NULL
