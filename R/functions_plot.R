@@ -24,8 +24,8 @@ ems_plots <- function(data, plot_type, geom, date_range,
 
   lapply(unique(data$Units), function(x){
     dat <- data[data$Units == x,]
-    dat$Detected <- detected(data$Value, data$DetectionLimit)
-    dat$EMS_ID <- data$EMS_ID_Renamed
+    dat$Detected <- detected(dat$Value, dat$DetectionLimit)
+    dat$EMS_ID <- dat$EMS_ID_Renamed
     dat$Detected %<>% factor(levels = c(TRUE, FALSE))
     dat <- dat[dat$Date >= as.Date(date_range[1]) & dat$Date <= as.Date(date_range[2]),]
     dat$Timeframe <- factor(get_timeframe(dat$Date, timeframe))

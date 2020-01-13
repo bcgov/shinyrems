@@ -15,6 +15,7 @@ Imports:
     shiny,
     htmltools,
     rems,
+    dtplyr,
     dplyr,
     ggplot2,
     shinyjs,
@@ -30,8 +31,7 @@ Imports:
     shinyhttr,
     shinyWidgets,
     dttr2,
-    waiter,
-    dtplyr
+    waiter
 Suggests:
     testthat (>= 2.1.0),
     usethis
