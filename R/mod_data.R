@@ -352,6 +352,10 @@ mod_data_server <- function(input, output, session){
     }
   )
 
-  return(filter_data)
+  return(
+    list(
+      data = filter_data
+    )
+  )
 }
 

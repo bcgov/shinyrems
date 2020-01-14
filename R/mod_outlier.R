@@ -39,19 +39,19 @@ mod_outlier_ui <- function(id){
 #' @export
 #' @keywords internal
 
-mod_outlier_server <- function(input, output, session, params, stand_data){
+mod_outlier_server <- function(input, output, session, clean, stand){
   ns <- session$ns
 
   outlier_data <- reactive({
-    req(stand_data())
-    req(params$by())
-    max_cv <- maxcv(params$max_cv())
+    req(stand$data())
+    req(clean$by())
+    max_cv <- maxcv(clean$max_cv())
     x <- ems_outlier(
-      x = stand_data(),
-      by = params$by(),
+      x = stand$data(),
+      by = clean$by(),
       max_cv = max_cv,
-      remove_blanks = params$remove_blanks(),
-      FUN = params$fun(),
+      remove_blanks = clean$remove_blanks(),
+      FUN = clean$fun(),
       sds = input$sds,
       ignore_undetected = input$ignore_undetected,
       large_only = input$large_only)
@@ -104,7 +104,7 @@ mod_outlier_server <- function(input, output, session, params, stand_data){
 
   output$plot_clean <- renderPlot({
     waiter::show_butler()
-    p <- plot_outlier(outlier_data2(), params$by(), input$point_size)
+    p <- plot_outlier(outlier_data2(), clean$by(), input$point_size)
     waiter::hide_butler()
     p
   })
@@ -119,7 +119,11 @@ mod_outlier_server <- function(input, output, session, params, stand_data){
     shinyjs::toggle("div_info_sds", anim = TRUE)
   })
 
-  return(outlier_data3)
+  return(
+    list(
+      data = outlier_data3
+    )
+  )
 }
 
 ## To be copied in the UI

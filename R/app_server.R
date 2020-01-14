@@ -16,14 +16,15 @@ app_server <- function(input, output, session) {
 
   callModule(mod_reference_server, "reference_ui_1")
 
-  tidy_data <- callModule(mod_data_server, "data_ui_1")
+  tidy <- callModule(mod_data_server, "data_ui_1")
 
-  stand_data <- callModule(mod_standardise_server, "standardise_ui_1", tidy_data)
+  stand <- callModule(mod_standardise_server, "standardise_ui_1", tidy)
 
-  params <- callModule(mod_clean_server, "clean_ui_1", stand_data)
+  clean <- callModule(mod_clean_server, "clean_ui_1", stand)
 
-  outlier_data <- callModule(mod_outlier_server, "outlier_ui_1", params, stand_data)
+  outlier <- callModule(mod_outlier_server, "outlier_ui_1", clean, stand)
 
-  callModule(mod_results_server, "results_ui_1", outlier_data)
+  results <- callModule(mod_results_server, "results_ui_1", outlier)
 
+  callModule(mod_rcode_server, "rcode_ui_1", tidy, stand, clean, outlier, results)
 }

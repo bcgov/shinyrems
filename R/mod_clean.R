@@ -39,11 +39,11 @@ mod_clean_ui <- function(id){
 #' @export
 #' @keywords internal
 
-mod_clean_server <- function(input, output, session, stand_data){
+mod_clean_server <- function(input, output, session, stand){
   ns <- session$ns
 
   output$ui_by <- renderUI({
-    data <- stand_data()
+    data <- stand$data()
     if(nrow(data) < 1) return()
     selected <- intersect(names(data),
                      c("EMS_ID", "UPPER_DEPTH", "LOWER_DEPTH"))
@@ -63,7 +63,7 @@ mod_clean_server <- function(input, output, session, stand_data){
     waiter::show_butler()
     withCallingHandlers({
       shinyjs::html("console_clean", "")
-      x <- ems_aggregate(stand_data(),
+      x <- ems_aggregate(stand$data(),
                 by = input$by,
                 remove_blanks = input$remove_blanks,
                 max_cv = max_cv(),

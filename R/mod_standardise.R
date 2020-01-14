@@ -33,14 +33,14 @@ mod_standardise_ui <- function(id){
 #' @export
 #' @keywords internal
 
-mod_standardise_server <- function(input, output, session, tidy_data){
+mod_standardise_server <- function(input, output, session, tidy){
   ns <- session$ns
 
   stand_data <- reactive({
     waiter::show_butler()
     withCallingHandlers({
       shinyjs::html("console_stand", "")
-      x <- ems_standardize(tidy_data(), input$strict)},
+      x <- ems_standardize(tidy$data(), input$strict)},
     message = function(m) {
       shinyjs::html(id = "console_stand", html = HTML(paste(m$message, "<br>")), add = TRUE)
     })
@@ -62,6 +62,10 @@ mod_standardise_server <- function(input, output, session, tidy_data){
     ems_data_table(stand_data())
   })
 
-  return(stand_data)
+  return(
+    list(
+      data = stand_data
+    )
+  )
 }
 
