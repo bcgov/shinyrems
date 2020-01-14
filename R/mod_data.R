@@ -352,9 +352,29 @@ mod_data_server <- function(input, output, session){
     }
   )
 
+  uiOutput(ns("ui_site")),
+  tags$label("Select Parameter(s)"),
+  radioButtons(ns("param_strict"), label = NULL,
+               choices = c("in ANY of selected sites",
+                           "in ALL of selected sites"),
+               selected = "in ANY of selected sites"),
+  uiOutput(ns("ui_parameter")),
+  uiOutput(ns("ui_date")),
+  uiOutput(ns("ui_get")),
+  br(),
+  uiOutput(ns("ui_sample_state")),
+  uiOutput(ns("ui_sample_class")),
+  uiOutput(ns("ui_mdl_action"))
+
   return(
     list(
-      data = filter_data
+      data = filter_data,
+      site = input$site,
+      parameter = input$parameter,
+      date = input$date,
+      sample_state = input$sample_state,
+      sample_class = input$sample_class,
+      mdl_action = input$md_action
     )
   )
 }
