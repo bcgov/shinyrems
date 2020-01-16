@@ -66,6 +66,10 @@ mod_outlier_server <- function(input, output, session, clean, stand){
   #   clean_rv$data <- add_outlier_table(clean_rv$data, input$table_clean_rows_selected)
   # })
 
+  manual_outliers <- reactive({
+    which(add_outlier_brush(outlier_rv$data, input$plot_brush)$Outlier)
+  })
+
   observeEvent(input$plot_brush, {
     outlier_rv$data <- add_outlier_brush(outlier_rv$data, input$plot_brush)
   })
@@ -131,7 +135,9 @@ mod_outlier_server <- function(input, output, session, clean, stand){
       max_cv = max_cv,
       sds = reactive({input$sds}),
       ignore_undetected = reactive({input$ignore_undetected}),
-      large_only = reactive({input$large_only})
+      large_only = reactive({input$large_only}),
+      delete_outliers = reactive({input$delete_outliers}),
+      manual_outliers = manual_outliers
     )
   )
 }

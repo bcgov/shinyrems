@@ -6,6 +6,10 @@ pc <- function(x){
   paste0("c('", paste(x, collapse = "', '"), "')")
 }
 
+pcnum <- function(x){
+  paste0("c(", paste(x, collapse = ", "), ")")
+}
+
 rcode_head <- function(dataset){
   l <- list()
 
@@ -109,5 +113,16 @@ rcode_clean <- function(by, max_cv, sds,
                  sds = {sds}, ignore_undetected = {ignore_undetected},
                  large_only = {large_only}, remove_blanks = {remove_blanks},
                  FUN = {fun})")
+  pbr(l)
+}
+
+rcode_outlier <- function(manual_outliers){
+  l <- list()
+  l$comment <- "### remove outliers"
+  if(length(manual_outliers) > 0){
+    l$outliers <- paste0("outlier_index <- ", pcnum(manual_outliers))
+    l$manual <- "data$Outlier[outlier_index] <- TRUE"
+  }
+  l$data <- "data <- data[!data$Outlier,]"
   pbr(l)
 }

@@ -28,7 +28,10 @@ mod_rcode_ui <- function(id){
           br(),
           uiOutput(ns("code_standardize")),
           br(),
-          uiOutput(ns("code_clean"))
+          uiOutput(ns("code_clean")),
+          br(),
+          uiOutput(ns("code_outlier")),
+          br()
     )
   ))
 }
@@ -75,6 +78,10 @@ mod_rcode_server <- function(input, output, session, tidy,
                 sds = outlier$sds(), ignore_undetected = outlier$ignore_undetected(),
                 large_only = outlier$large_only(), remove_blanks = outlier$remove_blanks(),
                 fun = outlier$fun())
+  })
+
+  output$code_outlier <- renderUI({
+    rcode_outlier(manual_outliers = outlier$manual_outliers())
   })
 }
 
