@@ -382,7 +382,7 @@ mod_data_server <- function(input, output, session){
       sample_state = reactive({input$sample_state}),
       sample_class = reactive({input$sample_class}),
       mdl_action = reactive({input$md_action}),
-      file = reactive({input$upload_data$datapath})
+      file = reactive({input$upload_data$name})
     )
   )
 }

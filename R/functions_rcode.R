@@ -67,7 +67,7 @@ rcode_data <- function(dataset, emsid, parameter, date,
 
   if(dataset == "upload"){
     l <- list()
-    l$data <- glue("data <- readr::read_csv({file}")
+    l$data <- glue("data <- readr::read_csv('{file}')")
   }
 
   p_br(l)

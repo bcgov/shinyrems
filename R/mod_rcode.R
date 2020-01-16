@@ -50,7 +50,8 @@ mod_rcode_server <- function(input, output, session, tidy,
                date = tidy$date(),
                sample_state = tidy$sample_state(),
                sample_class = tidy$sample_class(),
-               mdl_action = tidy$mdl_action())
+               mdl_action = tidy$mdl_action(),
+               file = tidy$file())
   })
 }
 
