@@ -45,11 +45,10 @@ mod_outlier_server <- function(input, output, session, clean, stand){
   outlier_data <- reactive({
     req(stand$data())
     req(clean$by())
-    max_cv <- maxcv(clean$max_cv())
     x <- ems_outlier(
       x = stand$data(),
       by = clean$by(),
-      max_cv = max_cv,
+      max_cv = max_cv(),
       remove_blanks = clean$remove_blanks(),
       FUN = clean$fun(),
       sds = input$sds,
@@ -76,6 +75,10 @@ mod_outlier_server <- function(input, output, session, clean, stand){
       return(outlier_rv$data[!outlier_rv$data$Outlier,])
     }
     outlier_rv$data
+  })
+
+  max_cv <- reactive({
+    maxcv(clean$max_cv())
   })
 
   observe({
@@ -121,7 +124,14 @@ mod_outlier_server <- function(input, output, session, clean, stand){
 
   return(
     list(
-      data = outlier_data3
+      data = outlier_data3,
+      by = reactive({clean$by()}),
+      fun = reactive({clean$fun()}),
+      remove_blanks = reactive({clean$remove_blanks()}),
+      max_cv = max_cv,
+      sds = reactive({input$sds}),
+      ignore_undetected = reactive({input$ignore_undetected}),
+      large_only = reactive({input$large_only})
     )
   )
 }

@@ -1,5 +1,9 @@
-p_br <- function(x){
+pbr <- function(x){
   HTML(paste(x, collapse = "<br/>"))
+}
+
+pc <- function(x){
+  paste0("c('", paste(x, collapse = "', '"), "')")
 }
 
 rcode_head <- function(dataset){
@@ -14,7 +18,7 @@ rcode_head <- function(dataset){
   l$ggplot2 <- "library(ggplot2)"
   l$dplyr <- "library(dplyr)"
 
-  p_br(l)
+  pbr(l)
 }
 
 rcode_data <- function(dataset, emsid, parameter, date,
@@ -23,8 +27,8 @@ rcode_data <- function(dataset, emsid, parameter, date,
   l <- list()
 
   l$comment <- "### get data"
-  l$emsid <- paste0("emsid <- c('", paste(emsid, collapse = "', '"), "')")
-  l$parameter <- paste0("parameter <- c('", paste(parameter, collapse = "', '"), "')")
+  l$emsid <- paste0("emsid <- ", pc(emsid))
+  l$parameter <- paste0("parameter <- ", pc(parameter))
   l$from <- paste0("from_date <- '", date[1], "'")
   l$to <- paste0("to_date <- '", date[2], "'")
 
@@ -72,12 +76,38 @@ rcode_data <- function(dataset, emsid, parameter, date,
     l$data <- glue("data <- readr::read_csv('{file}')")
   }
 
-  p_br(l)
+  pbr(l)
 }
 
-rcode_standardize <- function(data, strict){
+rcode_tidy <- function(mdl_action, cols){
+  l <- list()
+  l$comment <- "### tidy data"
+  l$cols <- paste0("cols <- ", pc(cols))
+  l$data <- glue("data <- wqbc::tidy_ems_data(data, mdl_action = '{mdl_action}')")
+  if(length(cols) > 0){
+    l$data <- glue("data <- wqbc::tidy_ems_data(data, mdl_action = {mdl_action},
+                 cols = cols}")
+  }
+  pbr(l)
+}
+
+rcode_standardize <- function(strict){
   l <- list()
   l$comment <- "### standardize data"
   l$data <- glue("data <- wqbc::standardize_wqdata(data, strict = {strict})")
-  p_br(l)
+  pbr(l)
+}
+
+rcode_clean <- function(by, max_cv, sds,
+                        ignore_undetected, large_only,
+                        remove_blanks, fun){
+
+  l <- list()
+  l$comment <- "### clean data"
+  l$by <- paste0("by <- ", pc(by))
+  l$data <- glue("data <- wqbc::clean_wqdata(data, by = by, max_cv = {max_cv},
+                 sds = {sds}, ignore_undetected = {ignore_undetected},
+                 large_only = {large_only}, remove_blanks = {remove_blanks},
+                 FUN = {fun})")
+  pbr(l)
 }

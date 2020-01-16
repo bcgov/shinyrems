@@ -103,13 +103,9 @@ ems_data <- function(dataset, emsid, parameter, from_date, to_date){
          ))
 }
 
-ems_tidy <- function(data, mdl_action, data_type, dataset, include_depth = TRUE){
+ems_tidy <- function(data, mdl_action, data_type, dataset, cols){
   if(dataset == "upload" && data_type == "tidy"){
     data <- tidy_names_to_raw(data)
-  }
-  cols <- character(0)
-  if(include_depth){
-    cols <- c("UPPER_DEPTH", "LOWER_DEPTH")
   }
   x <- try({
   wqbc::tidy_ems_data(data, mdl_action = mdl_action,

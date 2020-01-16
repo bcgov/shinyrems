@@ -24,6 +24,8 @@ mod_rcode_ui <- function(id){
           br(),
           uiOutput(ns("code_data")),
           br(),
+          uiOutput(ns("code_tidy")),
+          br(),
           uiOutput(ns("code_standardize")),
           br(),
           uiOutput(ns("code_clean"))
@@ -57,8 +59,22 @@ mod_rcode_server <- function(input, output, session, tidy,
                file = tidy$file())
   })
 
+  output$code_tidy <- renderUI({
+    if(dataset == "upload" && tidy$data_type() == "tidy"){
+      return()
+    }
+    rcode_tidy(mdl_action = tidy$mdl_action(), cols = tidy$cols())
+  })
+
   output$code_standardize <- renderUI({
-    rcode_standardize(stand$data(), stand$strict())
+    rcode_standardize(strict = stand$strict())
+  })
+
+  output$code_clean <- renderUI({
+    rcode_clean(by = outlier$by(), max_cv = outlier$max_cv(),
+                sds = outlier$sds(), ignore_undetected = outlier$ignore_undetected(),
+                large_only = outlier$large_only(), remove_blanks = outlier$remove_blanks(),
+                fun = outlier$fun())
   })
 }
 

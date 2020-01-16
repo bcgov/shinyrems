@@ -106,7 +106,13 @@ mod_data_server <- function(input, output, session){
     button(ns("get"), "Get/Update Data")
   })
 
-  raw_rv <- reactiveValues(data = empty_raw)
+  raw_rv <- reactiveValues(data = empty_raw,
+                           cols = character(0))
+  observe({
+    if(!all_depth_na(raw_rv$data)){
+      raw_rv$cols <- c("UPPER_DEPTH", "LOWER_DEPTH")
+    }
+  })
 
   observeEvent(input$get, {
     waiter::show_butler()
@@ -175,13 +181,9 @@ mod_data_server <- function(input, output, session){
 
   tidy_data <- reactive({
     req(raw_rv$data)
-    include_depth <- TRUE
-    if(all_depth_na(raw_rv$data)){
-      include_depth <- FALSE
-    }
     ems_tidy(raw_rv$data, input$mdl_action,
              input$data_type, dataset,
-             include_depth)
+             raw_rv$cols)
   })
 
   filter_data <- reactive({
@@ -381,8 +383,10 @@ mod_data_server <- function(input, output, session){
       date = reactive({input$date_range}),
       sample_state = reactive({input$sample_state}),
       sample_class = reactive({input$sample_class}),
-      mdl_action = reactive({input$md_action}),
-      file = reactive({input$upload_data$name})
+      mdl_action = reactive({input$mdl_action}),
+      file = reactive({input$upload_data$name}),
+      cols = reactive({raw_rv$cols}),
+      data_type = reactive({input$data_type})
     )
   )
 }
