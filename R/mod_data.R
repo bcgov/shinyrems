@@ -36,14 +36,7 @@ mod_data_ui <- function(id){
                           uiOutput(ns("ui_parameter")),
                           uiOutput(ns("ui_date")),
                           uiOutput(ns("ui_get")),
-                          br(),
-                          uiOutput(ns("ui_sample_state")),
-                          uiOutput(ns("ui_sample_class")),
-                          uiOutput(ns("ui_mdl_action")),
-                          br(),
-                          dl_button(ns("dl_raw"), "Download Raw Data"),
-                          br2(),
-                          dl_button(ns("dl_tidy"), "Download Tidy Data"))),
+                          br())),
       shinyjs::hidden(div(id = ns("div_data_upload"),
                           radioButtons(ns("data_type"), label = "Data format",
                                        choices = c("Tidied EMS Data" = "tidy",
@@ -54,7 +47,15 @@ mod_data_ui <- function(id){
                                     label = "",
                                     placeholder = "Upload your own dataset",
                                     accept = c('.csv')),
-                          button(ns('dl_template'), label = "Download Template")))),
+                          dl_button(ns('dl_template'), label = "Download Template"))),
+      br(),
+      uiOutput(ns("ui_sample_state")),
+      uiOutput(ns("ui_sample_class")),
+      uiOutput(ns("ui_mdl_action")),
+      br(),
+      dl_button(ns("dl_raw"), "Download Raw Data"),
+      br2(),
+      dl_button(ns("dl_tidy"), "Download Tidy Data")),
     mainPanel(
       tabsetPanel(selected = "Tidy Data",
                   id = ns("tabset_data"),
@@ -227,7 +228,12 @@ mod_data_server <- function(input, output, session){
 
   output$ui_sample_state <- renderUI({
     if(nrow(tidy_data()) < 1) return()
-    req(input$parameter)
+    if(dataset != "upload"){
+      req(input$parameter)
+    }
+    if(dataset == "upload"){
+      req(tidy_data())
+    }
     x <- sort(unique(tidy_data()$SAMPLE_STATE))
     select_input_x(ns("sample_state"),
                    label = "Select values of SAMPLE_STATE to include",
@@ -237,7 +243,12 @@ mod_data_server <- function(input, output, session){
 
   output$ui_sample_class <- renderUI({
     if(nrow(tidy_data()) < 1) return()
-    req(input$parameter)
+    if(dataset != "upload"){
+      req(input$parameter)
+    }
+    if(dataset == "upload"){
+      req(tidy_data())
+    }
     x <- sort(unique(tidy_data()$SAMPLE_CLASS))
     select_input_x(ns("sample_class"),
                    label = "Select values of SAMPLE_CLASS to include",
@@ -247,7 +258,12 @@ mod_data_server <- function(input, output, session){
 
   output$ui_mdl_action <- renderUI({
     if(nrow(tidy_data()) < 1) return()
-    req(input$parameter)
+    if(dataset != "upload"){
+      req(input$parameter)
+    }
+    if(dataset == "upload"){
+      req(tidy_data())
+    }
     selectInput(ns("mdl_action"), label = "MDL Action",
                 choices = c("zero", "mdl", "half", "na", "none"),
                 selected = "zero") %>%
