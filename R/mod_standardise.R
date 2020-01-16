@@ -64,7 +64,8 @@ mod_standardise_server <- function(input, output, session, tidy){
 
   return(
     list(
-      data = stand_data
+      data = stand_data,
+      strict = reactive({input$strict})
     )
   )
 }

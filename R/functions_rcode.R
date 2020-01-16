@@ -22,6 +22,7 @@ rcode_data <- function(dataset, emsid, parameter, date,
 
   l <- list()
 
+  l$comment <- "### get data"
   l$emsid <- paste0("emsid <- c('", paste(emsid, collapse = "', '"), "')")
   l$parameter <- paste0("parameter <- c('", paste(parameter, collapse = "', '"), "')")
   l$from <- paste0("from_date <- '", date[1], "'")
@@ -67,8 +68,16 @@ rcode_data <- function(dataset, emsid, parameter, date,
 
   if(dataset == "upload"){
     l <- list()
+    l$comment <- "# you will need to change the 'file' argument to point to the file path"
     l$data <- glue("data <- readr::read_csv('{file}')")
   }
 
+  p_br(l)
+}
+
+rcode_standardize <- function(data, strict){
+  l <- list()
+  l$comment <- "### standardize data"
+  l$data <- glue("data <- wqbc::standardize_wqdata(data, strict = {strict})")
   p_br(l)
 }

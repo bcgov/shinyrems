@@ -23,7 +23,10 @@ mod_rcode_ui <- function(id){
           uiOutput(ns('code_head')),
           br(),
           uiOutput(ns("code_data")),
-          br()
+          br(),
+          uiOutput(ns("code_standardize")),
+          br(),
+          uiOutput(ns("code_clean"))
     )
   ))
 }
@@ -52,6 +55,10 @@ mod_rcode_server <- function(input, output, session, tidy,
                sample_class = tidy$sample_class(),
                mdl_action = tidy$mdl_action(),
                file = tidy$file())
+  })
+
+  output$code_standardize <- renderUI({
+    rcode_standardize(stand$data(), stand$strict())
   })
 }
 
