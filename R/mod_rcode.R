@@ -41,20 +41,16 @@ mod_rcode_server <- function(input, output, session, tidy,
   dataset <- getShinyOption("dataset", "demo")
 
   output$code_head <- renderUI({
-    if(dataset == "upload")
-      return()
-    l1 <- "install.packages('rems')"
-    l2 <- "library(rems)"
-    l3 <- "library(wqbc)"
-    l4 <- "library(ggplot2)"
-    if(dataset == "upload") {
-      l5 <- "library(readr)"} else {
-        l5 <- NULL}
-    HTML(paste(l1, l2, l3, l4, l5, sep = "<br/>"))
+    rcode_head(dataset)
   })
 
   output$code_data <- renderUI({
-
+    rcode_data(dataset, emsid = tidy$emsid(),
+               parameter = tidy$parameter(),
+               date = tidy$date(),
+               sample_state = tidy$sample_state(),
+               sample_class = tidy$sample_class(),
+               mdl_action = tidy$mdl_action())
   })
 }
 

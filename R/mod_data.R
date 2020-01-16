@@ -109,7 +109,7 @@ mod_data_server <- function(input, output, session){
 
   observeEvent(input$get, {
     waiter::show_butler()
-    emsid <- translate_site(input$site, lookup(), input$site_type)
+    emsid <- translate_sites()
     raw_rv$data <- ems_data(dataset = dataset,
                             parameter = input$parameter,
                             emsid = emsid,
@@ -158,6 +158,10 @@ mod_data_server <- function(input, output, session){
                     lookup(),
                     input$site_type,
                     input$param_strict)
+  })
+
+  translate_sites <- reactive({
+    unique(translate_site(input$site, lookup(), input$site_type))
   })
 
   template <- reactive({
@@ -355,12 +359,14 @@ mod_data_server <- function(input, output, session){
   return(
     list(
       data = filter_data,
-      site = input$site,
-      parameter = input$parameter,
-      date = input$date,
-      sample_state = input$sample_state,
-      sample_class = input$sample_class,
-      mdl_action = input$md_action
+      site = reactive({input$site}),
+      emsid = translate_sites,
+      parameter = reactive({input$parameter}),
+      date = reactive({input$date_range}),
+      sample_state = reactive({input$sample_state}),
+      sample_class = reactive({input$sample_class}),
+      mdl_action = reactive({input$md_action}),
+      file = reactive({input$upload_data$datapath})
     )
   )
 }
