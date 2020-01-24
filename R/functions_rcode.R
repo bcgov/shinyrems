@@ -126,3 +126,14 @@ rcode_outlier <- function(manual_outliers){
   l$data <- "data <- data[!data$Outlier,]"
   pbr(l)
 }
+
+rcode_result_plot <- function(){
+  l <- list()
+
+
+}
+
+rcode_result_summary <- function(){
+  l <- list()
+
+}

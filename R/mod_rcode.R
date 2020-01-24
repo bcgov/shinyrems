@@ -31,6 +31,10 @@ mod_rcode_ui <- function(id){
           uiOutput(ns("code_clean")),
           br(),
           uiOutput(ns("code_outlier")),
+          br(),
+          uiOutput(ns("code_result_plot")),
+          br(),
+          uiOutput(ns("code_result_summary")),
           br()
     )
   ))
@@ -82,6 +86,14 @@ mod_rcode_server <- function(input, output, session, tidy,
 
   output$code_outlier <- renderUI({
     rcode_outlier(manual_outliers = outlier$manual_outliers())
+  })
+
+  output$code_result_plot <- renderUI({
+    rcode_result_plot()
+  })
+
+  output$code_result_summary <- renderUI({
+    rcode_result_summary()
   })
 }
 
