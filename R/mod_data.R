@@ -28,7 +28,7 @@ mod_data_ui <- function(id){
                                        choices = c("Monitoring Location", "EMS ID"),
                                        selected = "Monitoring Location", inline = TRUE),
                           uiOutput(ns("ui_site")),
-                          tags$label("Select Parameter(s)"),
+                          tags$label("Select Parameter"),
                           radioButtons(ns("param_strict"), label = NULL,
                                        choices = c("in ANY of selected sites",
                                                    "in ALL of selected sites"),
@@ -212,10 +212,10 @@ mod_data_server <- function(input, output, session){
   })
 
   output$ui_parameter <- renderUI({
-    select_input_x(ns("parameter"),
+    selectInput(ns("parameter"),
                    label = NULL,
                    choices = c(get_parameters(), ""),
-                   selected = "")
+                   selected = "", multiple = FALSE)
   })
 
   output$ui_date <- renderUI({
