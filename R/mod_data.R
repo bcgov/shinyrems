@@ -155,6 +155,7 @@ mod_data_server <- function(input, output, session){
   })
 
   get_site_locations <- reactive({
+    req(lookup_location())
     lookup <- lookup_location()
     x <- site_col(input$site_type)
     lookup[lookup[[x]] %in% get_sites(),]

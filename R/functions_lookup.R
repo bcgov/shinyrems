@@ -26,11 +26,11 @@ get_which_lookup <- function(which){
 
 get_lookup_location <- function(data){
   data %>%
-    dtplyr::lazy_dt() %>%
-    dplyr::distinct(dplyr::.data$EMS_ID, dplyr::.data$MONITORING_LOCATION,
-                    dplyr::.data$PERMIT, dplyr::.data$LATITUDE,
-                    dplyr::.data$LONGITUDE) %>%
-    dplyr::as_tibble()
+    # dtplyr::lazy_dt() %>%
+    dplyr::distinct(EMS_ID, MONITORING_LOCATION,
+                    PERMIT, LATITUDE,
+                    LONGITUDE)
+    # dplyr::as_tibble()
 }
 
 
