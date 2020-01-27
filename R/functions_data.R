@@ -67,19 +67,19 @@ ems_data_which <- function(which){
                      dont_update = TRUE, force = TRUE)
 }
 
-ems_data <- function(dataset, emsid, parameter, from_date, to_date){
+ems_data <- function(dataset, emsid, parameter, from_date, to_date, data){
   switch(dataset,
          "demo" = rems::filter_ems_data(x = shinyrems::ems_demo_data,
                                         emsid = emsid,
                                         parameter = parameter,
                                         from_date = from_date,
                                         to_date = to_date),
-         "2yr" = rems::filter_ems_data(x = ems_data_which("2yr"),
+         "2yr" = rems::filter_ems_data(x = data,
                                        emsid = emsid,
                                        parameter = parameter,
                                        from_date = from_date,
                                        to_date = to_date),
-         "4yr" = rems::filter_ems_data(x = ems_data_which("4yr"),
+         "4yr" = rems::filter_ems_data(x = data,
                                        emsid = emsid,
                                        parameter = parameter,
                                        from_date = from_date,
@@ -95,7 +95,7 @@ ems_data <- function(dataset, emsid, parameter, from_date, to_date){
                                     from_date = from_date,
                                     to_date = to_date,
                                     check_db = FALSE),
-           rems::filter_ems_data(x = ems_data_which("2yr"),
+           rems::filter_ems_data(x = data,
                                  emsid = emsid,
                                  parameter = parameter,
                                  from_date = from_date,

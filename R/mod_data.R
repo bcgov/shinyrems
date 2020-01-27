@@ -84,6 +84,15 @@ mod_data_server <- function(input, output, session){
     h4(p("Dataset:", pretty_dataset(dataset)))
   })
 
+  observe({
+    if(dataset %in% c("2yr", "4yr")){
+      raw_rv$ems_data <- ems_data_which(dataset)
+    }
+    if(dataset == "all"){
+      raw_rv$ems_data <- ems_data_which("2yr")
+    }
+  })
+
   ########## ---------- dataset ---------- ##########
   observe({
     raw_rv$data <- empty_raw
@@ -107,7 +116,8 @@ mod_data_server <- function(input, output, session){
   })
 
   raw_rv <- reactiveValues(data = empty_raw,
-                           cols = character(0))
+                           cols = character(0),
+                           ems_data = NULL)
   observe({
     if(!all_depth_na(raw_rv$data)){
       raw_rv$cols <- c("UPPER_DEPTH", "LOWER_DEPTH")
@@ -121,7 +131,8 @@ mod_data_server <- function(input, output, session){
                             parameter = input$parameter,
                             emsid = emsid,
                             from_date = input$date_range[1],
-                            to_date = input$date_range[2])
+                            to_date = input$date_range[2],
+                            data = raw_rv$ems_data)
     waiter::hide_butler()
   })
 
