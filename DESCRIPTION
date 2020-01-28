@@ -22,7 +22,6 @@ Imports:
     DBI,
     leaflet,
     readr,
-    shinycssloaders,
     DT,
     checkr,
     glue,
@@ -31,7 +30,9 @@ Imports:
     shinyhttr,
     shinyWidgets,
     dttr2,
-    waiter
+    waiter,
+    plyr,
+    tibble
 Suggests:
     testthat (>= 2.1.0),
     usethis

@@ -54,7 +54,7 @@ clean_wqdata2 <- function (x, by = NULL, max_cv = Inf, sds = 10, ignore_undetect
     if (tibble::has_name(x, "DateTime")) {
       if (messages)
         message("replacing DateTime column with Date")
-      x$Date <- lubridate::date(x$DateTime)
+      x$Date <- dttr2::dtt_date(x$DateTime)
       x$DateTime <- NULL
     }
     else x <- wqbc:::add_missing_columns(x, list(Date = as.Date("2000-01-01")),
