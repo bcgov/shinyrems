@@ -125,7 +125,7 @@ mod_data_server <- function(input, output, session){
   })
 
   observeEvent(input$get, {
-    waiter::show_butler()
+    suppressWarnings(waiter::show_butler())
     emsid <- translate_sites()
     raw_rv$data <- ems_data(dataset = dataset,
                             parameter = input$parameter,
@@ -133,7 +133,7 @@ mod_data_server <- function(input, output, session){
                             from_date = input$date_range[1],
                             to_date = input$date_range[2],
                             data = raw_rv$ems_data)
-    waiter::hide_butler()
+    suppressWarnings(waiter::hide_butler())
   })
 
   observe({

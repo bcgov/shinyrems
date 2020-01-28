@@ -72,9 +72,9 @@ mod_results_server <- function(input, output, session, clean){
   })
 
   summary_table <- reactive({
-    waiter::show_butler()
+    suppressWarnings(waiter::show_butler())
     x <- ems_summary_table(clean_rv$data)
-    waiter::hide_butler()
+    suppressWarnings(waiter::hide_butler())
     x
   })
 
@@ -88,7 +88,7 @@ mod_results_server <- function(input, output, session, clean){
 
   observe({
     req(plots())
-    waiter::show_butler()
+    suppressWarnings(waiter::show_butler())
     for (i in seq_along(plots())) {
       local({
         my_i <- i
@@ -98,7 +98,7 @@ mod_results_server <- function(input, output, session, clean){
         })
       })
     }
-    waiter::hide_butler()
+    suppressWarnings(waiter::hide_butler())
   })
 
   output$ui_date_range <- renderUI({

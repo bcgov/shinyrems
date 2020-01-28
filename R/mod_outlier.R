@@ -110,9 +110,9 @@ mod_outlier_server <- function(input, output, session, clean, stand){
   })
 
   output$plot_clean <- renderPlot({
-    waiter::show_butler()
+    suppressWarnings(waiter::show_butler())
     p <- plot_outlier(outlier_data2(), clean$by(), input$point_size)
-    waiter::hide_butler()
+    suppressWarnings(waiter::hide_butler())
     p
   })
 

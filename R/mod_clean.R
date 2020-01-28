@@ -60,7 +60,7 @@ mod_clean_server <- function(input, output, session, stand){
   )
 
   clean_data <- reactive({
-    waiter::show_butler()
+    suppressWarnings(waiter::show_butler())
     withCallingHandlers({
       shinyjs::html("console_clean", "")
       x <- ems_aggregate(stand$data(),
@@ -71,7 +71,7 @@ mod_clean_server <- function(input, output, session, stand){
       message = function(m) {
         shinyjs::html(id = "console_clean", html = HTML(paste(m$message, "<br>")), add = TRUE)
       })
-    waiter::hide_butler()
+    suppressWarnings(waiter::hide_butler())
     x
   })
 

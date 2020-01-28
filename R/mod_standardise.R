@@ -37,14 +37,14 @@ mod_standardise_server <- function(input, output, session, tidy){
   ns <- session$ns
 
   stand_data <- reactive({
-    waiter::show_butler()
+    suppressWarnings(waiter::show_butler())
     withCallingHandlers({
       shinyjs::html("console_stand", "")
       x <- ems_standardize(tidy$data(), input$strict)},
     message = function(m) {
       shinyjs::html(id = "console_stand", html = HTML(paste(m$message, "<br>")), add = TRUE)
     })
-    waiter::hide_butler()
+    suppressWarnings(waiter::hide_butler())
     x
   })
 
