@@ -32,7 +32,8 @@ Imports:
     dttr2,
     waiter,
     plyr,
-    tibble
+    tibble,
+    shinycssloaders
 Suggests:
     testthat (>= 2.1.0),
     usethis
