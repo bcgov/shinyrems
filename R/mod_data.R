@@ -57,7 +57,7 @@ mod_data_ui <- function(id){
       br2(),
       dl_button(ns("dl_tidy"), "Download Tidy Data")),
     mainPanel(
-      tabsetPanel(selected = "Tidy Data",
+      tabsetPanel(selected = "Raw Data",
                   id = ns("tabset_data"),
                   tabPanel(title = "Raw Data",
                            uiOutput(ns("ui_table_raw"))),
