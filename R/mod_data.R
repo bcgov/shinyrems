@@ -53,6 +53,7 @@ mod_data_ui <- function(id){
       uiOutput(ns("ui_sample_class")),
       uiOutput(ns("ui_mdl_action")),
       br(),
+      textInput(ns("filename"), label = "File name", value = "ems_data"),
       dl_button(ns("dl_raw"), "Download Raw Data"),
       br2(),
       dl_button(ns("dl_tidy"), "Download Tidy Data")),
@@ -368,13 +369,17 @@ mod_data_server <- function(input, output, session){
   })
 
   output$dl_raw <- downloadHandler(
-    filename = function() "ems_raw_data.csv",
+    filename = function(){
+      paste0(input$filename, ".csv")
+    },
     content = function(file) {
       readr::write_csv(raw_rv$data, file)
     })
 
   output$dl_tidy <- downloadHandler(
-    filename = function() "ems_tidy_data.csv",
+    filename = function(){
+      paste0(input$filename, ".csv")
+    },
     content = function(file) {
       readr::write_csv(tidy_data(), file)
     })
