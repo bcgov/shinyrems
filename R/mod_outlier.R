@@ -32,6 +32,11 @@ mod_outlier_ui <- function(id){
                    shinyjs::hidden(button(ns("clear_outliers"),
                                           label = "Undo outlier selection",
                                           icon = icon(NULL)))),
+          tabPanel(title = "Final Data",
+                   br(),
+                   dl_group("final", ns),
+                   br2(),
+                   uiOutput(ns("ui_table_final"))),
           tabPanel(title = "R Code",
                    br(),
                    wellPanel(uiOutput(ns("rcode")))))
@@ -151,6 +156,22 @@ mod_outlier_server <- function(input, output, session, clean, stand){
       rcodeoutlier()
     )
   })
+
+  output$ui_table_final <- renderUI({
+    ems_table_output(ns('table_final'))
+  })
+
+  output$table_final <- DT::renderDT({
+    ems_data_table(outlier_data3())
+  })
+
+  output$dl_final <- downloadHandler(
+    filename = function(){
+      paste0(input$file_final, ".csv")
+    },
+    content = function(file) {
+      readr::write_csv(outlier_data3(), file)
+    })
 
   return(
     list(
