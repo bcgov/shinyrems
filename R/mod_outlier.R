@@ -25,10 +25,17 @@ mod_outlier_ui <- function(id){
                    numericInput(ns("point_size"), label = "Point Size",
                                 value = 1.3, min = 0, max = 10)),
       mainPanel(
-        uiOutput(ns("ui_plot")),
-        shinyjs::hidden(button(ns("clear_outliers"),
-                               label = "Undo outlier selection",
-                               icon = icon(NULL))))
+        tabsetPanel(
+          tabPanel(title = "Manual outlier selection",
+                   br(),
+                   uiOutput(ns("ui_plot")),
+                   shinyjs::hidden(button(ns("clear_outliers"),
+                                          label = "Undo outlier selection",
+                                          icon = icon(NULL)))),
+          tabPanel(title = "R Code",
+                   br(),
+                   wellPanel(uiOutput(ns("rcode")))))
+        )
     )
   )
 }
@@ -126,18 +133,30 @@ mod_outlier_server <- function(input, output, session, clean, stand){
     shinyjs::toggle("div_info_sds", anim = TRUE)
   })
 
+  rcodeclean <- reactive({
+    rcode_clean2(by = clean$by(), max_cv = max_cv(), sds = input$sds,
+                 ignore_undetected = input$ignore_undetected,
+                 large_only = input$large_only,
+                 remove_blanks = clean$remove_blanks(), fun = clean$fun())
+  })
+
+  rcodeoutlier <- reactive({
+    rcode_outlier(manual_outliers())
+  })
+
+  output$rcode <- renderUI({
+    tagList(
+      rcodeclean(),
+      br2(),
+      rcodeoutlier()
+    )
+  })
+
   return(
     list(
       data = outlier_data3,
-      by = reactive({clean$by()}),
-      fun = reactive({clean$fun()}),
-      remove_blanks = reactive({clean$remove_blanks()}),
-      max_cv = max_cv,
-      sds = reactive({input$sds}),
-      ignore_undetected = reactive({input$ignore_undetected}),
-      large_only = reactive({input$large_only}),
-      delete_outliers = reactive({input$delete_outliers}),
-      manual_outliers = manual_outliers
+      rcodeclean = rcodeclean,
+      rcodeoutlier = rcodeoutlier
     )
   )
 }

@@ -17,6 +17,7 @@ mod_data_ui <- function(id){
   sidebarLayout(
     sidebarPanel(
       uiOutput(ns("ui_dataset")),
+      br(),
       shinyjs::hidden(div(id = ns("div_data_find"),
                           tags$label("Select site(s) or"),
                           actionLink(ns("search_map"), label = "find sites on map"),
@@ -38,6 +39,7 @@ mod_data_ui <- function(id){
                           uiOutput(ns("ui_get")),
                           br())),
       shinyjs::hidden(div(id = ns("div_data_upload"),
+                          title("Upload Data"),
                           radioButtons(ns("data_type"), label = "Data format",
                                        choices = c("Tidied EMS Data" = "tidy",
                                                    "Raw EMS Data" = "raw"),
@@ -47,25 +49,23 @@ mod_data_ui <- function(id){
                                     label = "",
                                     placeholder = "Upload your own dataset",
                                     accept = c('.csv')),
-                          dl_button(ns('dl_template'), label = "Download Template"))),
-      br(),
-      uiOutput(ns("ui_sample_state")),
-      uiOutput(ns("ui_sample_class")),
-      uiOutput(ns("ui_mdl_action")),
-      br(),
-      textInput(ns("filename"), label = "File name", value = "ems_data"),
-      dl_button(ns("dl_raw"), "Download Raw Data"),
-      br2(),
-      dl_button(ns("dl_tidy"), "Download Tidy Data")),
+                          dl_button(ns('dl_template'), label = "Download Template")))),
     mainPanel(
-      tabsetPanel(selected = "Raw Data",
+      tabsetPanel(selected = "Data",
                   id = ns("tabset_data"),
-                  tabPanel(title = "Raw Data",
-                           uiOutput(ns("ui_table_raw"))),
-                  tabPanel(title = "Tidy Data",
-                           uiOutput(ns("ui_table_tidy"))),
+                  tabPanel(title = "Data",
+                           br(),
+                             dl_group("raw", ns),
+                           br2(),
+                             uiOutput(ns("ui_table_raw"))
+                           ),
                   tabPanel(title = "Site Map",
-                           wellPanel(site_map(ns), class = "wellpanel"))
+                           wellPanel(site_map(ns), class = "wellpanel")),
+                  tabPanel(title = "R Code",
+                           br(),
+                           wellPanel(
+                             uiOutput(ns("rcode")))
+                           )
       )
     )
   )
@@ -82,7 +82,7 @@ mod_data_server <- function(input, output, session){
 
   dataset <- getShinyOption("dataset", "demo")
   output$ui_dataset <- renderUI({
-    h4(p("Dataset:", pretty_dataset(dataset)))
+    title(paste("Dataset:", pretty_dataset(dataset)))
   })
 
   observe({
@@ -192,19 +192,6 @@ mod_data_server <- function(input, output, session){
     tidy_names_to_raw(template_tidy)
   })
 
-  tidy_data <- reactive({
-    req(raw_rv$data)
-    ems_tidy(raw_rv$data, input$mdl_action,
-             input$data_type, dataset,
-             raw_rv$cols)
-  })
-
-  filter_data <- reactive({
-    x <- tidy_data()
-    if(nrow(x) < 1) return(empty_tidy)
-    x[x$SAMPLE_STATE %in% input$sample_state & x$SAMPLE_CLASS %in% input$sample_class,]
-  })
-
   output$ui_wsgroup <- renderUI({
     selectInput(ns("wsgroup"), label = "Zoom to watershed group",
                 choices = c(sort(watershed_groups$WATERSHED_GROUP_NAME), ""),
@@ -239,46 +226,6 @@ mod_data_server <- function(input, output, session){
                    label = "Get any available data between dates:",
                    start = dates[1], end = dates[2],
                    min = dates[1], max = dates[2])
-  })
-
-  output$ui_sample_state <- renderUI({
-    x <- sort(unique(raw_rv$data$SAMPLE_STATE))
-    select_input_x(ns("sample_state"),
-                   label = "Select values of SAMPLE_STATE to include",
-                   choices = x,
-                   selected = x)
-  })
-
-  output$ui_sample_class <- renderUI({
-    x <- sort(unique(raw_rv$data$SAMPLE_CLASS))
-    select_input_x(ns("sample_class"),
-                   label = "Select values of SAMPLE_CLASS to include",
-                   choices = x,
-                   selected = x)
-  })
-
-  observe({
-    if(nrow(tidy_data()) < 1 || dataset == "upload" || input$parameter == ""){
-      shinyjs::hide("ui_sample_class")
-      shinyjs::hide("ui_sample_state")
-      shinyjs::hide("ui_mdl_action")
-    } else {
-      shinyjs::show("ui_sample_class")
-      shinyjs::show("ui_sample_state")
-      shinyjs::show("ui_mdl_action")
-    }
-  })
-
-  output$ui_mdl_action <- renderUI({
-    selectInput(ns("mdl_action"), label = "MDL Action",
-                choices = c("zero", "mdl", "half", "na", "none"),
-                selected = "zero") %>%
-      embed_help("info_mdl", ns, info$mdl_action)
-
-  })
-
-  observeEvent(input$info_mdl, {
-    shinyjs::toggle("div_info_mdl", anim = TRUE)
   })
 
   observeEvent(input$search_map, {
@@ -347,32 +294,16 @@ mod_data_server <- function(input, output, session){
     ems_table_output(ns('table_raw'))
   })
 
-  output$ui_table_tidy <- renderUI({
-    ems_table_output(ns('table_tidy'))
-  })
-
   output$table_raw <- DT::renderDT({
     ems_data_table(raw_rv$data)
   })
 
-  output$table_tidy <- DT::renderDT({
-    ems_data_table(filter_data())
-  })
-
   output$dl_raw <- downloadHandler(
     filename = function(){
-      paste0(input$filename, ".csv")
+      paste0(input$file_raw, ".csv")
     },
     content = function(file) {
       readr::write_csv(raw_rv$data, file)
-    })
-
-  output$dl_tidy <- downloadHandler(
-    filename = function(){
-      paste0(input$filename, ".csv")
-    },
-    content = function(file) {
-      readr::write_csv(tidy_data(), file)
     })
 
   output$dl_template <- downloadHandler(
@@ -382,19 +313,23 @@ mod_data_server <- function(input, output, session){
     }
   )
 
+  rcode <- reactive({
+    rcode_data(dataset, emsid = translate_sites(),
+               parameter = input$parameter,
+               date = input$date_range, file = input$upload_data$name)
+  })
+
+  output$rcode <- renderUI({
+    rcode()
+  })
+
   return(
     list(
-      data = filter_data,
-      site = reactive({input$site}),
-      emsid = translate_sites,
-      parameter = reactive({input$parameter}),
-      date = reactive({input$date_range}),
-      sample_state = reactive({input$sample_state}),
-      sample_class = reactive({input$sample_class}),
-      mdl_action = reactive({input$mdl_action}),
-      file = reactive({input$upload_data$name}),
+      dataset = reactive({dataset}),
+      data = reactive({raw_rv$data}),
       cols = reactive({raw_rv$cols}),
-      data_type = reactive({input$data_type})
+      data_type = reactive({input$data_type}),
+      rcode = rcode
     )
   )
 }

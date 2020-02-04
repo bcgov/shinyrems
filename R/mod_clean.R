@@ -17,19 +17,24 @@ mod_clean_ui <- function(id){
     sidebarPanel(class = "sidebar",
                  checkboxInput(ns("remove_blanks"), "Remove blanks", value = TRUE),
                  uiOutput(ns("ui_by")),
-                 radioButtons(ns("fun"), label = "Aggreggation function",
+                 radioButtons(ns("fun"), label = "Summarize by function",
                               choices = c("mean", "median", "max"),
                               selected = "max", inline = TRUE),
                  numericInput(ns("max_cv"), label = "Maximum CV", value = Inf) %>%
-                   embed_help("info_maxcv", ns, info$max_cv),
-                 dl_button(ns("dl_clean"), "Download Clean Data")),
+                   embed_help("info_maxcv", ns, info$max_cv)),
     mainPanel(tabsetPanel(selected = "Clean Data",
                           id = ns("tabset_data"),
                           tabPanel(title = "Clean Data",
+                                   br(),
+                                   dl_group("clean", ns),
+                                   br2(),
                                    uiOutput(ns("ui_table_clean"))),
                           tabPanel(title = "Messages",
                                    br(),
-                                   help_output(ns("console_clean")))
+                                   help_output(ns("console_clean"))),
+                          tabPanel(title = "R Code",
+                                   br(),
+                                   wellPanel(uiOutput(ns("rcode"))))
     ))
   )
 }
@@ -50,7 +55,7 @@ mod_clean_server <- function(input, output, session, stand){
     optional <- intersect(names(data),
                           c("SAMPLE_STATE", "SAMPLE_CLASS"))
 
-    select_input_x(ns("by"), label = "Aggregation columns",
+    select_input_x(ns("by"), label = "Summarize by columns",
                    choices = c(selected, optional),
                    selected = selected)
   })
@@ -84,13 +89,24 @@ mod_clean_server <- function(input, output, session, stand){
   })
 
   output$dl_clean <- downloadHandler(
-    filename = function() "ems_clean_data.csv",
+    filename = function(){
+      paste0(input$file_clean, ".csv")
+    },
     content = function(file) {
       readr::write_csv(clean_data(), file)
     })
 
   observeEvent(input$info_maxcv, {
     shinyjs::toggle("div_info_maxcv", anim = TRUE)
+  })
+
+  rcode <- reactive({
+    rcode_clean(by = input$by, max_cv = input$max_cv,
+                remove_blanks = input$remove_blanks, fun = input$fun)
+  })
+
+  output$rcode <- renderUI({
+    rcode()
   })
 
   return(

@@ -25,8 +25,7 @@ rcode_head <- function(dataset){
   pbr(l)
 }
 
-rcode_data <- function(dataset, emsid, parameter, date,
-                       sample_state, sample_class, mdl_action, file){
+rcode_data <- function(dataset, emsid, parameter, date, file){
 
   l <- list()
 
@@ -79,7 +78,6 @@ rcode_data <- function(dataset, emsid, parameter, date,
     l$comment <- "# you will need to change the 'file' argument to point to the file path"
     l$data <- glue("data <- readr::read_csv('{file}')")
   }
-
   pbr(l)
 }
 
@@ -90,7 +88,7 @@ rcode_tidy <- function(mdl_action, cols){
   l$data <- glue("data <- wqbc::tidy_ems_data(data, mdl_action = '{mdl_action}')")
   if(length(cols) > 0){
     l$data <- glue("data <- wqbc::tidy_ems_data(data, mdl_action = {mdl_action},
-                 cols = cols}")
+                 cols = cols)")
   }
   pbr(l)
 }
@@ -102,7 +100,17 @@ rcode_standardize <- function(strict){
   pbr(l)
 }
 
-rcode_clean <- function(by, max_cv, sds,
+rcode_clean <- function(by, max_cv, remove_blanks, fun){
+
+  l <- list()
+  l$comment <- "### clean data"
+  l$by <- paste0("by <- ", pc(by))
+  l$data <- glue("data <- wqbc::clean_wqdata(data, by = by, max_cv = {max_cv},
+                  remove_blanks = {remove_blanks}, FUN = {fun})")
+  pbr(l)
+}
+
+rcode_clean2 <- function(by, max_cv, sds,
                         ignore_undetected, large_only,
                         remove_blanks, fun){
 
