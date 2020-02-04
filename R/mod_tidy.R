@@ -19,7 +19,8 @@ mod_tidy_ui <- function(id){
                  uiOutput(ns("ui_sample_state")),
                  uiOutput(ns("ui_sample_class")),
                  uiOutput(ns("ui_mdl_action")),
-                 checkboxInput(ns("strict"), "Strict matching", value = TRUE)),
+                 checkboxInput(ns("strict"), "Strict matching", value = TRUE) %>%
+                   embed_help("info_strict", ns, info$strict)),
     mainPanel(tabsetPanel(tabPanel(title = "Tidy Data",
                                    br(),
                                    dl_group("tidy", ns),
@@ -94,6 +95,10 @@ mod_tidy_server <- function(input, output, session, raw){
 
   observeEvent(input$info_mdl, {
     shinyjs::toggle("div_info_mdl", anim = TRUE)
+  })
+
+  observeEvent(input$info_strict, {
+    shinyjs::toggle("div_info_strict", anim = TRUE)
   })
 
   output$ui_table_tidy <- renderUI({
