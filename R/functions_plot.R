@@ -36,6 +36,8 @@ ems_plots <- function(data, plot_type, geom, date_range,
       ggplot2::facet_wrap(facet, ncol = 1,
                           scales = "free_y") +
       ggplot2::ylab(unique(dat$Units)) +
+      ggplot2::theme(legend.position = "bottom") +
+      ggplot2::theme_bw() +
       ggplot2::theme(legend.position = "bottom")
 
     if(plot_type == "scatter"){
@@ -70,7 +72,9 @@ plot_outlier <- function(data, by, point_size){
     ggplot2::geom_point(ggplot2::aes_string(),
                           size = point_size) +
     ggplot2::scale_color_discrete(drop = FALSE) +
-    ggplot2::expand_limits(y = 0)
+    ggplot2::expand_limits(y = 0) +
+    # ggplot2::theme_bw() +
+    ggplot2::theme(legend.position = "bottom")
 
   if("EMS_ID" %in% by){
     if(length(unique(data$Variable)) == 1){

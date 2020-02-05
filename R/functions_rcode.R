@@ -16,6 +16,9 @@ rcode_head <- function(dataset){
   if(dataset == "upload"){
     l$readr <- "library(readr)"
   }
+  if(dataset == "demo"){
+    l$shinyrems <- "library(shinyrems)"
+  }
 
   l$rems <- "library(rems)"
   l$wqbc <- "library(wqbc)"
@@ -35,7 +38,7 @@ rcode_data <- function(dataset, emsid, parameter, date, file){
   l$from <- paste0("from_date <- '", date[1], "'")
   l$to <- paste0("to_date <- '", date[2], "'")
 
-  l$data <- "data <- rems::ems_demo_data"
+  l$data <- "data <- shinyrems::ems_demo_data"
   l$filter <- paste0("data <- rems::filter_ems_data(x = data, emsid = emsid,
              parameter = parameter, from_date = from_date, to_date = to_date)")
 
@@ -87,7 +90,7 @@ rcode_tidy <- function(mdl_action, cols){
   l$cols <- paste0("cols <- ", pc(cols))
   l$data <- glue("data <- wqbc::tidy_ems_data(data, mdl_action = '{mdl_action}')")
   if(length(cols) > 0){
-    l$data <- glue("data <- wqbc::tidy_ems_data(data, mdl_action = {mdl_action},
+    l$data <- glue("data <- wqbc::tidy_ems_data(data, mdl_action = '{mdl_action}',
                  cols = cols)")
   }
   pbr(l)

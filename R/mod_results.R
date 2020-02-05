@@ -23,19 +23,22 @@ mod_results_ui <- function(id){
                            uiOutput(ns("ui_colour"))),
                    actionLink(ns("rename"), "Rename sites"),
                    br(),
-                   uiOutput(ns("ui_rename")),
-                   br2(),
-                   dl_button(ns("dl_table"), "Download Table"),
-                   br2(),
-                   dl_button(ns("dl_plot"), "Download Plots")),
+                   uiOutput(ns("ui_rename"))),
       mainPanel(tabsetPanel(selected = "Plot",
                             tabPanel(title = "Plot",
                                      br(),
+                                     dl_group("plot", ns),
+                                     br2(),
                                      uiOutput(ns("ui_plot"))),
-                            tabPanel(title = "Summary Table",
+                            tabPanel(title = "Summary Statistics",
                                      br(),
+                                     dl_group("table", ns),
+                                     br2(),
                                      tableOutput(ns("table"))
-                                     )
+                                     ),
+                            tabPanel(title = "R Code",
+                                     br(),
+                                     wellPanel(uiOutput(ns("rcode"))))
       ))
     )
   )
@@ -132,7 +135,8 @@ mod_results_server <- function(input, output, session, clean){
         ))),
       shinyjs::hidden(selectInput(ns("timeframe"), label = "Group by time window",
                                   choices = c("Year", "Year-Month", "Month", "Season"),
-                                  selected = c("Year")))
+                                  selected = c("Year")) %>%
+                        embed_help("info_timeframe", ns, info$timeframe))
     )
   })
 
@@ -154,27 +158,43 @@ mod_results_server <- function(input, output, session, clean){
 
   output$dl_plot <- downloadHandler(
     filename = function(){
-      "ems_plots.zip"
+      paste0(input$file_plot, ".png")
     },
-    content = function(file){
-      fs <- c()
-      tmpdir <- tempdir()
-      setwd(tempdir())
-      for (i in seq_along(plots())) {
-        path <- paste0("plot_", i, ".png")
-        fs <- c(fs, path)
-        ggplot2::ggsave(path, plots()[[i]], device = "png")
-      }
-      zip(zipfile = file, files = fs)
-    },
-    contentType = "application/zip"
-  )
+    content = function(file) {
+      ggplot2::ggsave(file, plots()[[1]], device = "png")
+    })
 
   output$dl_table <- downloadHandler(
-    filename = function() "ems_summary_table.csv",
+    filename = function(){
+      paste0(input$file_table, ".csv")
+    },
     content = function(file) {
       readr::write_csv(summary_table(), file)
     })
+
+  # output$dl_plot <- downloadHandler(
+  #   filename = function(){
+  #     "ems_plots.zip"
+  #   },
+  #   content = function(file){
+  #     fs <- c()
+  #     tmpdir <- tempdir()
+  #     setwd(tempdir())
+  #     for (i in seq_along(plots())) {
+  #       path <- paste0("plot_", i, ".png")
+  #       fs <- c(fs, path)
+  #       ggplot2::ggsave(path, plots()[[i]], device = "png")
+  #     }
+  #     zip(zipfile = file, files = fs)
+  #   },
+  #   contentType = "application/zip"
+  # )
+
+  # output$dl_table <- downloadHandler(
+  #   filename = function() "ems_summary_table.csv",
+  #   content = function(file) {
+  #     readr::write_csv(summary_table(), file)
+  #   })
 
   clean_rv <- reactiveValues(data = NULL)
   observe({
@@ -204,10 +224,20 @@ mod_results_server <- function(input, output, session, clean){
         button(ns("finalise"), "Rename")))
   })
 
+  observeEvent(input$info_timeframe, {
+    shinyjs::toggle("div_info_timeframe", anim = TRUE)
+  })
+
+  rcodeplot <- reactive({})
+
+  rcodetable <- reactive({})
+
   return(
     list(
       facet = reactive({input$facet}),
-      colour = reactive({input$colour})
+      colour = reactive({input$colour}),
+      rcodeplot = rcodeplot,
+      rcodetable = rcodetable
     )
   )
 }

@@ -30,7 +30,7 @@ app_ui <- function() {
                tabPanel(title = "4. Outliers",
                         br(),
                         mod_outlier_ui("outlier_ui_1")),
-               tabPanel(title = "5. Results",
+               tabPanel(title = "5. Plots/Statistics",
                         br(),
                         mod_results_ui("results_ui_1")),
                tabPanel(title = "6. R Code",

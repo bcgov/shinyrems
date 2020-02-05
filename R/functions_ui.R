@@ -67,4 +67,7 @@ to half the MDL), 'mdl' (set the value to equal to the MDL), or 'na'
              remove = "Whether to view the plots with outliers removed.
              Note, all outliers (manually or automatically selected)
              are removed from the data before proceeding to the next tab,
-             regardless of whether this checkbox is selected.")
+             regardless of whether this checkbox is selected.",
+             timeframe = "Seasons are defined as: Spring (March to May),
+             Summer (June to August),
+             Autumn (September to November), Winter (December to February)")

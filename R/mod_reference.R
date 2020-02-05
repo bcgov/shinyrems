@@ -28,7 +28,7 @@ mod_reference_ui <- function(id){
   fluidPage(
     fluidRow(
       selectInput(ns("selectTable"), label = "Select Reference Table",
-                  choices = c("Parameters", "Location Samples",
+                  choices = c("Parameters", "Location Samples - Sample State",
                               "Collection Methods", "Sample Classes",
                               "Species", "Units"),
                   selected = "Parameters"),
@@ -47,12 +47,8 @@ mod_reference_ui <- function(id){
 mod_reference_server <- function(input, output, session){
   ns <- session$ns
 
-  table <- reactive({
-    ems_reference_tables[[input$selectTable]]
-  })
-
   output$table <- DT::renderDT({
-    ems_data_table(table())
+    ems_data_table(ems_reference_tables[[input$selectTable]])
     })
 
   output$download <- downloadHandler(

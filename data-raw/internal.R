@@ -98,7 +98,7 @@ empty_clean <- empty_df(clean %>% select(-Outlier))
 empty_outlier <- empty_df(clean)
 
 ems_reference_tables <- list("Collection Methods" = rems::ems_coll_methods,
-                             "Location Samples" = rems::ems_location_samples,
+                             "Location Samples - Sample State" = rems::ems_location_samples,
                              "Parameters" = rems::ems_parameters,
                              "Sample Classes" = rems::ems_sample_classes,
                              "Species" = rems::ems_species,
