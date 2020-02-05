@@ -20,22 +20,7 @@ mod_rcode_ui <- function(id){
     uiOutput("ui_help"),
     div(id = 'codes',
         wellPanel(
-          uiOutput(ns('code_head')),
-          br(),
-          uiOutput(ns("code_data")),
-          br(),
-          uiOutput(ns("code_tidy")),
-          br(),
-          uiOutput(ns("code_standardize")),
-          br(),
-          uiOutput(ns("code_clean")),
-          br(),
-          uiOutput(ns("code_outlier")),
-          br(),
-          uiOutput(ns("code_result_plot")),
-          br(),
-          uiOutput(ns("code_result_summary")),
-          br()
+          uiOutput(ns('rcode'))
     )
   ))
 }
@@ -46,54 +31,28 @@ mod_rcode_ui <- function(id){
 #' @export
 #' @keywords internal
 
-mod_rcode_server <- function(input, output, session, tidy,
-                             stand, clean, outlier, results){
+mod_rcode_server <- function(input, output, session, data, tidy,
+                             clean, outlier, results){
   ns <- session$ns
 
   dataset <- getShinyOption("dataset", "demo")
 
-  output$code_head <- renderUI({
-    rcode_head(dataset)
-  })
-
-  output$code_data <- renderUI({
-    rcode_data(dataset, emsid = tidy$emsid(),
-               parameter = tidy$parameter(),
-               date = tidy$date(),
-               sample_state = tidy$sample_state(),
-               sample_class = tidy$sample_class(),
-               mdl_action = tidy$mdl_action(),
-               file = tidy$file())
-  })
-
-  output$code_tidy <- renderUI({
-    if(dataset == "upload" && tidy$data_type() == "tidy"){
-      return()
-    }
-    rcode_tidy(mdl_action = tidy$mdl_action(), cols = tidy$cols())
-  })
-
-  output$code_standardize <- renderUI({
-    rcode_standardize(strict = stand$strict())
-  })
-
-  output$code_clean <- renderUI({
-    rcode_clean(by = outlier$by(), max_cv = outlier$max_cv(),
-                sds = outlier$sds(), ignore_undetected = outlier$ignore_undetected(),
-                large_only = outlier$large_only(), remove_blanks = outlier$remove_blanks(),
-                fun = outlier$fun())
-  })
-
-  output$code_outlier <- renderUI({
-    rcode_outlier(manual_outliers = outlier$manual_outliers())
-  })
-
-  output$code_result_plot <- renderUI({
-    rcode_result_plot()
-  })
-
-  output$code_result_summary <- renderUI({
-    rcode_result_summary()
+  output$rcode <- renderUI({
+    tagList(
+      rcode_head(dataset),
+      br2(),
+      data$rcode(),
+      br2(),
+      tidy$rcodetidy(),
+      br2(),
+      outlier$rcodeclean(),
+      br2(),
+      outlier$rcodeoutlier(),
+      br2(),
+      results$rcodeplot(),
+      br2(),
+      results$rcodetable()
+    )
   })
 }
 
