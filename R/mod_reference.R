@@ -25,7 +25,7 @@
 #' @keywords internal
 mod_reference_ui <- function(id){
   ns <- NS(id)
-  fillPage(
+  fluidPage(
     fillRow(height = "90%", width = 350, flex = c(2, 1),
       selectInput(ns("selectTable"), label = NULL,
                   choices = c("Parameters", "Location Samples - Sample State",
