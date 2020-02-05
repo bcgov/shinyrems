@@ -25,16 +25,16 @@
 #' @keywords internal
 mod_reference_ui <- function(id){
   ns <- NS(id)
-  fluidPage(
-    fluidRow(
-      selectInput(ns("selectTable"), label = "Select Reference Table",
+  fillPage(
+    fillRow(height = "90%", width = 350, flex = c(2, 1),
+      selectInput(ns("selectTable"), label = NULL,
                   choices = c("Parameters", "Location Samples - Sample State",
                               "Collection Methods", "Sample Classes",
                               "Species", "Units"),
                   selected = "Parameters"),
-      dl_button(ns("download"), label = "Download Table"),
-      br(), br(),
-      ems_table_output(ns("table"))
+      dl_button(ns("download"), label = "Download")),
+      br3(),
+      ems_table_output(ns("table")
     )
   )
 }
