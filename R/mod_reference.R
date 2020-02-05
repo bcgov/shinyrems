@@ -47,8 +47,12 @@ mod_reference_ui <- function(id){
 mod_reference_server <- function(input, output, session){
   ns <- session$ns
 
+  table <- reactive({
+    ems_reference_tables[[input$selectTable]]
+  })
+
   output$table <- DT::renderDT({
-    ems_data_table(ems_reference_tables[[input$selectTable]])
+    ems_data_table(table())
     })
 
   output$download <- downloadHandler(
