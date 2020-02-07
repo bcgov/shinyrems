@@ -33,9 +33,9 @@ help_output <- function(id){
       style = "color: grey;")
 }
 
-plot_outputs <- function(x, ns){
+plot_outputs <- function(x, ns, height){
   tagList(
-    plotOutput(ns(paste0("plot_", x))),
+    plotOutput(ns(paste0("plot_", x)), height = height),
     br()
   )
 }

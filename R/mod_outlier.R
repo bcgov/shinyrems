@@ -26,7 +26,9 @@ mod_outlier_ui <- function(id){
                    checkboxInput(ns("delete_outliers"), "Remove outliers from plot", FALSE) %>%
                      embed_help("info_remove", ns, info$remove),
                    numericInput(ns("point_size"), label = "Point Size",
-                                value = 1.3, min = 0, max = 10)),
+                                value = 1.3, min = 0, max = 10),
+                   sliderInput(ns("plot_height"), label = "Plot Height",
+                                value = 500, min = 0, max = 1000, step = 100)),
       mainPanel(
         tabsetPanel(
           tabPanel(title = "Manual outlier selection",
@@ -146,7 +148,7 @@ mod_outlier_server <- function(input, output, session, clean, stand){
       plotOutput(ns("plot_clean"), brush = brushOpts(
         id = ns("plot_brush"),
         delay = 5000
-      ))
+      ), height = input$plot_height)
     )
   })
 

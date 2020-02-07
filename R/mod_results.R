@@ -23,7 +23,10 @@ mod_results_ui <- function(id){
                            uiOutput(ns("ui_colour"))),
                    actionLink(ns("rename"), "Rename sites"),
                    br(),
-                   uiOutput(ns("ui_rename"))),
+                   uiOutput(ns("ui_rename")),
+                   br(),
+                   sliderInput(ns("plot_height"), label = "Plot Height",
+                               value = 500, min = 0, max = 1000, step = 100)),
       mainPanel(tabsetPanel(selected = "Plot",
                             tabPanel(title = "Plot",
                                      br(),
@@ -86,7 +89,7 @@ mod_results_server <- function(input, output, session, clean){
   })
 
   output$ui_plot <- renderUI({
-    lapply(seq_along(plots()), plot_outputs, ns)
+    lapply(seq_along(plots()), plot_outputs, ns, input$plot_height)
   })
 
   observe({
