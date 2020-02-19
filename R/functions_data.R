@@ -168,11 +168,6 @@ add_outlier_brush <- function(data, brush){
   x
 }
 
-# add_outlier_table <- function(data, rows){
-#   data$Outlier[rows] <- TRUE
-#   data
-# }
-
 tidy_names_to_raw <- function(x, names = raw_names){
   tmp <- sapply(names(x), function(y){
     if(!(y %in% names(raw_names))) return(y)
