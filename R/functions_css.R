@@ -9,6 +9,18 @@ css_hide_errors <- function(){
 "))
 }
 
+css_button <- function(){
+  css_add(".small-dl{
+  padding:4px; font-size:85%;
+}")
+}
+
+css_text <- function(){
+  css_add(".small-txt{
+  padding:4px; font-size:85%;
+}")
+}
+
 css_navbar <- function(text_color = "#E0E0E0", text_selected_color = "#37CBA2",
                        text_size = "15px",
                        background_color = "#010101", float = "right"){

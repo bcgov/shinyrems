@@ -175,30 +175,6 @@ mod_results_server <- function(input, output, session, clean){
       readr::write_csv(summary_table(), file)
     })
 
-  # output$dl_plot <- downloadHandler(
-  #   filename = function(){
-  #     "ems_plots.zip"
-  #   },
-  #   content = function(file){
-  #     fs <- c()
-  #     tmpdir <- tempdir()
-  #     setwd(tempdir())
-  #     for (i in seq_along(plots())) {
-  #       path <- paste0("plot_", i, ".png")
-  #       fs <- c(fs, path)
-  #       ggplot2::ggsave(path, plots()[[i]], device = "png")
-  #     }
-  #     zip(zipfile = file, files = fs)
-  #   },
-  #   contentType = "application/zip"
-  # )
-
-  # output$dl_table <- downloadHandler(
-  #   filename = function() "ems_summary_table.csv",
-  #   content = function(file) {
-  #     readr::write_csv(summary_table(), file)
-  #   })
-
   clean_rv <- reactiveValues(data = NULL)
   observe({
     data <- clean$data()
