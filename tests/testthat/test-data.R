@@ -14,4 +14,37 @@ context("test-data")
 
 test_that("ems data functions work", {
 
+  data <- ems_data_which("2yr")
+  emsid <- c("0121580", "0200036")
+  param <- "pH"
+  from <- as.Date("2018-01-02")
+  to <- as.Date("2019-09-30")
+  data <- ems_data("2yr", emsid = emsid, parameter = param,
+                   from_date = from, to_date = to, data)
+
+  expect_identical(unique(data$EMS_ID), emsid)
+  expect_identical(unique(data$PARAMETER), param)
+  expect_true(as.Date(min(data$COLLECTION_START)) <= from)
+  expect_true(as.Date(max(data$COLLECTION_START)) <= to)
+  expect_identical(nrow(data), 98L)
+
+  tidy_data <- ems_tidy(data, mdl_action = "zero", data_type = "raw",
+                        dataset = "2yr", cols = character(0))
+  tidy_data2 <- wqbc::tidy_ems_data(data, mdl_action = "zero", cols = character(0))
+  expect_identical(tidy_data, tidy_data2)
+
+  stand_data <- ems_standardize(tidy_data, TRUE)
+  stand_data2 <- wqbc::standardize_wqdata(tidy_data, TRUE)
+  expect_identical(stand_data, stand_data2)
+
+  agg_data <- ems_aggregate(stand_data, by = "EMS_ID", remove_blanks = TRUE,
+                            max_cv = Inf, FUN = "max")
+  expect_true(nrow(agg_data), 64L)
+
+  out_data <- ems_outlier(stand_data, by = "EMS_ID", max_cv = Inf, sds = 1, FUN = "mean")
+  expect_true(nrow(out_data), 64L)
+
+  limits <- shinywqg::limits
+
+
 })
