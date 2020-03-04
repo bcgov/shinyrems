@@ -86,16 +86,13 @@ mod_data_server <- function(input, output, session){
   })
 
   observe({
-    progress <- shiny::Progress$new()
-    on.exit(progress$close())
-    progress$set(message = "loading dataset...", value = 0.75)
-
     if(dataset %in% c("2yr", "4yr")){
       raw_rv$ems_data <- ems_data_which(dataset)
     }
     if(dataset == "all"){
       raw_rv$ems_data <- ems_data_which("2yr")
     }
+    waiter::waiter_hide()
   })
 
   ########## ---------- dataset ---------- ##########
