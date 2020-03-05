@@ -106,7 +106,7 @@ mod_tidy_server <- function(input, output, session, raw){
   })
 
   output$table_tidy <- DT::renderDT({
-    ems_data_table(filter_data())
+    ems_data_table(stand_data())
   })
 
   output$dl_tidy <- downloadHandler(
