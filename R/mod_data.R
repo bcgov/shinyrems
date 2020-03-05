@@ -39,7 +39,6 @@ mod_data_ui <- function(id){
                           uiOutput(ns("ui_get")),
                           br())),
       shinyjs::hidden(div(id = ns("div_data_upload"),
-                          title("Upload Data"),
                           radioButtons(ns("data_type"), label = "Data format",
                                        choices = c("Tidied EMS Data" = "tidy",
                                                    "Raw EMS Data" = "raw"),
