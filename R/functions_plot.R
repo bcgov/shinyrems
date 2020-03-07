@@ -20,7 +20,7 @@ multiple_units <- function(data){
 
 ems_plots <- function(data, plot_type, geom, date_range,
                       point_size, line_size,
-                      facet, colour, timeframe){
+                      facet, colour, timeframe, guideline){
 
   lapply(unique(data$Units), function(x){
     dat <- data[data$Units == x,]
@@ -38,7 +38,8 @@ ems_plots <- function(data, plot_type, geom, date_range,
       ggplot2::ylab(unique(dat$Units)) +
       ggplot2::theme(legend.position = "bottom") +
       ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = "bottom")
+      ggplot2::theme(legend.position = "bottom") +
+      ggplot2::geom_hline(yintercept = guideline)
 
     if(plot_type == "scatter"){
       if("show points" %in% geom){

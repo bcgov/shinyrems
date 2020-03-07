@@ -16,17 +16,24 @@ mod_results_ui <- function(id){
   tagList(
     sidebarLayout(
       sidebarPanel(class = "sidebar",
-                   uiOutput(ns("ui_date_range")),
-                   uiOutput(ns("ui_type")),
-                   fillRow(height = 75,
-                           uiOutput(ns("ui_facet")),
-                           uiOutput(ns("ui_colour"))),
-                   actionLink(ns("rename"), "Rename sites"),
-                   br(),
-                   uiOutput(ns("ui_rename")),
-                   br(),
-                   sliderInput(ns("plot_height"), label = "Plot Height",
-                               value = 500, min = 0, max = 1000, step = 100)),
+                   tabsetPanel(
+                     tabPanel(title = "Plot",
+                              br(),
+                              uiOutput(ns("ui_date_range")),
+                              uiOutput(ns("ui_type")),
+                              fillRow(height = 75,
+                                      uiOutput(ns("ui_facet")),
+                                      uiOutput(ns("ui_colour"))),
+                              actionLink(ns("rename"), "Rename sites"),
+                              br(),
+                              uiOutput(ns("ui_rename")),
+                              br(),
+                              sliderInput(ns("plot_height"), label = "Plot Height",
+                                          value = 500, min = 0, max = 1000, step = 100)),
+                     tabPanel(title = "Guideline",
+                              br(),
+                              numericInput(ns("user_guideline"), "Manually set guideline", 0)))
+                   ),
       mainPanel(tabsetPanel(selected = "Plot",
                             tabPanel(title = "Plot",
                                      br(),
@@ -71,10 +78,11 @@ mod_results_server <- function(input, output, session, clean){
     req(input$date_range)
     req(input$facet)
     req(input$colour)
+
     ems_plots(clean_rv$data, input$plot_type,
               input$geom, input$date_range,
               input$point_size, input$line_size,
-              input$facet, input$colour, input$timeframe)
+              input$facet, input$colour, input$timeframe, input$user_guideline)
   })
 
   summary_table <- reactive({
@@ -175,12 +183,19 @@ mod_results_server <- function(input, output, session, clean){
       readr::write_csv(summary_table(), file)
     })
 
-  clean_rv <- reactiveValues(data = NULL)
+  clean_rv <- reactiveValues(data = NULL,
+                             guideline = NULL)
   observe({
     data <- clean$data()
     data$EMS_ID_Renamed <- data$EMS_ID
     clean_rv$data <- data
   })
+
+  observe({
+
+  })
+
+
 
   observeEvent(input$finalise, {
     data <- clean_rv$data
