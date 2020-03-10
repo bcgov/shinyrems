@@ -84,14 +84,16 @@ mod_data_server <- function(input, output, session){
     title(paste("Dataset:", pretty_dataset(dataset)))
   })
 
-  observe({
+  ems_data
+
+  all_data <- reactive({
     if(dataset %in% c("2yr", "4yr")){
-      raw_rv$ems_data <- ems_data_which(dataset)
+      return(ems_data_which(dataset))
     }
     if(dataset == "all"){
-      raw_rv$ems_data <- ems_data_which("2yr")
+      return(ems_data_which("2yr"))
     }
-    waiter::waiter_hide()
+    NULL
   })
 
   ########## ---------- dataset ---------- ##########
@@ -117,8 +119,7 @@ mod_data_server <- function(input, output, session){
   })
 
   raw_rv <- reactiveValues(data = empty_raw,
-                           cols = character(0),
-                           ems_data = NULL)
+                           cols = character(0))
   observe({
     if(!all_depth_na(raw_rv$data)){
       raw_rv$cols <- c("UPPER_DEPTH", "LOWER_DEPTH")
@@ -133,7 +134,7 @@ mod_data_server <- function(input, output, session){
                             emsid = emsid,
                             from_date = input$date_range[1],
                             to_date = input$date_range[2],
-                            data = raw_rv$ems_data)
+                            data = all_data())
     waiter::waiter_hide()
   })
 
@@ -327,7 +328,7 @@ mod_data_server <- function(input, output, session){
     list(
       dataset = reactive({dataset}),
       data = reactive({raw_rv$data}),
-      all_data = reactive({raw_rv$ems_data}),
+      all_data = all_data,
       cols = reactive({raw_rv$cols}),
       data_type = reactive({input$data_type}),
       rcode = rcode,

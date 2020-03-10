@@ -16,7 +16,7 @@ app_ui <- function() {
     shinyjs::useShinyjs(),
     waiter::use_butler(),
     waiter::use_waiter(),
-    waiter::waiter_show_on_load(html = waiter_html("Fetching dataset ...")),
+    # waiter::waiter_show_on_load(html = waiter_html("Fetching dataset ...")),
     css_navbar(text_selected_color = "#5bc0de"),
     css_hide_errors(),
     navbarPage(title =  "ShinyRems", selected = '1. Data',
