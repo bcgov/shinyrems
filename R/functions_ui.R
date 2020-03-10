@@ -34,6 +34,15 @@ error_modal <- function(x){
     )
   )}
 
+guideline_modal <- function(x = "There is insufficient data to calculate the water quality guideline.
+                            You could try getting a modelled estimate, or set the guideline manually."){
+  modalDialog(title = "",
+              footer = modalButton(label = "Got it"),
+              tagList(
+                p(x)
+              )
+  )}
+
 help_output <- function(id){
   div(textOutput(id),
       style = "color: grey;")

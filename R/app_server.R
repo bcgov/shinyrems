@@ -24,9 +24,9 @@ app_server <- function(input, output, session) {
 
   outlier <- callModule(mod_outlier_server, "outlier_ui_1", clean, tidy)
 
-  results <- callModule(mod_results_server, "results_ui_1", outlier)
+  results <- callModule(mod_results_server, "results_ui_1", data, tidy, clean, outlier)
 
-  guideline <- callModule(mod_guideline_server, "guideline_ui_1", results)
+  # guideline <- callModule(mod_guideline_server, "guideline_ui_1", results)
 
   callModule(mod_rcode_server, "rcode_ui_1", data, tidy, clean, outlier, results)
 }

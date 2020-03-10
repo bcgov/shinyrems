@@ -18,48 +18,62 @@ multiple_units <- function(data){
   length(unique(data$Units)) > 1
 }
 
-ems_plots <- function(data, plot_type, geom, date_range,
-                      point_size, line_size,
-                      facet, colour, timeframe, guideline){
+### takes aggregated data with EMS_ID_Rename col
+ems_plot <- function(data, plot_type, geom, date_range,
+                     point_size, line_size,
+                     facet, colour, timeframe,
+                     guideline){
 
-  lapply(unique(data$Units), function(x){
-    dat <- data[data$Units == x,]
-    dat$Detected <- detected(dat$Value, dat$DetectionLimit)
-    dat$EMS_ID <- dat$EMS_ID_Renamed
-    dat$Detected %<>% factor(levels = c(TRUE, FALSE))
-    dat <- dat[dat$Date >= as.Date(date_range[1]) & dat$Date <= as.Date(date_range[2]),]
-    dat$Timeframe <- factor(get_timeframe(dat$Date, timeframe))
+  data$Detected <- detected(data$Value, data$DetectionLimit)
+  data$EMS_ID <- data$EMS_ID_Renamed
+  data$Detected %<>% factor(levels = c(TRUE, FALSE))
+  data <- data[data$Date >= as.Date(date_range[1]) & data$Date <= as.Date(date_range[2]),]
+  data$Timeframe <- factor(get_timeframe(data$Date, timeframe))
 
-    gp <- ggplot2::ggplot(dat, ggplot2::aes_string(x = "Date", y = "Value")) +
-      ggplot2::scale_color_discrete(drop = FALSE) +
-      ggplot2::expand_limits(y = 0) +
-      ggplot2::facet_wrap(facet, ncol = 1,
-                          scales = "free_y") +
-      ggplot2::ylab(unique(dat$Units)) +
-      ggplot2::theme(legend.position = "bottom") +
-      ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = "bottom") +
-      ggplot2::geom_hline(yintercept = guideline)
+  gp <- ggplot2::ggplot(data, ggplot2::aes_string(x = "Date", y = "Value")) +
+    ggplot2::scale_color_discrete(drop = FALSE) +
+    ggplot2::expand_limits(y = 0) +
+    ggplot2::facet_wrap(facet, ncol = 1,
+                        scales = "free_y") +
+    ggplot2::ylab(unique(data$Units)) +
+    ggplot2::theme(legend.position = "bottom") +
+    ggplot2::theme_bw() +
+    ggplot2::theme(legend.position = "bottom")
 
-    if(plot_type == "scatter"){
-      if("show points" %in% geom){
-        gp <- gp + ggplot2::geom_point(size = point_size,
-                                       ggplot2::aes_string(shape = "Detected",
-                                                    color = colour))
-      }
-      if("show lines" %in% geom){
-        gp <- gp + ggplot2::geom_line(size = line_size, ggplot2::aes_string(color = colour))
-      }
+  if(!is.data.frame(guideline)){
+    gp <- gp + ggplot2::geom_hline(yintercept = guideline, linetype = "dotted")
+  }
+
+  if(is.data.frame(guideline)){
+    if(nrow(guideline) == 1){
+      gp <- gp + ggplot2::geom_hline(yintercept = guideline$UpperLimit,
+                                     linetype = "dotted")
+    } else {
+      gp <- gp + ggplot2::geom_line(data = guideline,
+                                    ggplot2::aes(x = Date, y = UpperLimit),
+                                    linetype = "dotted")
     }
+  }
 
-    if(plot_type == "boxplot"){
-      gp <- gp + ggplot2::geom_boxplot(ggplot2::aes_string(x = "Timeframe",
-                                                y = "Value",
-                                                fill = colour)) +
-        ggplot2::xlab(timeframe)
+  if(plot_type == "scatter"){
+    if("show points" %in% geom){
+      gp <- gp + ggplot2::geom_point(size = point_size,
+                                     ggplot2::aes_string(shape = "Detected",
+                                                         color = colour))
     }
-    gp
-   }) %>% setNames(unique(data$Units))
+    if("show lines" %in% geom){
+      gp <- gp + ggplot2::geom_line(size = line_size,
+                                    ggplot2::aes_string(color = colour))
+    }
+  }
+
+  if(plot_type == "boxplot"){
+    gp <- gp + ggplot2::geom_boxplot(ggplot2::aes_string(x = "Timeframe",
+                                                         y = "Value",
+                                                         fill = colour)) +
+      ggplot2::xlab(timeframe)
+  }
+  gp
 }
 
 plot_outlier <- function(data, by, point_size){
@@ -71,7 +85,7 @@ plot_outlier <- function(data, by, point_size){
                                                   color = "Outlier",
                                                   shape = "Detected")) +
     ggplot2::geom_point(ggplot2::aes_string(),
-                          size = point_size) +
+                        size = point_size) +
     ggplot2::scale_color_discrete(drop = FALSE) +
     ggplot2::expand_limits(y = 0) +
     # ggplot2::theme_bw() +

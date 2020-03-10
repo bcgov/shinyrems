@@ -39,12 +39,24 @@ test_that("ems data functions work", {
 
   agg_data <- ems_aggregate(stand_data, by = "EMS_ID", remove_blanks = TRUE,
                             max_cv = Inf, FUN = "max")
-  expect_true(nrow(agg_data), 64L)
+  expect_identical(nrow(agg_data), 64L)
 
   out_data <- ems_outlier(stand_data, by = "EMS_ID", max_cv = Inf, sds = 1, FUN = "mean")
-  expect_true(nrow(out_data), 64L)
+  expect_identical(nrow(out_data), 64L)
 
   limits <- shinywqg::limits
 
+  #### test plot
+  data = out_data
+  data$EMS_ID_Renamed <- data$EMS_ID
+
+  x <- ems_plots(data, plot_type = "scatter", geom = c("show lines" ,"show points"),
+            date_range = c(from, to), point_size = 1, line_size = 1,
+            facet = "EMS_ID", colour = "EMS_ID", timeframe = "Year", guideline = 6)
+
+  expect_is(x, "list")
+  expect_named(x)
+  expect_length(x, 1L)
+  expect_is(x$pH, "ggplot")
 
 })

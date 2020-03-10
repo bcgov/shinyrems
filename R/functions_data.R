@@ -61,6 +61,11 @@ translate_site <- function(x, lookup, site_type){
   lookup$EMS_ID[lookup[[col]] %in% x]
 }
 
+code_to_parameter <- function(x, lookup){
+  y <- gsub("EMS_", "", x)
+  setdiff(unique(lookup$PARAMETER[lookup$PARAMETER_CODE %in% y]), NA)
+}
+
 ########## ---------- fetching data ---------- ##########
 ems_data_which <- function(which){
   rems::get_ems_data(which = which,
@@ -115,6 +120,14 @@ ems_tidy <- function(data, mdl_action, data_type, dataset, cols){
   x
 }
 
+ems_standardize <- function(data, strict){
+  x <- try({
+    wqbc::standardize_wqdata(data, strict)
+  }, silent = TRUE)
+  if(is_try_error(x)) return(empty_standard)
+  x
+}
+
 ems_aggregate <- function(data, by, remove_blanks, max_cv, FUN){
   x <- try({
     data <- clean_wqdata2(data, by = by, max_cv = max_cv,
@@ -143,12 +156,32 @@ ems_outlier <- function(x, by = NULL, max_cv = Inf, sds = 10, ignore_undetected 
   x
 }
 
-ems_standardize <- function(data, strict){
-  x <- try({
-    wqbc::standardize_wqdata(data, strict)
-  }, silent = TRUE)
-  if(is_try_error(x)) return(empty_standard)
-  x
+additional_parameters <- function(data, dataset, limits = wqbc::limits){
+  parameter <- unique(data$Variable)
+  emsid <- unique(data$EMS_ID)
+  guideline <- limits[limits$Variable == parameter,]
+  codes <- extract_codes(c(guideline$Condition, guideline$Limit))
+  code_to_parameter(codes, lookup = get_lookup(dataset))
+}
+
+ems_data_parameter <- function(data, all_data, dataset, from_date, to_date, # data
+                               mdl_action, cols, # tidy
+                               strict, # standardize
+                               by, sds, ignore_undetected, large_only, # aggregate
+                               remove_blanks, max_cv, FUN, limits = wqbc::limits){
+
+  emsid <- unique(data$EMS_ID)
+  params <- additional_parameters(data, dataset)
+
+  data <- ems_data(dataset, emsid = emsid, parameter = params,
+                    from_date = from_date, to_date = to_date, data = all_data)
+  data <- ems_tidy(data, mdl_action = mdl_action, data_type = "raw",
+                   dataset = dataset, cols = cols)
+  data <- ems_standardize(data, strict = strict)
+  data <- ems_outlier(data, by = by, max_cv = max_cv, sds = sds,
+                       ignore_undetected = ignore_undetected, large_only = large_only,
+                      remove_blanks = remove_blanks, FUN = FUN)
+  data
 }
 
 all_depth_na <- function(data){

@@ -32,7 +32,21 @@ mod_results_ui <- function(id){
                                           value = 500, min = 0, max = 1000, step = 100)),
                      tabPanel(title = "Guideline",
                               br(),
-                              numericInput(ns("user_guideline"), "Manually set guideline", 0)))
+                              radioButtons(ns("guideline"), "Show guideline on plot",
+                                           choices = c("manual", "calculated"),
+                                           "manual", inline = TRUE),
+                              br(),
+                              tags$label("Manually set guideline"),
+                              numericInput(ns("user_guideline"), label = NULL, 0),
+                              br(),
+                              tags$label("Calculate guideline"),
+                              radioButtons(ns("term"), "Select term",
+                                           choices = c("short", "long", "long-daily"),
+                                           selected = "long", inline = TRUE),
+                              checkboxInput(ns("estimate_variables"), "Get modelled estimate",
+                                            value = FALSE),
+                              actionButton(ns("get"), "Get/update guideline")
+                              ))
                    ),
       mainPanel(tabsetPanel(selected = "Plot",
                             tabPanel(title = "Plot",
@@ -60,7 +74,7 @@ mod_results_ui <- function(id){
 #' @export
 #' @keywords internal
 
-mod_results_server <- function(input, output, session, clean){
+mod_results_server <- function(input, output, session, data, tidy, clean, outlier){
   ns <- session$ns
 
   observe({
@@ -79,15 +93,16 @@ mod_results_server <- function(input, output, session, clean){
     req(input$facet)
     req(input$colour)
 
-    ems_plots(clean_rv$data, input$plot_type,
+    ems_plot(rv$data, input$plot_type,
               input$geom, input$date_range,
               input$point_size, input$line_size,
-              input$facet, input$colour, input$timeframe, input$user_guideline)
+              input$facet, input$colour, input$timeframe,
+             rv$guideline)
   })
 
   summary_table <- reactive({
     suppressWarnings(waiter::show_butler())
-    x <- ems_summary_table(clean_rv$data)
+    x <- ems_summary_table(rv$data)
     suppressWarnings(waiter::hide_butler())
     x
   })
@@ -97,28 +112,19 @@ mod_results_server <- function(input, output, session, clean){
   })
 
   output$ui_plot <- renderUI({
-    lapply(seq_along(plots()), plot_outputs, ns, input$plot_height)
+      plotOutput(ns("ems_plot"), height = input$plot_height)
   })
 
-  observe({
-    req(plots())
-    suppressWarnings(waiter::show_butler())
-    for (i in seq_along(plots())) {
-      local({
-        my_i <- i
-        plotname <- paste0("plot_", my_i)
-        output[[plotname]] <- renderPlot({
-          plots()[my_i]
-        })
-      })
-    }
-    suppressWarnings(waiter::hide_butler())
+  output$ems_plot <- renderPlot({
+    # suppressWarnings(waiter::show_butler())
+    plots()
+    # suppressWarnings(waiter::hide_butler())
   })
 
   output$ui_date_range <- renderUI({
-    req(clean$data())
-    if(nrow(clean$data()) < 1) return()
-    date_range <- range(clean$data()$Date, na.rm = TRUE)
+    req(outlier$data())
+    if(nrow(outlier$data()) < 1) return()
+    date_range <- range(outlier$data()$Date, na.rm = TRUE)
     tagList(
       tags$label("Adjust plot start and end date"),
       help_text("This only changes the plot x-axis,
@@ -152,7 +158,7 @@ mod_results_server <- function(input, output, session, clean){
   })
 
   output$ui_facet <- renderUI({
-    data <- clean_rv$data
+    data <- rv$data
     x <- sort(intersect(names(data), c("Variable", "EMS_ID")))
     selectInput(ns("facet"), "Facet by",
                 choices = x,
@@ -160,7 +166,7 @@ mod_results_server <- function(input, output, session, clean){
   })
 
   output$ui_colour <- renderUI({
-    data <- clean_rv$data
+    data <- rv$data
     x <- sort(intersect(names(data), c("Variable", "EMS_ID")))
     selectInput(ns("colour"), "Colour by",
                 choices = x,
@@ -183,28 +189,23 @@ mod_results_server <- function(input, output, session, clean){
       readr::write_csv(summary_table(), file)
     })
 
-  clean_rv <- reactiveValues(data = NULL,
-                             guideline = NULL)
+  rv <- reactiveValues(data = NULL,
+                       guideline = NULL,
+                       guideline_calc = NULL)
   observe({
-    data <- clean$data()
+    data <- outlier$data()
     data$EMS_ID_Renamed <- data$EMS_ID
-    clean_rv$data <- data
+    rv$data <- data
   })
-
-  observe({
-
-  })
-
-
 
   observeEvent(input$finalise, {
-    data <- clean_rv$data
+    data <- rv$data
     sites <- unique(data$EMS_ID)
     for(i in sites){
       x <- input[[i]]
       data$EMS_ID_Renamed[data$EMS_ID == i] <- x
     }
-    clean_rv$data <- data
+    rv$data <- data
   })
 
   observeEvent(input$rename, {
@@ -212,7 +213,7 @@ mod_results_server <- function(input, output, session, clean){
   })
 
   output$ui_rename <- renderUI({
-    sites <- unique(clean_rv$data$EMS_ID)
+    sites <- unique(rv$data$EMS_ID)
     shinyjs::hidden(div(id = ns("div_rename"),
         lapply(sites, rename_inputs, ns),
         button(ns("finalise"), "Rename")))
@@ -220,6 +221,61 @@ mod_results_server <- function(input, output, session, clean){
 
   observeEvent(input$info_timeframe, {
     shinyjs::toggle("div_info_timeframe", anim = TRUE)
+  })
+
+  observeEvent(input$get, {
+    data1 <- outlier$data()
+    dataset <- data$dataset()
+    all_data <- data$all_data()
+
+    params <- additional_parameters(data1, dataset)
+    print(params)
+    html <- waiter_html("")
+    if(length(params) == 0)
+      html <- waiter_html("Calculating guideline ...")
+    waiter::waiter_show(html = html)
+
+    if(length(params) != 0){
+      waiter::waiter_update(html = waiter_html(paste("Fetching additional data:",
+                                                   paste(params, collapse = ", "))))
+      data2 <- ems_data_parameter(data1, all_data = all_data, dataset = dataset,
+                                  from_date = data$date()[1], to_date = data$date()[2],
+                                  mdl_action = tidy$mdl_action(),
+                                  cols = data$cols(), strict = tidy$strict(),
+                                  by = clean$by(), sds = outlier$sds(),
+                                  ignore_undetected = outlier$ignore_undetected(),
+                                  large_only = outlier$large_only(),
+                                  remove_blanks = clean$remove_blanks(),
+                                  max_cv = clean$max_cv(), FUN = clean$fun(),
+                                  limits = wqbc::limits)
+
+      all_data <- rbind(data1, data2)
+    } else {
+      all_data <- data1
+    }
+
+    waiter::waiter_update(html = waiter_html("Calculating guideline ..."))
+    x <- try(wqbc::calc_limits(all_data, clean = FALSE, term = input$term,
+                           estimate_variables = input$estimate_variables), silent = TRUE)
+
+    waiter::waiter_hide()
+
+    if(!is_try_error(x)){
+      if(nrow(x) == 0){
+        return(showModal(guideline_modal()))
+      }
+      return(rv$guideline_calc <- x)
+    } else {
+      return(showModal(guideline_modal()))
+    }
+  })
+
+  observe({
+    if(input$guideline == "manual"){
+      rv$guideline <- input$user_guideline
+    } else {
+      rv$guideline <- rv$guideline_calc
+    }
   })
 
   rcodeplot <- reactive({})
