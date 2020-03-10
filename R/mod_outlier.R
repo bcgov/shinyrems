@@ -220,7 +220,11 @@ mod_outlier_server <- function(input, output, session, clean, stand){
     list(
       data = outlier_data3,
       rcodeclean = rcodeclean,
-      rcodeoutlier = rcodeoutlier
+      rcodeoutlier = rcodeoutlier,
+      max_cv = max_cv,
+      sds = reactive({input$sds}),
+      ignore_undetected = reactive({input$ignore_undetected}),
+      large_only = reactive({input$large_only})
     )
   )
 }

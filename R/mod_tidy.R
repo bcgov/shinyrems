@@ -126,9 +126,6 @@ mod_tidy_server <- function(input, output, session, raw){
   })
 
   output$rcode <- renderUI({
-    print("hi")
-    print(rcodestand())
-    print(rcodetidy())
     tagList(rcodetidy(),
             br2(),
         rcodestand())
@@ -138,7 +135,9 @@ mod_tidy_server <- function(input, output, session, raw){
     list(
       data = stand_data,
       rcodetidy = rcodetidy,
-      rcodestand = rcodestand
+      rcodestand = rcodestand,
+      mdl_action = reactive({input$mdl_action}),
+      strict = reactive({input$strict})
     )
   )
 }

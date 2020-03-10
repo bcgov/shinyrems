@@ -126,7 +126,7 @@ mod_data_server <- function(input, output, session){
   })
 
   observeEvent(input$get, {
-    suppressWarnings(waiter::show_butler())
+    waiter::waiter_show(html = waiter_html("Fetching requested data ..."))
     emsid <- translate_sites()
     raw_rv$data <- ems_data(dataset = dataset,
                             parameter = input$parameter,
@@ -134,7 +134,7 @@ mod_data_server <- function(input, output, session){
                             from_date = input$date_range[1],
                             to_date = input$date_range[2],
                             data = raw_rv$ems_data)
-    suppressWarnings(waiter::hide_butler())
+    waiter::waiter_hide()
   })
 
   observe({
@@ -327,9 +327,13 @@ mod_data_server <- function(input, output, session){
     list(
       dataset = reactive({dataset}),
       data = reactive({raw_rv$data}),
+      all_data = reactive({raw_rv$ems_data}),
       cols = reactive({raw_rv$cols}),
       data_type = reactive({input$data_type}),
-      rcode = rcode
+      rcode = rcode,
+      emsid = translate_sites,
+      parameter = reactive({input$parameter}),
+      date = reactive({input$date_range})
     )
   )
 }

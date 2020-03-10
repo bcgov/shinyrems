@@ -9,6 +9,12 @@ dl_group <- function(x, ns){
   )
 }
 
+waiter_html <- function(x){
+  tagList(waiter::spin_chasing_dots(),
+          br2(),
+          h3(x))
+}
+
 site_map <- function(ns){
   tagList(
     help_text("Click a marker to add to selected sites. Selected sites
