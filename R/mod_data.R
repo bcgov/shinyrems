@@ -80,11 +80,12 @@ mod_data_server <- function(input, output, session){
   ns <- session$ns
 
   dataset <- getShinyOption("dataset", "demo")
+  lookup <- getShinyOption("lookup", NULL)
+
   output$ui_dataset <- renderUI({
     title(paste("Dataset:", pretty_dataset(dataset)))
   })
 
-  ems_data
 
   all_data <- reactive({
     if(dataset %in% c("2yr", "4yr")){
@@ -132,8 +133,8 @@ mod_data_server <- function(input, output, session){
     raw_rv$data <- ems_data(dataset = dataset,
                             parameter = input$parameter,
                             emsid = emsid,
-                            from_date = input$date_range[1],
-                            to_date = input$date_range[2],
+                            from_date = as.character(input$date_range[1]),
+                            to_date = as.character(input$date_range[2]),
                             data = all_data())
     waiter::waiter_hide()
   })
@@ -149,40 +150,36 @@ mod_data_server <- function(input, output, session){
     }
   })
 
-  lookup <- reactive({
-    get_lookup(dataset)
-  })
-
   lookup_location <- reactive({
-    req(lookup())
-    get_lookup_location(lookup())
+    req(lookup)
+    get_lookup_location(lookup)
   })
 
   get_permits <- reactive({
     req(input$check_permit)
-    permits(lookup())
+    permits(lookup)
   })
 
   get_sites <- reactive({
-    permit_sites(input$permit, lookup(), input$site_type)
+    permit_sites(input$permit, lookup, input$site_type)
   })
 
   get_site_locations <- reactive({
     req(lookup_location())
-    lookup <- lookup_location()
+    lookup_location <- lookup_location()
     x <- site_col(input$site_type)
-    lookup[lookup[[x]] %in% get_sites(),]
+    lookup_location[lookup_location[[x]] %in% get_sites(),]
   })
 
   get_parameters <- reactive({
     site_parameters(input$site,
-                    lookup(),
+                    lookup,
                     input$site_type,
                     input$param_strict)
   })
 
   translate_sites <- reactive({
-    unique(translate_site(input$site, lookup(), input$site_type))
+    unique(translate_site(input$site, lookup, input$site_type))
   })
 
   template <- reactive({
@@ -222,7 +219,7 @@ mod_data_server <- function(input, output, session){
     req(input$parameter)
     req(input$site)
     dates <- date_range(input$site, input$parameter,
-                        lookup(), input$site_type)
+                        lookup, input$site_type)
     dateRangeInput(ns("date_range"),
                    label = "Get any available data between dates:",
                    start = dates[1], end = dates[2],
@@ -255,8 +252,8 @@ mod_data_server <- function(input, output, session){
                             label = sites[[id]])
       )
 
-    lookup <- lookup_location()
-    selected <- lookup[lookup[[id]] %in% input$site,]
+    lookup_location <- lookup_location()
+    selected <- lookup_location[lookup_location[[id]] %in% input$site,]
 
     leafletProxy('leaf') %>%
       leaflet::removeShape("Sites") %>%

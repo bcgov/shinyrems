@@ -39,7 +39,10 @@ run_ems_app <- function(dataset = "2yr") {
   if(dataset == "all")
     check_all_data()
 
-  shinyOptions(dataset = dataset)
+  lookup <- get_lookup(dataset)
+
+  shinyOptions(dataset = dataset,
+               lookup = lookup)
 
   shiny::runApp(system.file("app", package = "shinyrems"), launch.browser = TRUE)
 }

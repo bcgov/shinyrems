@@ -1,42 +1,58 @@
-which_lup <- function(x){
-  paste(x, "lookup", sep = "_")
+get_ems_lookup <- function(which = "2yr", ask = TRUE){
+
+  if(!(which %in% c("2yr", "4yr")))
+    stop("`which` must be either '2yr' or '4yr'")
+
+  which_lup <- paste(which, "lookup2", sep = "_")
+  which_exists <- rems:::._remsCache_$exists(which_lup)
+
+  update <- FALSE
+  if(!which_exists){
+    update <- TRUE
+  } else if(rems:::._remsCache_$exists("cache_dates")) {
+    lup_cache_date <- rems:::get_cache_date(which_lup)
+    data_cache_date <- rems:::get_cache_date(which)
+
+    if (lup_cache_date < data_cache_date){
+      update <- TRUE
+    }
+  }
+
+  if (update) {
+    if (ask) {
+      rems:::stop_for_permission(paste0("rems would like to store a ", which,
+                                 " data lookup table at ", rems:::rems_data_dir(), ". This is required to run the ShinyRems app. Is that okay?"))
+    }
+
+    message("Creating and caching lookup table ...")
+    data <- try(rems:::._remsCache_$get(which), silent = TRUE)
+    if(inherits(data, "try-error"))
+      stop(which, " dataset must be cached before lookup table can be created. Run get_ems_data().")
+
+    lookup <- make_lookup(data)
+    update_lookup_cache(which = which_lup, lookup)
+  }
+
+  lookup_from_cache(which_lup)
 }
 
 lookup_from_cache <- function(which){
-  rems:::._remsCache_$get(which_lup(which))
+  rems:::._remsCache_$get(which)
 }
 
-lookup_cache_exists <- function(which){
-  rems:::._remsCache_$exists(which_lup(which))
+make_lookup <- function(x){
+  x %>%
+    dplyr::group_by(EMS_ID, MONITORING_LOCATION, PERMIT, PARAMETER_CODE,
+                    PARAMETER, LONGITUDE, LATITUDE) %>%
+    dplyr::arrange(COLLECTION_START) %>%
+    dplyr::summarise(FROM_DATE = dplyr::first(COLLECTION_START),
+                     TO_DATE = dplyr::last(COLLECTION_START)) %>%
+    dplyr::ungroup()
 }
 
-update_lookup_cache <- function(which, lookup){
-  file_meta <- rems:::get_file_metadata(which)
-  which <- which_lup(which)
-  rems:::._remsCache_$set(which, lookup)
-  rems:::set_cache_date(which = which, value = file_meta[["server_date"]])
+update_lookup_cache <- function(which, data){
+  ._remsCache_$set(which, data)
+  set_cache_date(which = which, value = Sys.time())
 }
 
-# ems_lookup <- function(data){
-#   data %>%
-#     dplyr::group_by(dplyr::.data$EMS_ID, dplyr::.data$MONITORING_LOCATION,
-#                     dplyr::.data$PERMIT, dplyr::.data$PARAMETER_CODE,
-#                     dplyr::.data$PARAMETER, dplyr::.data$LONGITUDE, dplyr::.data$LATITUDE) %>%
-#     dplyr::arrange(dplyr::.data$COLLECTION_START) %>%
-#     dplyr::summarise(FROM_DATE = first(dplyr::.data$COLLECTION_START),
-#               TO_DATE = last(dplyr::.data$COLLECTION_START)) %>%
-#     dplyr::ungroup()
-# }
 
-### dtplyr version is much faster but not sure if adding dependency to rems is worth it
-ems_lookup_dt <- function(data){
-  dt <- dtplyr::lazy_dt(data)
-  dt %>%
-    dplyr::group_by(dplyr::.data$EMS_ID, dplyr::.data$MONITORING_LOCATION,
-                    dplyr::.data$PERMIT, dplyr::.data$PARAMETER_CODE,
-                    dplyr::.data$PARAMETER, dplyr::.data$LONGITUDE, dplyr::.data$LATITUDE) %>%
-    dplyr::summarise(FROM_DATE = min(dplyr::.data$COLLECTION_START, na.rm = TRUE),
-                     TO_DATE = max(dplyr::.data$COLLECTION_START, na.rm = TRUE)) %>%
-    dplyr::ungroup() %>%
-    dplyr::as_tibble()
-}
