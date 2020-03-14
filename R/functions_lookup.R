@@ -8,8 +8,8 @@ get_lookup <- function(dataset){
 
   if(dataset == "all"){
     lookup1 <- lookup_historic
-    lookup2 <- rems::get_ems_lookup(dataset)
-    rbind(lookup1, lookup2)
+    lookup2 <- get_ems_lookup("2yr")
+    lookup <- rbind(lookup1, lookup2)
   }
 
   if(dataset == "demo")

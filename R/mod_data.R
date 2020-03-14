@@ -81,6 +81,7 @@ mod_data_server <- function(input, output, session){
 
   dataset <- getShinyOption("dataset", "demo")
   lookup <- getShinyOption("lookup", NULL)
+  ems_data <- getShinyOption("ems_data", NULL)
 
   output$ui_dataset <- renderUI({
     title(paste("Dataset:", pretty_dataset(dataset)))
@@ -88,13 +89,7 @@ mod_data_server <- function(input, output, session){
 
 
   all_data <- reactive({
-    if(dataset %in% c("2yr", "4yr")){
-      return(ems_data_which(dataset))
-    }
-    if(dataset == "all"){
-      return(ems_data_which("2yr"))
-    }
-    NULL
+    ems_data
   })
 
   ########## ---------- dataset ---------- ##########
@@ -331,7 +326,8 @@ mod_data_server <- function(input, output, session){
       rcode = rcode,
       emsid = translate_sites,
       parameter = reactive({input$parameter}),
-      date = reactive({input$date_range})
+      date = reactive({input$date_range}),
+      lookup = reactive({lookup})
     )
   )
 }

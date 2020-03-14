@@ -223,13 +223,31 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     shinyjs::toggle("div_info_timeframe", anim = TRUE)
   })
 
+  data_parameter <- reactive({
+    data1 <- outlier$data()
+    dataset <- data$dataset()
+    all_data <- data$all_data()
+    lookup <- data$lookup()
+    ems_data_parameter(data1, all_data = all_data, dataset = dataset,
+                       lookup = lookup,
+                       from_date = data$date()[1], to_date = data$date()[2],
+                       mdl_action = tidy$mdl_action(),
+                       cols = data$cols(), strict = tidy$strict(),
+                       by = clean$by(), sds = outlier$sds(),
+                       ignore_undetected = outlier$ignore_undetected(),
+                       large_only = outlier$large_only(),
+                       remove_blanks = clean$remove_blanks(),
+                       max_cv = clean$max_cv(), FUN = clean$fun(),
+                       limits = wqbc::limits)
+  })
+
   observeEvent(input$get, {
     data1 <- outlier$data()
     dataset <- data$dataset()
     all_data <- data$all_data()
+    lookup <- data$lookup()
 
-    params <- additional_parameters(data1, dataset)
-    print(params)
+    params <- additional_parameters(data1, lookup)
     html <- waiter_html("")
     if(length(params) == 0)
       html <- waiter_html("Calculating guideline ...")
@@ -238,17 +256,7 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     if(length(params) != 0){
       waiter::waiter_update(html = waiter_html(paste("Fetching additional data:",
                                                    paste(params, collapse = ", "))))
-      data2 <- ems_data_parameter(data1, all_data = all_data, dataset = dataset,
-                                  from_date = data$date()[1], to_date = data$date()[2],
-                                  mdl_action = tidy$mdl_action(),
-                                  cols = data$cols(), strict = tidy$strict(),
-                                  by = clean$by(), sds = outlier$sds(),
-                                  ignore_undetected = outlier$ignore_undetected(),
-                                  large_only = outlier$large_only(),
-                                  remove_blanks = clean$remove_blanks(),
-                                  max_cv = clean$max_cv(), FUN = clean$fun(),
-                                  limits = wqbc::limits)
-
+      data2 <- data_parameter()
       all_data <- rbind(data1, data2)
     } else {
       all_data <- data1

@@ -12,10 +12,10 @@
 
 check_ems_data <- function(which){
   message(glue("checking for most recent {which} dataset..."))
-  if(!rems:::._remsCache_$exists(which)){
-    rems::get_ems_data(which, ask = TRUE, check_only = FALSE)
-  }
-  rems::get_ems_data(which, ask = FALSE, check_only = TRUE)
+  # if(!rems:::._remsCache_$exists(which)){
+  #   return(rems::get_ems_data(which, ask = TRUE, check_only = FALSE))
+  # }
+  rems::get_ems_data(which, ask = TRUE, check_only = FALSE)
 }
 
 check_historic_data <- function(){
@@ -24,8 +24,8 @@ check_historic_data <- function(){
 }
 
 check_all_data <- function(){
-  check_ems_data("2yr")
   check_historic_data()
+  check_ems_data("2yr")
 }
 
 check_data_upload <- function(data, template){

@@ -114,7 +114,7 @@ mod_clean_server <- function(input, output, session, stand){
       by = reactive({input$by}),
       fun = reactive({input$fun}),
       remove_blanks = reactive({input$remove_blanks}),
-      max_cv = reactive({input$max_cv})
+      max_cv = max_cv
     )
   )
 

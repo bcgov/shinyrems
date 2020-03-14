@@ -3,7 +3,7 @@ get_ems_lookup <- function(which = "2yr", ask = TRUE){
   if(!(which %in% c("2yr", "4yr")))
     stop("`which` must be either '2yr' or '4yr'")
 
-  which_lup <- paste(which, "lookup2", sep = "_")
+  which_lup <- paste(which, "lookup", sep = "_")
   which_exists <- rems:::._remsCache_$exists(which_lup)
 
   update <- FALSE
@@ -30,7 +30,7 @@ get_ems_lookup <- function(which = "2yr", ask = TRUE){
       stop(which, " dataset must be cached before lookup table can be created. Run get_ems_data().")
 
     lookup <- make_lookup(data)
-    update_lookup_cache(which = which_lup, lookup)
+    update_lookup_cache(which = which, lookup)
   }
 
   lookup_from_cache(which_lup)
@@ -51,8 +51,10 @@ make_lookup <- function(x){
 }
 
 update_lookup_cache <- function(which, data){
-  ._remsCache_$set(which, data)
-  set_cache_date(which = which, value = Sys.time())
+  file_meta <- rems:::get_file_metadata(which)
+  which_lup <- paste(which, "lookup", sep = "_")
+  rems:::._remsCache_$set(which_lup, data)
+  rems:::set_cache_date(which = which_lup, value = file_meta[["server_date"]])
 }
 
 

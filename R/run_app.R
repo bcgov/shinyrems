@@ -27,22 +27,24 @@ run_ems_app <- function(dataset = "2yr") {
 
   checkr::check_vector(dataset, c("demo", "2yr", "4yr", "historic", "all", "upload"))
 
+  ems_data <- NULL
   if(dataset == "2yr")
-    check_ems_data("2yr")
+    ems_data <- check_ems_data("2yr")
 
   if(dataset == "4yr")
-    check_ems_data("4yr")
+    ems_data <- check_ems_data("4yr")
 
   if(dataset == "historic")
     check_historic_data()
 
   if(dataset == "all")
-    check_all_data()
+    ems_data <- check_all_data()
 
   lookup <- get_lookup(dataset)
 
   shinyOptions(dataset = dataset,
-               lookup = lookup)
+               lookup = lookup,
+               ems_data = ems_data)
 
   shiny::runApp(system.file("app", package = "shinyrems"), launch.browser = TRUE)
 }
