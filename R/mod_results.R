@@ -32,21 +32,18 @@ mod_results_ui <- function(id){
                                           value = 500, min = 0, max = 1000, step = 100)),
                      tabPanel(title = "Guideline",
                               br(),
-                              radioButtons(ns("guideline"), "Show guideline on plot",
-                                           choices = c("manual", "calculated"),
-                                           "manual", inline = TRUE),
-                              br(),
-                              tags$label("Manually set guideline"),
-                              numericInput(ns("user_guideline"), label = NULL, 0),
-                              br(),
-                              tags$label("Calculate guideline"),
-                              radioButtons(ns("term"), "Select term",
+                              radioButtons(ns("guideline"), "How do you want to determine Water Quality Guideline?",
+                                           choices = c("set manually", "calculate from data"),
+                                           "set manually", inline = TRUE),
+                              shinyjs::hidden(div(id = ns("div_manual"),
+                                                  numericInput(ns("user_guideline"), label = NULL, 0))),
+                              shinyjs::hidden(div(id = ns("div_calculate"),
+                                                  radioButtons(ns("term"), "Select term",
                                            choices = c("short", "long", "long-daily"),
                                            selected = "long", inline = TRUE),
-                              checkboxInput(ns("estimate_variables"), "Get modelled estimate",
-                                            value = FALSE),
-                              actionButton(ns("get"), "Get/update guideline")
-                              ))
+                                           checkboxInput(ns("estimate_variables"), "Get modelled estimate",
+                                                        value = FALSE),
+                                           actionButton(ns("get"), "Get/update guideline")))))
                    ),
       mainPanel(tabsetPanel(selected = "Plot",
                             tabPanel(title = "Plot",
@@ -85,6 +82,16 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     } else {
       hide("div_geom")
       show("timeframe")
+    }
+  })
+
+  observe({
+    if(input$guideline == "set manually"){
+      show("div_manual")
+      hide("div_calculate")
+    } else {
+      hide("div_manual")
+      show("div_calculate")
     }
   })
 
@@ -279,7 +286,7 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
   })
 
   observe({
-    if(input$guideline == "manual"){
+    if(input$guideline == "set manually"){
       rv$guideline <- input$user_guideline
     } else {
       rv$guideline <- rv$guideline_calc
