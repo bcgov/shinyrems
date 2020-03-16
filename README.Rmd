@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 [![Apache license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 <!-- badges: end -->
 
-`shinyrems` is an app that allows you to visualize and download data from the EMS database.
+`shinyrems` is an app that allows you to visualize, analyze and download data from the EMS database.
 
 ## Installation
 
@@ -31,9 +31,30 @@ remotes::install_github("bcgov/shinyrems")
 ```
 
 ## Usage
-`shinyrems` ships with an Rstudio addin. If you are using Rstudio, you can run the app by selecting Shinyrems app from the addins dropdown menu.
+ShinyRems app can be run with various EMS datasets that must be downloaded and stored on the user's computer. Prior to app startup, you will be prompted to download data if required and you will be notified if data updates are available.
 
-Alternatively, type `shinyrems::run_app())` into the console.
+There are six possible run modes corresponding to different 
+datasets:
+
+- **'demo'** - uses a demo dataset that requires no download of EMS data  
+- **'2yr'** - uses most recent 2 years of EMS data (from 2018-01-01 to present)
+- **'4yr'** - uses most recent 4 years of EMS data from 2016-01-01 to present)  
+- **'historic'** - uses historic EMS data (up to 2018-01-01)  
+- **'all'** - uses combined "2yr" and "historic" EMS data 
+- **'upload'** - allows user to upload their own data following correct format 
+
+To select a run mode, provide the value (as it appears above) to `shinyrems::run_ems_app()`. For example, type the following into your R console:
+
+```{r, eval = FALSE}
+# select historic run mode
+shinyrems::run_ems_app('historic')
+
+# select upload run mode
+shinyrems::run_ems_app('upload')
+
+# "2yr" run mode is the default and will be selected if no other value is provided
+shinyrems::run_ems_app()
+```
 
 ## Contribution
 
