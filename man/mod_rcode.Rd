@@ -7,7 +7,7 @@
 \usage{
 mod_rcode_ui(id)
 
-mod_rcode_server(input, output, session, tidy, stand, clean, outlier, results)
+mod_rcode_server(input, output, session, data, tidy, clean, outlier, results)
 }
 \arguments{
 \item{id}{shiny id}
