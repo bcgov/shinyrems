@@ -72,7 +72,7 @@ mod_clean_server <- function(input, output, session, stand){
                 by = input$by,
                 remove_blanks = input$remove_blanks,
                 max_cv = max_cv(),
-                FUN = input$fun)},
+                FUN = eval(parse(text = input$fun)))},
       message = function(m) {
         shinyjs::html(id = "console_clean", html = HTML(paste(m$message, "<br>")), add = TRUE)
       })
@@ -102,7 +102,7 @@ mod_clean_server <- function(input, output, session, stand){
 
   rcode <- reactive({
     rcode_clean(by = input$by, max_cv = input$max_cv,
-                remove_blanks = input$remove_blanks, fun = input$fun)
+                remove_blanks = input$remove_blanks, fun = eval(parse(text = input$fun)))
   })
 
   output$rcode <- renderUI({

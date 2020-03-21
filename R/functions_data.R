@@ -134,7 +134,7 @@ ems_standardize <- function(data, strict){
 
 ems_aggregate <- function(data, by, remove_blanks, max_cv, FUN){
   x <- try({
-    data <- clean_wqdata2(data, by = by, max_cv = max_cv,
+    data <- wqbc::clean_wqdata(data, by = by, max_cv = max_cv,
                           remove_blanks = remove_blanks, FUN = FUN)
     first <- c("Variable", "Date", by, "Value", "Units")
     last <- setdiff(names(data), c(first, "Outlier"))
@@ -146,9 +146,9 @@ ems_aggregate <- function(data, by, remove_blanks, max_cv, FUN){
 
 ems_outlier <- function(x, by = NULL, max_cv = Inf, sds = 10, ignore_undetected = TRUE,
                         large_only = TRUE, remove_blanks = FALSE,
-                        FUN = "mean"){
+                        FUN = mean){
   x <- try({
-    clean_wqdata2(x = x,
+    wqbc::clean_wqdata(x = x,
                   by = by,
                   max_cv = max_cv,
                   sds = sds,

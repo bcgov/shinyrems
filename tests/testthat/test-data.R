@@ -38,10 +38,10 @@ test_that("ems data functions work", {
   expect_identical(stand_data, stand_data2)
 
   agg_data <- ems_aggregate(stand_data, by = "EMS_ID", remove_blanks = TRUE,
-                            max_cv = Inf, FUN = "max")
+                            max_cv = Inf, FUN = max)
   expect_identical(nrow(agg_data), 64L)
 
-  out_data <- ems_outlier(stand_data, by = "EMS_ID", max_cv = Inf, sds = 1, FUN = "mean")
+  out_data <- ems_outlier(stand_data, by = "EMS_ID", max_cv = Inf, sds = 1, FUN = mean)
   expect_identical(nrow(out_data), 64L)
 
   limits <- shinywqg::limits

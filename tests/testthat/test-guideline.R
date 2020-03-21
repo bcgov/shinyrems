@@ -13,7 +13,7 @@ test_that("calculating guideline works", {
   by = "EMS_ID"
   max_cv = Inf
   sds = 1
-  FUN = "mean"
+  FUN = mean
   ignore_undetected = TRUE
   large_only = TRUE
   remove_blanks = TRUE
@@ -53,7 +53,7 @@ test_that("calculating guideline works", {
   y <- wqbc::calc_limits(all_data, clean = FALSE, term = "long", estimate_variables = FALSE)
   expect_false(identical(x, y))
 
-  x <- wqbc::calc_limits(all_data, clean = FALSE, term = "short", estimate_variables = TRUE)
+  x <- wqbc::calc_limits(all_data, by = "EMS_ID", clean = FALSE, term = "short", estimate_variables = TRUE)
   expect_identical(nrow(x), 113L)
 
   y <- wqbc::calc_limits(all_data, clean = FALSE, term = "long-daily", estimate_variables = FALSE)
@@ -64,6 +64,44 @@ test_that("calculating guideline works", {
            silent = TRUE)
 
   data$EMS_ID_Renamed <- data$EMS_ID
+
+  #####
+  date_range <- c(from_date, to_date)
+  timeframe = "Year"
+  facet = "EMS_ID"
+  guideline = x
+  data$Detected <- detected(data$Value, data$DetectionLimit)
+  data$EMS_ID <- data$EMS_ID_Renamed
+  data$Detected %<>% factor(levels = c(TRUE, FALSE))
+  data <- data[data$Date >= as.Date(date_range[1]) & data$Date <= as.Date(date_range[2]),]
+  data$Timeframe <- factor(get_timeframe(data$Date, timeframe))
+
+  gp <- ggplot2::ggplot(data, ggplot2::aes_string(x = "Date", y = "Value")) +
+    ggplot2::scale_color_discrete(drop = FALSE) +
+    ggplot2::expand_limits(y = 0) +
+    ggplot2::facet_wrap(facet, ncol = 1,
+                        scales = "free_y") +
+    ggplot2::ylab(unique(data$Units)) +
+    ggplot2::theme(legend.position = "bottom") +
+    ggplot2::theme_bw() +
+    ggplot2::theme(legend.position = "bottom")
+
+  gp <- gp + ggplot2::geom_hline(yintercept = guideline$UpperLimit[1],
+                                 linetype = "WQG", colour = "black")
+
+  # gp <- gp + ggplot2::geom_line(data = guideline,
+  #                               ggplot2::aes(x = Date, y = UpperLimit),
+  #                               linetype = "Water Quality Guideline")
+
+  gp <- gp + ggplot2::scale_linetype_manual(name = "Water Quality",
+                                            values = c(2, 2),
+                                            guide = ggplot2::guide_legend(override.aes = list(color = c("black", "black"))))
+
+  gp <- gp + ggplot2::geom_point(size = 0.5,
+                                 ggplot2::aes_string(shape = "Detected",
+                                                     color = "EMS_ID"))
+  gp
+
   gp <- ems_plot(data, "scatter", c("show lines", "show points"),
                   c(from_date, to_date), 1, 0.5, "Variable", "EMS_ID", "Year", y)
 

@@ -62,22 +62,6 @@ mod_outlier_ui <- function(id){
 mod_outlier_server <- function(input, output, session, clean, stand){
   ns <- session$ns
 
-  clean_data <- reactive({
-    suppressWarnings(waiter::show_butler())
-    withCallingHandlers({
-      shinyjs::html("console_clean", "")
-      x <- ems_aggregate(stand$data(),
-                         by = input$by,
-                         remove_blanks = input$remove_blanks,
-                         max_cv = max_cv(),
-                         FUN = input$fun)},
-      message = function(m) {
-        shinyjs::html(id = "console_clean", html = HTML(paste(m$message, "<br>")), add = TRUE)
-      })
-    suppressWarnings(waiter::hide_butler())
-    x
-  })
-
   outlier_data <- reactive({
     req(stand$data())
     req(clean$by())
@@ -89,7 +73,7 @@ mod_outlier_server <- function(input, output, session, clean, stand){
         by = clean$by(),
         max_cv = max_cv(),
         remove_blanks = clean$remove_blanks(),
-        FUN = clean$fun(),
+        FUN = eval(parse(text = clean$fun())),
         sds = input$sds,
         ignore_undetected = input$ignore_undetected,
         large_only = input$large_only)},
