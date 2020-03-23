@@ -24,9 +24,8 @@ test_that("ems data functions work", {
 
   expect_identical(unique(data$EMS_ID), emsid)
   expect_identical(unique(data$PARAMETER), param)
-  expect_true(as.Date(min(data$COLLECTION_START)) <= from)
   expect_true(as.Date(max(data$COLLECTION_START)) <= to)
-  expect_identical(nrow(data), 98L)
+  expect_identical(nrow(data), 48L)
 
   tidy_data <- ems_tidy(data, mdl_action = "zero", data_type = "raw",
                         dataset = "2yr", cols = character(0))
@@ -39,24 +38,22 @@ test_that("ems data functions work", {
 
   agg_data <- ems_aggregate(stand_data, by = "EMS_ID", remove_blanks = TRUE,
                             max_cv = Inf, FUN = max)
-  expect_identical(nrow(agg_data), 64L)
+  expect_identical(nrow(agg_data), 30L)
 
   out_data <- ems_outlier(stand_data, by = "EMS_ID", max_cv = Inf, sds = 1, FUN = mean)
-  expect_identical(nrow(out_data), 64L)
+  expect_identical(nrow(out_data), 30L)
 
-  limits <- shinywqg::limits
+  limits <- wqbc::limits
 
   #### test plot
   data = out_data
   data$EMS_ID_Renamed <- data$EMS_ID
 
-  x <- ems_plots(data, plot_type = "scatter", geom = c("show lines" ,"show points"),
+  x <- ems_plot(data, plot_type = "scatter", geom = c("show lines" ,"show points"),
             date_range = c(from, to), point_size = 1, line_size = 1,
             facet = "EMS_ID", colour = "EMS_ID", timeframe = "Year", guideline = 6)
 
-  expect_is(x, "list")
+  expect_is(x, "ggplot")
   expect_named(x)
-  expect_length(x, 1L)
-  expect_is(x$pH, "ggplot")
 
 })
