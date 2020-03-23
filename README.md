@@ -21,6 +21,8 @@ To install the latest development version from
 
 ``` r
 # install.packages("remotes")
+remotes::install_github("bcgov/rems")
+remotes::install_github("bcgov/wqbc#117)
 remotes::install_github("bcgov/shinyrems")
 ```
 

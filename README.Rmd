@@ -27,6 +27,8 @@ knitr::opts_chunk$set(
 To install the latest development version from [GitHub](https://github.com/bcgov/shinyrems)
 ``` r
 # install.packages("remotes")
+remotes::install_github("bcgov/rems")
+remotes::install_github("bcgov/wqbc#117)
 remotes::install_github("bcgov/shinyrems")
 ```
 
