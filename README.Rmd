@@ -32,6 +32,8 @@ remotes::install_github("bcgov/wqbc#117)
 remotes::install_github("bcgov/shinyrems")
 ```
 
+Please remember to restart your R session after installation.
+
 ## Usage
 ShinyRems app can be run with various EMS datasets that must be downloaded and stored on the user's computer. Prior to app startup, you will be prompted to download data if required and you will be notified if data updates are available.
 
