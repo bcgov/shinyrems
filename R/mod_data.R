@@ -94,6 +94,7 @@ mod_data_server <- function(input, output, session){
 
   ########## ---------- dataset ---------- ##########
   observe({
+    print(wqbc::limits)
     raw_rv$data <- empty_raw
     hide("div_data_find")
     hide("div_data_upload")
