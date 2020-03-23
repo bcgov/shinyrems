@@ -23,7 +23,7 @@ To install the latest development version from
 # install.packages("remotes")
 remotes::install_github("bcgov/rems")
 remotes::install_github("bcgov/wqbc")
-remotes::install_github("bcgov/shinyrems")
+remotes::install_github("poissonconsulting/shinyrems")
 ```
 
 Please remember to restart your R session after installation.
