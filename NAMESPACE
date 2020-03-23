@@ -2,8 +2,6 @@
 
 export(mod_clean_server)
 export(mod_data_server)
-export(mod_guideline_server)
-export(mod_guideline_ui)
 export(mod_outlier_server)
 export(mod_rcode_server)
 export(mod_rcode_ui)
