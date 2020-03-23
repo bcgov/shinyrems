@@ -185,7 +185,7 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
       paste0(input$file_plot, ".png")
     },
     content = function(file) {
-      ggplot2::ggsave(file, plots()[[1]], device = "png")
+      ggplot2::ggsave(file, plots(), device = "png")
     })
 
   output$dl_table <- downloadHandler(
