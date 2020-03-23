@@ -28,9 +28,9 @@ mod_tidy_ui <- function(id){
                                    uiOutput(ns("ui_table_tidy"))),
                           tabPanel(title = "Messages",
                                    br(),
-                                   help_output(ns("console_stand"))),
-                          tabPanel(title = "R Code",
-                                   wellPanel(uiOutput(ns("rcode"))))
+                                   help_output(ns("console_stand")))
+                          # tabPanel(title = "R Code",
+                          #          wellPanel(uiOutput(ns("rcode"))))
     ))
   )
 }

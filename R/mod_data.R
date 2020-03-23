@@ -59,12 +59,12 @@ mod_data_ui <- function(id){
                              uiOutput(ns("ui_table_raw"))
                            ),
                   tabPanel(title = "Site Map",
-                           wellPanel(site_map(ns), class = "wellpanel")),
-                  tabPanel(title = "R Code",
-                           br(),
-                           wellPanel(
-                             uiOutput(ns("rcode")))
-                           )
+                           wellPanel(site_map(ns), class = "wellpanel"))
+                  # tabPanel(title = "R Code",
+                  #          br(),
+                  #          wellPanel(
+                  #            uiOutput(ns("rcode")))
+                  #          )
       )
     )
   )

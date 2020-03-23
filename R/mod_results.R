@@ -56,10 +56,10 @@ mod_results_ui <- function(id){
                                      dl_group("table", ns),
                                      br2(),
                                      tableOutput(ns("table"))
-                                     ),
-                            tabPanel(title = "R Code",
-                                     br(),
-                                     wellPanel(uiOutput(ns("rcode"))))
+                                     )
+                            # tabPanel(title = "R Code",
+                            #          br(),
+                            #          wellPanel(uiOutput(ns("rcode"))))
       ))
     )
   )

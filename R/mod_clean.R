@@ -31,10 +31,10 @@ mod_clean_ui <- function(id){
                                    uiOutput(ns("ui_table_clean"))),
                           tabPanel(title = "Messages",
                                    br(),
-                                   help_output(ns("console_clean"))),
-                          tabPanel(title = "R Code",
-                                   br(),
-                                   wellPanel(uiOutput(ns("rcode"))))
+                                   help_output(ns("console_clean")))
+                          # tabPanel(title = "R Code",
+                          #          br(),
+                          #          wellPanel(uiOutput(ns("rcode"))))
     ))
   )
 }
