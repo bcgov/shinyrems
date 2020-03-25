@@ -244,7 +244,7 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
                        ignore_undetected = outlier$ignore_undetected(),
                        large_only = outlier$large_only(),
                        remove_blanks = clean$remove_blanks(),
-                       max_cv = clean$max_cv(), FUN = clean$fun(),
+                       max_cv = clean$max_cv(), FUN = eval(parse(text = clean$fun())),
                        limits = wqbc::limits)
   })
 
