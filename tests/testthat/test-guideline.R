@@ -57,7 +57,7 @@ test_that("calculating guideline works", {
   expect_identical(nrow(x), 113L)
 
   y <- wqbc::calc_limits(all_data, clean = FALSE, term = "long-daily", estimate_variables = FALSE)
-  expect_identical(nrow(y), 113L)
+  expect_identical(nrow(y), 109L)
   expect_false(identical(x, y))
 
   z <- try(wqbc::calc_limits(data2, clean = FALSE, term = "long-daily", estimate_variables = FALSE),
@@ -76,34 +76,10 @@ test_that("calculating guideline works", {
   data <- data[data$Date >= as.Date(date_range[1]) & data$Date <= as.Date(date_range[2]),]
   data$Timeframe <- factor(get_timeframe(data$Date, timeframe))
 
-  gp <- ggplot2::ggplot(data, ggplot2::aes_string(x = "Date", y = "Value")) +
-    ggplot2::scale_color_discrete(drop = FALSE) +
-    ggplot2::expand_limits(y = 0) +
-    ggplot2::facet_wrap(facet, ncol = 1,
-                        scales = "free_y") +
-    ggplot2::ylab(unique(data$Units)) +
-    ggplot2::theme(legend.position = "bottom") +
-    ggplot2::theme_bw() +
-    ggplot2::theme(legend.position = "bottom")
-
-  gp <- gp + ggplot2::geom_hline(yintercept = guideline$UpperLimit[1],
-                                 linetype = "WQG", colour = "black")
-
-  # gp <- gp + ggplot2::geom_line(data = guideline,
-  #                               ggplot2::aes(x = Date, y = UpperLimit),
-  #                               linetype = "Water Quality Guideline")
-
-  gp <- gp + ggplot2::scale_linetype_manual(name = "Water Quality",
-                                            values = c(2, 2),
-                                            guide = ggplot2::guide_legend(override.aes = list(color = c("black", "black"))))
-
-  gp <- gp + ggplot2::geom_point(size = 0.5,
-                                 ggplot2::aes_string(shape = "Detected",
-                                                     color = "EMS_ID"))
-  gp
-
   gp <- ems_plot(data, "scatter", c("show lines", "show points"),
                   c(from_date, to_date), 1, 0.5, "Variable", "EMS_ID", "Year", y)
+
+  expect_is(gp, "ggplot")
 
   emsid <- c("E103448")
   param <- c("Aluminum Dissolved")
