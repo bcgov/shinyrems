@@ -50,7 +50,7 @@ ems_plot <- function(data, plot_type, geom, date_range,
                                      linetype = "dotted")
     } else {
       gp <- gp + ggplot2::geom_line(data = guideline,
-                                    ggplot2::aes(x = Date, y = UpperLimit),
+                                    ggplot2::aes_string(x = "Date", y = "UpperLimit"),
                                     linetype = "dotted")
     }
   }

@@ -34,7 +34,8 @@ Imports:
     plyr,
     tibble,
     shinycssloaders,
-    stringr
+    stringr,
+    rlang
 Suggests:
     testthat (>= 2.1.0),
     usethis

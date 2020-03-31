@@ -73,6 +73,29 @@ raw_names <- c(EMS_ID = "EMS_ID", Station = "MONITORING_LOCATION",
                Units = "UNIT", DetectionLimit = "METHOD_DETECTION_LIMIT",
                ResultLetter = "RESULT_LETTER")
 
+tidy_names_to_raw <- function(x, names = raw_names){
+  tmp <- sapply(names(x), function(y){
+    if(!(y %in% names(raw_names))) return(y)
+    raw_names[which(y == names(raw_names))] %>% setNames(NULL)
+  }, USE.NAMES = FALSE)
+  setNames(x, tmp)
+}
+
+template_raw <- tidy_names_to_raw(template_tidy, raw_names)
+
+template_to_df <- function(template){
+  x <- dplyr::tibble(variable = c("example", "type", "description"))
+  for(i in names(template)){
+    x[x$variable == "example", i] <- template[[i]][["example"]]
+    x[x$variable == "type", i] <- template[[i]][["type"]]
+    x[x$variable == "description", i] <- template[[i]][["description"]]
+  }
+  x[,-1]
+}
+
+template_tidy_df <- template_to_df(template_tidy)
+template_raw_df <- template_to_df(template_raw)
+
 datasets <- c("2yr", "4yr", "historic", "all", "demo", "upload")
 
 empty_df <- function(data){
@@ -144,7 +167,8 @@ ems_reference_tables <- list("Collection Methods" = rems::ems_coll_methods,
 # limits <- limits_new
 
 usethis::use_data(lookup_historic, lookup_demo,
-                  template_tidy, watershed_groups, empty_raw,
+                  template_tidy, template_raw, template_tidy_df, template_raw_df,
+                  watershed_groups, empty_raw,
                   empty_tidy, empty_standard, empty_clean, empty_outlier,
                   datasets, ems_reference_tables, raw_names,
                   internal = TRUE, overwrite = TRUE)

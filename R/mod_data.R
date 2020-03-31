@@ -115,7 +115,9 @@ mod_data_server <- function(input, output, session){
   })
 
   raw_rv <- reactiveValues(data = empty_raw,
-                           cols = character(0))
+                           cols = character(0),
+                           template = template_tidy,
+                           template_df = template_tidy_df)
   observe({
     if(!all_depth_na(raw_rv$data)){
       raw_rv$cols <- c("UPPER_DEPTH", "LOWER_DEPTH")
@@ -137,7 +139,8 @@ mod_data_server <- function(input, output, session){
   observe({
     if(dataset == "upload"){
       req(input$upload_data)
-      check <- check_data_upload(input$upload_data, template())
+      print(raw_rv$template)
+      check <- check_data_upload(input$upload_data, raw_rv$template)
       if(is.character(check)){
         return(showModal(error_modal(check)))
       }
@@ -177,12 +180,15 @@ mod_data_server <- function(input, output, session){
     unique(translate_site(input$site, lookup, input$site_type))
   })
 
-  template <- reactive({
+  observe({
     req(input$data_type)
-    type <- input$data_type
-    if(type == "tidy")
-      return(template_tidy)
-    tidy_names_to_raw(template_tidy)
+    if(input$data_type == "raw"){
+      raw_rv$template = template_raw
+      raw_rv$template_df = template_raw_df
+    } else {
+      raw_rv$template = template_tidy
+      raw_rv$template_df = template_tidy_df
+    }
   })
 
   output$ui_wsgroup <- renderUI({
@@ -302,7 +308,7 @@ mod_data_server <- function(input, output, session){
   output$dl_template <- downloadHandler(
     filename = function() "ems_template.csv",
     content = function(file) {
-      readr::write_csv(template_to_df(template()), file)
+      readr::write_csv(raw_rv$template_df, file)
     }
   )
 
