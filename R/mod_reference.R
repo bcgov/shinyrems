@@ -28,10 +28,10 @@ mod_reference_ui <- function(id){
   fluidPage(
     fillRow(height = "90%", width = 350, flex = c(2, 1),
       selectInput(ns("selectTable"), label = NULL,
-                  choices = c("Parameters", "Location Samples - Sample State",
+                  choices = c("Limits", "Parameters", "Location Samples - Sample State",
                               "Collection Methods", "Sample Classes",
                               "Species", "Units"),
-                  selected = "Parameters"),
+                  selected = "Limits"),
       dl_button(ns("download"), label = "Download")),
       br3(),
       ems_table_output(ns("table")

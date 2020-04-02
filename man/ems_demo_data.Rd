@@ -4,7 +4,9 @@
 \name{ems_demo_data}
 \alias{ems_demo_data}
 \title{EMS demo data.}
-\format{A data frame with 250241 rows and 22 variables:}
+\format{
+A data frame with 250241 rows and 22 variables:
+}
 \usage{
 ems_demo_data
 }

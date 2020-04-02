@@ -84,13 +84,14 @@ tidy_names_to_raw <- function(x, names = raw_names){
 template_raw <- tidy_names_to_raw(template_tidy, raw_names)
 
 template_to_df <- function(template){
-  x <- dplyr::tibble(variable = c("example", "type", "description"))
+  x <- data.frame(variable = c("example", "type", "description"))
   for(i in names(template)){
     x[x$variable == "example", i] <- template[[i]][["example"]]
     x[x$variable == "type", i] <- template[[i]][["type"]]
     x[x$variable == "description", i] <- template[[i]][["description"]]
   }
-  x[,-1]
+  x <- x[,-1]
+  dplyr::as_tibble(x)
 }
 
 template_tidy_df <- template_to_df(template_tidy)
@@ -120,7 +121,8 @@ empty_standard <- empty_df(standard)
 empty_clean <- empty_df(clean %>% select(-Outlier))
 empty_outlier <- empty_df(clean)
 
-ems_reference_tables <- list("Collection Methods" = rems::ems_coll_methods,
+ems_reference_tables <- list("Limits" = wqbc::limits,
+                             "Collection Methods" = rems::ems_coll_methods,
                              "Location Samples - Sample State" = rems::ems_location_samples,
                              "Parameters" = rems::ems_parameters,
                              "Sample Classes" = rems::ems_sample_classes,

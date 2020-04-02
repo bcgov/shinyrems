@@ -44,7 +44,7 @@ Remotes:
     bcgov/wqbc
 URL: https://github.com/poissonconsulting/shinyrems
 BugReports: https://github.com/poissonconsulting/shinyrems/issues
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Encoding: UTF-8
 LazyData: true
 Language: en-US
