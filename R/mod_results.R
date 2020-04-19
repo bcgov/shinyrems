@@ -43,7 +43,16 @@ mod_results_ui <- function(id){
                                            selected = "long", inline = TRUE),
                                            checkboxInput(ns("estimate_variables"), "Get modelled estimate",
                                                         value = FALSE),
-                                           actionButton(ns("get"), "Get/update guideline")))))
+                                           actionButton(ns("get"), "Get/update guideline")))),
+                     tabPanel(title = "Summary Table",
+                              checkboxInput(ns("censored"),
+                                            label = "Account for censored data", value = TRUE),
+                              checkboxInput(ns("narm"),
+                                            label = "Exclude missing values", value = TRUE),
+                              uiOutput(ns("ui_by")),
+                              numericInput(ns("sigfig"),
+                                           label = "Significant figures",
+                                           value = 2, min = 0, max = 10)))
                    ),
       mainPanel(tabsetPanel(selected = "Plot",
                             tabPanel(title = "Plot",
@@ -51,11 +60,11 @@ mod_results_ui <- function(id){
                                      dl_group("plot", ns),
                                      br2(),
                                      uiOutput(ns("ui_plot"))),
-                            tabPanel(title = "Summary Statistics",
+                            tabPanel(title = "Summary Table",
                                      br(),
                                      dl_group("table", ns),
-                                     br2(),
-                                     tableOutput(ns("table"))
+                                     br2(), br(),
+                                     ems_table_output(ns("table"))
                                      )
                             # tabPanel(title = "R Code",
                             #          br(),
@@ -109,13 +118,23 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
 
   summary_table <- reactive({
     suppressWarnings(waiter::show_butler())
-    x <- ems_summary_table(rv$data)
+    x <- wqbc::summarise_wqdata(rv$data,
+                                by = input$by,
+                                censored = input$censored,
+                                na.rm = input$narm) %>%
+      dplyr::mutate_if(is.numeric, function(x) signif(x, input$sigfig))
     suppressWarnings(waiter::hide_butler())
     x
   })
 
-  output$table <- renderTable({
-    summary_table()
+  output$table <- DT::renderDT({
+    DT::datatable(summary_table(),
+                  class = "cell-border stripe compact",
+                  rownames = FALSE,
+                  options = list(
+                    scrollX = TRUE,
+                    dom = "t",
+                    ordering = FALSE))
   })
 
   output$ui_plot <- renderUI({
@@ -225,6 +244,13 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
         lapply(sites, rename_inputs, ns),
         button(ns("finalise"), "Rename")))
   })
+
+  output$ui_by <- renderUI({
+    select_input_x(ns("by"), label = "Summarise by columns",
+                   choices = clean$by(),
+                   selected = clean$by())
+  })
+  outputOptions(output, "ui_by", suspendWhenHidden = FALSE)
 
   observeEvent(input$info_timeframe, {
     shinyjs::toggle("div_info_timeframe", anim = TRUE)

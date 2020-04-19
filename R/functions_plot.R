@@ -114,7 +114,3 @@ get_timeframe <- function(date, x = "Year"){
   dttr2::dtt_season(date)
 }
 
-ems_summary_table <- function(data){
-  summarise_wqdata(data)
-}
-
