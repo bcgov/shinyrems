@@ -46,7 +46,7 @@ mod_results_ui <- function(id){
                                            actionButton(ns("get"), "Get/update guideline")))),
                      tabPanel(title = "Summary Table",
                               checkboxInput(ns("censored"),
-                                            label = "Account for censored data", value = TRUE),
+                                            label = "Account for data censoring", value = TRUE),
                               checkboxInput(ns("narm"),
                                             label = "Exclude missing values", value = TRUE),
                               uiOutput(ns("ui_by")),
