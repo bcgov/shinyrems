@@ -24,8 +24,8 @@
 #'
 #' @export
 run_ems_app <- function(dataset = "2yr") {
-
-  checkr::check_vector(dataset, c("demo", "2yr", "4yr", "historic", "all", "upload"))
+  chk::chk_string(dataset)
+  chk::chk_subset(dataset, c("demo", "2yr", "4yr", "historic", "all", "upload"))
 
   ems_data <- NULL
   if(dataset == "2yr")

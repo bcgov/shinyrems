@@ -44,10 +44,10 @@ check_data_upload <- function(data, template){
 }
 
 check_template <- function(x, template){
-  x <- try(checkr::check_data(x = x,
-                              values = sapply(template, function(x) x$check, USE.NAMES = FALSE),
-                              nrow = c(1L,.Machine$integer.max),
-                              error = TRUE, x_name = "data"), silent = TRUE)
+  x <- try(chk::check_data(x = x,
+                           values = sapply(template, function(x) x$check, USE.NAMES = FALSE),
+                           nrow = c(1L,.Machine$integer.max),
+                           x_name = "data"), silent = TRUE)
   if(is_try_error(x))
     return(gsub("Error : |\n", "", x[1]))
   invisible(TRUE)

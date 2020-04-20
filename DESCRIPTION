@@ -22,7 +22,7 @@ Imports:
     leaflet,
     readr,
     DT,
-    checkr,
+    chk,
     glue,
     magrittr,
     wqbc,
