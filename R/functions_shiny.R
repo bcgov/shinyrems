@@ -22,7 +22,7 @@ dl_button <- function(..., icon = "download", class = "btn-primary"){
 }
 
 button <- function(..., icon = NULL, class = "btn-primary"){
-  actionButton(..., icon = icon(icon), class = class)
+  actionButton(..., class = class)
 }
 
 select_input_x <- function(..., label = "Select sites:", choices, selected = choices[1]) {
