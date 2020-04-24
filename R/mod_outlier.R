@@ -23,44 +23,59 @@
 #' @rdname mod_outlier
 #'
 #' @keywords internal
-mod_outlier_ui <- function(id){
+mod_outlier_ui <- function(id) {
   ns <- NS(id)
   tagList(
     sidebarLayout(
-      sidebarPanel(class = "sidebar",
-                   numericInput(ns("sds"), label = "Standard deviations",
-                                value = 10) %>%
-                     embed_help("info_sds", ns, info$sds),
-                   checkboxInput(ns("ignore_undetected"), "Ignore values below detection limit", TRUE)  %>%
-                     embed_help("info_undetected", ns, info$undetected),
-                   checkboxInput(ns("large_only"), "Large values only", TRUE)  %>%
-                     embed_help("info_large", ns, info$large),
-                   checkboxInput(ns("delete_outliers"), "Remove outliers from plot", FALSE) %>%
-                     embed_help("info_remove", ns, info$remove),
-                   numericInput(ns("point_size"), label = "Point Size",
-                                value = 1.3, min = 0, max = 10),
-                   sliderInput(ns("plot_height"), label = "Plot Height",
-                                value = 500, min = 0, max = 1000, step = 100)),
+      sidebarPanel(
+        class = "sidebar",
+        numericInput(ns("sds"),
+          label = "Standard deviations",
+          value = 10
+        ) %>%
+          embed_help("info_sds", ns, info$sds),
+        checkboxInput(ns("ignore_undetected"), "Ignore values below detection limit", TRUE) %>%
+          embed_help("info_undetected", ns, info$undetected),
+        checkboxInput(ns("large_only"), "Large values only", TRUE) %>%
+          embed_help("info_large", ns, info$large),
+        checkboxInput(ns("delete_outliers"), "Remove outliers from plot", FALSE) %>%
+          embed_help("info_remove", ns, info$remove),
+        numericInput(ns("point_size"),
+          label = "Point Size",
+          value = 1.3, min = 0, max = 10
+        ),
+        sliderInput(ns("plot_height"),
+          label = "Plot Height",
+          value = 500, min = 0, max = 1000, step = 100
+        )
+      ),
       mainPanel(
         tabsetPanel(
-          tabPanel(title = "Manual outlier selection",
-                   br(),
-                   uiOutput(ns("ui_plot")),
-                   shinyjs::hidden(button(ns("clear_outliers"),
-                                          label = "Undo outlier selection"))),
-          tabPanel(title = "Final Data",
-                   br(),
-                   dl_group("final", ns),
-                   br2(),
-                   uiOutput(ns("ui_table_final"))),
-          tabPanel(title = "Messages",
-                   br(),
-                   help_output(ns("console_clean")))
+          tabPanel(
+            title = "Manual outlier selection",
+            br(),
+            uiOutput(ns("ui_plot")),
+            shinyjs::hidden(button(ns("clear_outliers"),
+              label = "Undo outlier selection"
+            ))
+          ),
+          tabPanel(
+            title = "Final Data",
+            br(),
+            dl_group("final", ns),
+            br2(),
+            uiOutput(ns("ui_table_final"))
+          ),
+          tabPanel(
+            title = "Messages",
+            br(),
+            help_output(ns("console_clean"))
+          )
           # tabPanel(title = "R Code",
           #          br(),
           #          wellPanel(uiOutput(ns("rcode"))))
-          )
         )
+      )
     )
   )
 }
@@ -71,27 +86,31 @@ mod_outlier_ui <- function(id){
 #' @export
 #' @keywords internal
 
-mod_outlier_server <- function(input, output, session, clean, stand){
+mod_outlier_server <- function(input, output, session, clean, stand) {
   ns <- session$ns
 
   outlier_data <- reactive({
     req(stand$data())
     req(clean$by())
     suppressWarnings(waiter::show_butler())
-    withCallingHandlers({
-      shinyjs::html("console_clean", "")
-      x <- ems_outlier(
-        x = stand$data(),
-        by = clean$by(),
-        max_cv = max_cv(),
-        remove_blanks = clean$remove_blanks(),
-        FUN = eval(parse(text = clean$fun())),
-        sds = input$sds,
-        ignore_undetected = input$ignore_undetected,
-        large_only = input$large_only)},
+    withCallingHandlers(
+      {
+        shinyjs::html("console_clean", "")
+        x <- ems_outlier(
+          x = stand$data(),
+          by = clean$by(),
+          max_cv = max_cv(),
+          remove_blanks = clean$remove_blanks(),
+          FUN = eval(parse(text = clean$fun())),
+          sds = input$sds,
+          ignore_undetected = input$ignore_undetected,
+          large_only = input$large_only
+        )
+      },
       message = function(m) {
         shinyjs::html(id = "console_clean", html = HTML(paste(m$message, "<br>")), add = TRUE)
-      })
+      }
+    )
     suppressWarnings(waiter::hide_butler())
     x
   })
@@ -114,8 +133,8 @@ mod_outlier_server <- function(input, output, session, clean, stand){
   })
 
   outlier_data2 <- reactive({
-    if(input$delete_outliers){
-      return(outlier_rv$data[!outlier_rv$data$Outlier,])
+    if (input$delete_outliers) {
+      return(outlier_rv$data[!outlier_rv$data$Outlier, ])
     }
     outlier_rv$data
   })
@@ -126,8 +145,9 @@ mod_outlier_server <- function(input, output, session, clean, stand){
 
   observe({
     req(outlier_rv$data)
-    if(all(outlier_rv$data$Outlier == outlier_data()$Outlier))
+    if (all(outlier_rv$data$Outlier == outlier_data()$Outlier)) {
       return(shinyjs::hide("clear_outliers"))
+    }
     shinyjs::show("clear_outliers")
   })
 
@@ -137,7 +157,9 @@ mod_outlier_server <- function(input, output, session, clean, stand){
 
   output$ui_plot <- renderUI({
     req(outlier_data2())
-    if(nrow(outlier_data2()) < 1) return()
+    if (nrow(outlier_data2()) < 1) {
+      return()
+    }
     tagList(
       help_text("Click and drag mouse over plot to manually select outliers.
                                              Table in 'Clean Data' tab will be automatically updated."),
@@ -158,7 +180,7 @@ mod_outlier_server <- function(input, output, session, clean, stand){
   outlier_data3 <- reactive({
     req(outlier_data2())
     x <- outlier_data2()
-    x[!x$Outlier,]
+    x[!x$Outlier, ]
   })
 
   observeEvent(input$info_sds, {
@@ -178,10 +200,12 @@ mod_outlier_server <- function(input, output, session, clean, stand){
   })
 
   rcodeclean <- reactive({
-    rcode_clean2(by = clean$by(), max_cv = max_cv(), sds = input$sds,
-                 ignore_undetected = input$ignore_undetected,
-                 large_only = input$large_only,
-                 remove_blanks = clean$remove_blanks(), fun = clean$fun())
+    rcode_clean2(
+      by = clean$by(), max_cv = max_cv(), sds = input$sds,
+      ignore_undetected = input$ignore_undetected,
+      large_only = input$large_only,
+      remove_blanks = clean$remove_blanks(), fun = clean$fun()
+    )
   })
 
   rcodeoutlier <- reactive({
@@ -197,7 +221,7 @@ mod_outlier_server <- function(input, output, session, clean, stand){
   })
 
   output$ui_table_final <- renderUI({
-    ems_table_output(ns('table_final'))
+    ems_table_output(ns("table_final"))
   })
 
   output$table_final <- DT::renderDT({
@@ -205,12 +229,13 @@ mod_outlier_server <- function(input, output, session, clean, stand){
   })
 
   output$dl_final <- downloadHandler(
-    filename = function(){
+    filename = function() {
       paste0(input$file_final, ".csv")
     },
     content = function(file) {
       readr::write_csv(outlier_data3(), file)
-    })
+    }
+  )
 
   return(
     list(
@@ -218,9 +243,15 @@ mod_outlier_server <- function(input, output, session, clean, stand){
       rcodeclean = rcodeclean,
       rcodeoutlier = rcodeoutlier,
       max_cv = max_cv,
-      sds = reactive({input$sds}),
-      ignore_undetected = reactive({input$ignore_undetected}),
-      large_only = reactive({input$large_only})
+      sds = reactive({
+        input$sds
+      }),
+      ignore_undetected = reactive({
+        input$ignore_undetected
+      }),
+      large_only = reactive({
+        input$large_only
+      })
     )
   )
 }
@@ -230,4 +261,3 @@ mod_outlier_server <- function(input, output, session, clean, stand){
 
 ## To be copied in the server
 # callModule(mod_outlier_server, "outlier_ui_1")
-

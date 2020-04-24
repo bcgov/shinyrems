@@ -18,28 +18,34 @@ test_that("calculating guideline works", {
   param <- c("Zinc Total")
   from_date <- as.Date("1990-01-02")
   to_date <- as.Date("2019-09-30")
-  mdl_action = "zero"
-  data_type = "raw"
-  dataset = "historic"
-  cols = character(0)
-  strict = TRUE
-  by = "EMS_ID"
-  max_cv = Inf
-  sds = 1
-  FUN = mean
-  ignore_undetected = TRUE
-  large_only = TRUE
-  remove_blanks = TRUE
-  lookup = lookup_historic
+  mdl_action <- "zero"
+  data_type <- "raw"
+  dataset <- "historic"
+  cols <- character(0)
+  strict <- TRUE
+  by <- "EMS_ID"
+  max_cv <- Inf
+  sds <- 1
+  FUN <- mean
+  ignore_undetected <- TRUE
+  large_only <- TRUE
+  remove_blanks <- TRUE
+  lookup <- lookup_historic
 
-  data <- ems_data(dataset, emsid = emsid, parameter = param,
-                   from_date = from_date, to_date = to_date, data) %>%
-    ems_tidy(mdl_action = mdl_action, data_type = data_type,
-             dataset = dataset, cols = cols) %>%
+  data <- ems_data(dataset,
+    emsid = emsid, parameter = param,
+    from_date = from_date, to_date = to_date, data
+  ) %>%
+    ems_tidy(
+      mdl_action = mdl_action, data_type = data_type,
+      dataset = dataset, cols = cols
+    ) %>%
     ems_standardize(strict) %>%
-    ems_outlier(by = by, max_cv = max_cv, sds = sds,
-                ignore_undetected = ignore_undetected, large_only = large_only,
-                remove_blanks = remove_blanks, FUN = FUN)
+    ems_outlier(
+      by = by, max_cv = max_cv, sds = sds,
+      ignore_undetected = ignore_undetected, large_only = large_only,
+      remove_blanks = remove_blanks, FUN = FUN
+    )
 
   ### get data for additional params - Hardness
   # this doesnt work because missing data for hardness
@@ -51,13 +57,15 @@ test_that("calculating guideline works", {
   params <- additional_parameters(data, lookup)
   expect_identical(params, "Hardness Total (Total)")
 
-  data2 <- ems_data_parameter(data, all_data = NULL, dataset = "historic",
-                              lookup = lookup,
-                              from_date = from_date, to_date = to_date,
-                              mdl_action = mdl_action, cols = cols, strict = strict,
-                              by = by, sds = sds, ignore_undetected = ignore_undetected,
-                              large_only = large_only, remove_blanks = remove_blanks,
-                              max_cv = max_cv, FUN = FUN, limits = wqbc::limits)
+  data2 <- ems_data_parameter(data,
+    all_data = NULL, dataset = "historic",
+    lookup = lookup,
+    from_date = from_date, to_date = to_date,
+    mdl_action = mdl_action, cols = cols, strict = strict,
+    by = by, sds = sds, ignore_undetected = ignore_undetected,
+    large_only = large_only, remove_blanks = remove_blanks,
+    max_cv = max_cv, FUN = FUN, limits = wqbc::limits
+  )
 
   all_data <- rbind(data, data2)
   x <- wqbc::calc_limits(all_data, clean = FALSE, term = "long", estimate_variables = TRUE)
@@ -74,37 +82,46 @@ test_that("calculating guideline works", {
   expect_false(identical(x, y))
 
   z <- try(wqbc::calc_limits(data2, clean = FALSE, term = "long-daily", estimate_variables = FALSE),
-           silent = TRUE)
+    silent = TRUE
+  )
 
   data$EMS_ID_Renamed <- data$EMS_ID
 
   #####
   date_range <- c(from_date, to_date)
-  timeframe = "Year"
-  facet = "EMS_ID"
-  guideline = x
+  timeframe <- "Year"
+  facet <- "EMS_ID"
+  guideline <- x
   data$Detected <- detected(data$Value, data$DetectionLimit)
   data$EMS_ID <- data$EMS_ID_Renamed
   data$Detected %<>% factor(levels = c(TRUE, FALSE))
-  data <- data[data$Date >= as.Date(date_range[1]) & data$Date <= as.Date(date_range[2]),]
+  data <- data[data$Date >= as.Date(date_range[1]) & data$Date <= as.Date(date_range[2]), ]
   data$Timeframe <- factor(get_timeframe(data$Date, timeframe))
 
-  gp <- ems_plot(data, "scatter", c("show lines", "show points"),
-                  c(from_date, to_date), 1, 0.5, "Variable", "EMS_ID", "Year", y)
+  gp <- ems_plot(
+    data, "scatter", c("show lines", "show points"),
+    c(from_date, to_date), 1, 0.5, "Variable", "EMS_ID", "Year", y
+  )
 
   expect_is(gp, "ggplot")
 
   emsid <- c("E103448")
   param <- c("Aluminum Dissolved")
 
-  data <- ems_data(dataset, emsid = emsid, parameter = param,
-                   from_date = from_date, to_date = to_date, data) %>%
-    ems_tidy(mdl_action = mdl_action, data_type = data_type,
-             dataset = dataset, cols = cols) %>%
+  data <- ems_data(dataset,
+    emsid = emsid, parameter = param,
+    from_date = from_date, to_date = to_date, data
+  ) %>%
+    ems_tidy(
+      mdl_action = mdl_action, data_type = data_type,
+      dataset = dataset, cols = cols
+    ) %>%
     ems_standardize(strict) %>%
-    ems_outlier(by = by, max_cv = max_cv, sds = sds,
-                ignore_undetected = ignore_undetected, large_only = large_only,
-                remove_blanks = remove_blanks, FUN = FUN)
+    ems_outlier(
+      by = by, max_cv = max_cv, sds = sds,
+      ignore_undetected = ignore_undetected, large_only = large_only,
+      remove_blanks = remove_blanks, FUN = FUN
+    )
 
   ### get data for additional params - Hardness
   # this doesnt work because missing data for hardness
@@ -115,13 +132,15 @@ test_that("calculating guideline works", {
   params <- additional_parameters(data, lookup)
   expect_identical(params, "pH")
 
-  data2 <- ems_data_parameter(data, all_data = NULL, dataset = "historic",
-                              lookup = lookup,
-                              from_date = from_date, to_date = to_date,
-                              mdl_action = mdl_action, cols = cols, strict = strict,
-                              by = by, sds = sds, ignore_undetected = ignore_undetected,
-                              large_only = large_only, remove_blanks = remove_blanks,
-                              max_cv = max_cv, FUN = FUN, limits = wqbc::limits)
+  data2 <- ems_data_parameter(data,
+    all_data = NULL, dataset = "historic",
+    lookup = lookup,
+    from_date = from_date, to_date = to_date,
+    mdl_action = mdl_action, cols = cols, strict = strict,
+    by = by, sds = sds, ignore_undetected = ignore_undetected,
+    large_only = large_only, remove_blanks = remove_blanks,
+    max_cv = max_cv, FUN = FUN, limits = wqbc::limits
+  )
 
   all_data <- rbind(data, data2)
   x <- wqbc::calc_limits(all_data, clean = FALSE, term = "long", estimate_variables = TRUE)
@@ -129,5 +148,4 @@ test_that("calculating guideline works", {
 
   y <- wqbc::calc_limits(all_data, clean = FALSE, term = "short", estimate_variables = TRUE)
   expect_identical(nrow(y), 5933L)
-
 })

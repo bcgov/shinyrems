@@ -11,7 +11,6 @@
 # See the License for the specific language governing permissions and limitations under the License.
 
 app_server <- function(input, output, session) {
-
   callModule(mod_about_server, "about_ui_1")
 
   callModule(mod_reference_server, "reference_ui_1")

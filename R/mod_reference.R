@@ -23,19 +23,24 @@
 #' @rdname mod_reference
 #'
 #' @keywords internal
-mod_reference_ui <- function(id){
+mod_reference_ui <- function(id) {
   ns <- NS(id)
   fluidPage(
-    fillRow(height = "90%", width = 350, flex = c(2, 1),
-      selectInput(ns("selectTable"), label = NULL,
-                  choices = c("Limits", "Parameters", "Location Samples - Sample State",
-                              "Collection Methods", "Sample Classes",
-                              "Species", "Units"),
-                  selected = "Limits"),
-      dl_button(ns("download"), label = "Download")),
-      br3(),
-      ems_table_output(ns("table")
-    )
+    fillRow(
+      height = "90%", width = 350, flex = c(2, 1),
+      selectInput(ns("selectTable"),
+        label = NULL,
+        choices = c(
+          "Limits", "Parameters", "Location Samples - Sample State",
+          "Collection Methods", "Sample Classes",
+          "Species", "Units"
+        ),
+        selected = "Limits"
+      ),
+      dl_button(ns("download"), label = "Download")
+    ),
+    br3(),
+    ems_table_output(ns("table"))
   )
 }
 
@@ -44,7 +49,7 @@ mod_reference_ui <- function(id){
 #' @rdname mod_reference
 #' @keywords internal
 
-mod_reference_server <- function(input, output, session){
+mod_reference_server <- function(input, output, session) {
   ns <- session$ns
 
   table <- reactive({
@@ -53,14 +58,15 @@ mod_reference_server <- function(input, output, session){
 
   output$table <- DT::renderDT({
     ems_data_table(table())
-    })
+  })
 
   output$download <- downloadHandler(
-    filename = function(){
+    filename = function() {
       x <- gsub(" ", "", input$selectTable)
       glue::glue("ems_{x}.csv")
     },
     content = function(file) {
       readr::write_csv(table(), file)
-    })
+    }
+  )
 }

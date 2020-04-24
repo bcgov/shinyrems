@@ -25,16 +25,18 @@
 #' @keywords internal
 #' @export
 #' @importFrom shiny NS tagList
-mod_rcode_ui <- function(id){
+mod_rcode_ui <- function(id) {
   ns <- NS(id)
   tagList(
     br(),
     uiOutput("ui_help"),
-    div(id = 'codes',
-        wellPanel(
-          uiOutput(ns('rcode'))
+    div(
+      id = "codes",
+      wellPanel(
+        uiOutput(ns("rcode"))
+      )
     )
-  ))
+  )
 }
 
 # Module Server
@@ -44,7 +46,7 @@ mod_rcode_ui <- function(id){
 #' @keywords internal
 
 mod_rcode_server <- function(input, output, session, data, tidy,
-                             clean, outlier, results){
+                             clean, outlier, results) {
   ns <- session$ns
 
   dataset <- getShinyOption("dataset", "demo")
@@ -73,4 +75,3 @@ mod_rcode_server <- function(input, output, session, data, tidy,
 
 ## To be copied in the server
 # callModule(mod_rcode_server, "rcode_ui_1")
-

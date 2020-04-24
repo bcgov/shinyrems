@@ -11,25 +11,25 @@
 # See the License for the specific language governing permissions and limitations under the License.
 
 
-pbr <- function(x){
+pbr <- function(x) {
   HTML(paste(x, collapse = "<br/>"))
 }
 
-pc <- function(x){
+pc <- function(x) {
   paste0("c('", paste(x, collapse = "', '"), "')")
 }
 
-pcnum <- function(x){
+pcnum <- function(x) {
   paste0("c(", paste(x, collapse = ", "), ")")
 }
 
-rcode_head <- function(dataset){
+rcode_head <- function(dataset) {
   l <- list()
 
-  if(dataset == "upload"){
+  if (dataset == "upload") {
     l$readr <- "library(readr)"
   }
-  if(dataset == "demo"){
+  if (dataset == "demo") {
     l$shinyrems <- "library(shinyrems)"
   }
 
@@ -41,8 +41,7 @@ rcode_head <- function(dataset){
   pbr(l)
 }
 
-rcode_data <- function(dataset, emsid, parameter, date, file){
-
+rcode_data <- function(dataset, emsid, parameter, date, file) {
   l <- list()
 
   l$comment <- "### get data"
@@ -55,25 +54,24 @@ rcode_data <- function(dataset, emsid, parameter, date, file){
   l$filter <- paste0("data <- rems::filter_ems_data(x = data, emsid = emsid,
              parameter = parameter, from_date = from_date, to_date = to_date)")
 
-  if(dataset == "2yr"){
+  if (dataset == "2yr") {
     l$data <- "data <- rems::get_ems_data(which = '2yr', dont_update = TRUE, force = TRUE)"
   }
 
-  if(dataset == "4yr"){
+  if (dataset == "4yr") {
     l$data <- "data <- rems::get_ems_data(which = '4yr', dont_update = TRUE, force = TRUE)"
   }
 
-  if(dataset == "historic"){
+  if (dataset == "historic") {
     l$data <- character(0)
     l$filter <- "data <- rems::read_historic_data(emsid = emsid,
                                                parameter = parameter,
                                                from_date = from_date,
                                                to_date = to_date,
                                                check_db = FALSE)"
-
   }
 
-  if(dataset == "all"){
+  if (dataset == "all") {
     l$data <- "data <- rems::get_ems_data(which = '2yr', dont_update = TRUE, force = TRUE)"
     l$filter <- "data <- rems::bind_ems_data(
            rems::read_historic_data(emsid = emsid,
@@ -89,7 +87,7 @@ rcode_data <- function(dataset, emsid, parameter, date, file){
          )"
   }
 
-  if(dataset == "upload"){
+  if (dataset == "upload") {
     l <- list()
     l$comment <- "# you will need to change the 'file' argument to point to the file path"
     l$data <- glue("data <- readr::read_csv('{file}')")
@@ -97,27 +95,26 @@ rcode_data <- function(dataset, emsid, parameter, date, file){
   pbr(l)
 }
 
-rcode_tidy <- function(mdl_action, cols){
+rcode_tidy <- function(mdl_action, cols) {
   l <- list()
   l$comment <- "### tidy data"
   l$cols <- paste0("cols <- ", pc(cols))
   l$data <- glue("data <- wqbc::tidy_ems_data(data, mdl_action = '{mdl_action}')")
-  if(length(cols) > 0){
+  if (length(cols) > 0) {
     l$data <- glue("data <- wqbc::tidy_ems_data(data, mdl_action = '{mdl_action}',
                  cols = cols)")
   }
   pbr(l)
 }
 
-rcode_standardize <- function(strict){
+rcode_standardize <- function(strict) {
   l <- list()
   l$comment <- "### standardize data"
   l$data <- glue("data <- wqbc::standardize_wqdata(data, strict = {strict})")
   pbr(l)
 }
 
-rcode_clean <- function(by, max_cv, remove_blanks, fun){
-
+rcode_clean <- function(by, max_cv, remove_blanks, fun) {
   l <- list()
   l$comment <- "### clean data"
   l$by <- paste0("by <- ", pc(by))
@@ -127,9 +124,8 @@ rcode_clean <- function(by, max_cv, remove_blanks, fun){
 }
 
 rcode_clean2 <- function(by, max_cv, sds,
-                        ignore_undetected, large_only,
-                        remove_blanks, fun){
-
+                         ignore_undetected, large_only,
+                         remove_blanks, fun) {
   l <- list()
   l$comment <- "### clean data"
   l$by <- paste0("by <- ", pc(by))
@@ -140,10 +136,10 @@ rcode_clean2 <- function(by, max_cv, sds,
   pbr(l)
 }
 
-rcode_outlier <- function(manual_outliers){
+rcode_outlier <- function(manual_outliers) {
   l <- list()
   l$comment <- "### remove outliers"
-  if(length(manual_outliers) > 0){
+  if (length(manual_outliers) > 0) {
     l$outliers <- paste0("outlier_index <- ", pcnum(manual_outliers))
     l$manual <- "data$Outlier[outlier_index] <- TRUE"
   }
@@ -151,13 +147,10 @@ rcode_outlier <- function(manual_outliers){
   pbr(l)
 }
 
-rcode_result_plot <- function(){
+rcode_result_plot <- function() {
   l <- list()
-
-
 }
 
-rcode_result_summary <- function(){
+rcode_result_summary <- function() {
   l <- list()
-
 }

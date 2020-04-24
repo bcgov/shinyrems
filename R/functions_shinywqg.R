@@ -11,7 +11,7 @@
 # See the License for the specific language governing permissions and limitations under the License.
 
 extract_codes <- function(x) {
-  setdiff(unique(unlist(lapply(x, function(y){
+  setdiff(unique(unlist(lapply(x, function(y) {
     stringr::str_extract_all(y, "EMS_[[:alnum:]][[:alnum:]_]{3,3}")
   }))), NA)
 }

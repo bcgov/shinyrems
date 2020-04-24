@@ -54,10 +54,10 @@ console:
 
 ``` r
 # select historic run mode
-shinyrems::run_ems_app('historic')
+shinyrems::run_ems_app("historic")
 
 # select upload run mode
-shinyrems::run_ems_app('upload')
+shinyrems::run_ems_app("upload")
 
 # "2yr" run mode is the default and will be selected if no other value is provided
 shinyrems::run_ems_app()
