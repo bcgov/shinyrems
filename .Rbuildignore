@@ -9,4 +9,5 @@ CODE_OF_CONDUCT.md
 ^LICENSE\.md$
 
 ^.*\.rtf$
+^.*\.xlsx$
 save_historic_data.R
