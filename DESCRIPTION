@@ -1,13 +1,13 @@
 Package: shinyrems
-Title: Shiny Interface to 'rems'
+Title: Shiny Interface to 'rems' and 'wqbc'
 Version: 0.0.0.9001
 Authors@R: c(
     person("Sebastian", "Dalgarno", , "seb@poissonconsulting.ca", c("aut", "cre"), comment = c(ORCID = "0000-0002-3658-4517")),
     person("Joe", "Thorley", , "joe@poissonconsulting.ca", "ctb", comment = c(ORCID = "0000-0002-7683-4592")),
     person("Province of British Columbia", role = c("cph", "fnd"))
     )
-Description: A shiny interface to visualize and download data from 
-    BC Data Catalogue 'ems' database using the 'rems' R package.
+Description: A Shiny interface to visualize, analyze and download data from 
+    BC Data Catalogue 'ems' database using the 'rems' and 'wqbc' R packages.
 License: Apache License (>= 2.0)
 Depends:
     R (>= 2.10)
@@ -46,3 +46,4 @@ RoxygenNote: 7.1.0
 Encoding: UTF-8
 LazyData: true
 Language: en-US
+Roxygen: list(markdown = TRUE)
