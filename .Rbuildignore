@@ -11,3 +11,4 @@ CODE_OF_CONDUCT.md
 ^.*\.rtf$
 ^.*\.xlsx$
 save_historic_data.R
+build.R
