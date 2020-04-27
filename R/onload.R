@@ -1,4 +1,4 @@
-# Copyright 2019 Province of British Columbia
+# Copyright 2020 Province of British Columbia
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,9 +12,8 @@
 
 #' Adds the content of www to www/ from this package
 #'
-#' @importFrom shiny addResourcePath
 #'
 #' @noRd
 .onLoad <- function(...) {
-  shiny::addResourcePath('www', system.file('app/www', package = 'shinyrems'))
+  shiny::addResourcePath("www", system.file("app/www", package = "shinyrems"))
 }

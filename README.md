@@ -11,8 +11,8 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 <!-- badges: end -->
 
-`shinyrems` is an app that allows you to visualize and download data
-from the EMS database.
+`shinyrems` is an app that allows you to visualize, analyze and download
+data from the EMS database.
 
 ## Installation
 
@@ -21,39 +21,47 @@ To install the latest development version from
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("bcgov/shinyrems")
+remotes::install_github("bcgov/rems")
+remotes::install_github("bcgov/wqbc")
+remotes::install_github("poissonconsulting/shinyrems")
 ```
+
+Please remember to restart your R session after installation.
 
 ## Usage
 
-The app has 4 run modes:
+ShinyRems app can be run with various EMS datasets that must be
+downloaded and stored on the user’s computer. Prior to app startup, you
+will be prompted to download data if required and you will be notified
+if data updates are available.
 
-  - **“demo”**
-  - **“2yr”**
-  - **“historic”**
-  - **“all”**
+There are six possible run modes corresponding to different datasets:
 
-Each run mode has different data requirements.
+  - **‘demo’** - uses a demo dataset that requires no download of EMS
+    data  
+  - **‘2yr’** - uses most recent 2 years of EMS data (from 2018-01-01 to
+    present)
+  - **‘4yr’** - uses most recent 4 years of EMS data from 2016-01-01 to
+    present)  
+  - **‘historic’** - uses historic EMS data (up to 2018-01-01)  
+  - **‘all’** - uses combined “2yr” and “historic” EMS data
+  - **‘upload’** - allows user to upload their own data following
+    correct format
 
-  - If using **“2yr”**, **“historic”** or **“all”** run mode, you will
-    be prompted to download or update the data onto your machine prior
-    to the app being launched. This requires internet\!
+To select a run mode, provide the value (as it appears above) to
+`shinyrems::run_ems_app()`. For example, type the following into your R
+console:
 
-  - If using **“historic”** and **“all”**, the data downloaded is in
-    excess of 4gb\!
+``` r
+# select historic run mode
+shinyrems::run_ems_app("historic")
 
-  - If you only require data since 2018-01-01, the **“2yr”** run mode
-    works with a smaller dataset and the app will run a little faster.
+# select upload run mode
+shinyrems::run_ems_app("upload")
 
-To simply run the app without having to download any data first, use the
-“demo” run mode:
-
-    shinyrems::run_app(run_mode = "demo")
-
-For the other run modes, simply substitute “demo” with one of the other
-options, e.g.:
-
-    shinyrems::run_app(run_mode = "2yr")
+# "2yr" run mode is the default and will be selected if no other value is provided
+shinyrems::run_ems_app()
+```
 
 ## Contribution
 

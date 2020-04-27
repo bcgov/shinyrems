@@ -1,4 +1,4 @@
-# Copyright 2019 Province of British Columbia
+# Copyright 2020 Province of British Columbia
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,23 +12,45 @@
 
 #' Run the Shiny Application
 #'
-#' @param run_mode A string indicating which dataset the app should use.
+#' @param dataset A string indicating which dataset the app should use.
 #' Possible choices are:
 #' "demo" (loads a small demo dataset that does not require any downloading);
-#' "2yr" (loads and prompts download/update of recent EMS data from 2018-01-01 onwards);
+#' "2yr" (loads and prompts download/update of recent 2 years of data (from 2018-01-01 onwards));
+#' "4yr" (loads and prompts download/update of recent 4 years of EMS data (from 2016-01-01 onwards));
 #' "historic" (loads and prompts download/update of historic EMS data from 1964-01-01 to 2018-01-02);
-#' "all" (loads both recent and historic data).
+#' "all" (loads both recent and historic data);
+#' "upload" (allows user to upload their own dataset in either tidied or raw format).
+#'
 #'
 #' @export
-#' @importFrom shiny runApp
-run_app <- function(run_mode = "2yr") {
-  checkr::check_vector(run_mode, c("demo", "2yr", "historic", "all"))
+run_ems_app <- function(dataset = "2yr") {
+  chk::chk_string(dataset)
+  chk::chk_subset(dataset, c("demo", "2yr", "4yr", "historic", "all", "upload"))
 
-  switch(run_mode,
-         "2yr" = check_2yr_data(),
-         "historic" = check_historic_data(),
-         "all" = check_all_data())
+  ems_data <- NULL
+  if (dataset == "2yr") {
+    ems_data <- check_ems_data("2yr")
+  }
 
-  shinyOptions(run_mode = run_mode)
-  shiny::runApp(system.file("app", package = "shinyrems"))
+  if (dataset == "4yr") {
+    ems_data <- check_ems_data("4yr")
+  }
+
+  if (dataset == "historic") {
+    check_historic_data()
+  }
+
+  if (dataset == "all") {
+    ems_data <- check_all_data()
+  }
+
+  lookup <- get_lookup(dataset)
+
+  shinyOptions(
+    dataset = dataset,
+    lookup = lookup,
+    ems_data = ems_data
+  )
+
+  shiny::runApp(system.file("app", package = "shinyrems"), launch.browser = TRUE)
 }

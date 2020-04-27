@@ -2,5 +2,9 @@
 .Rhistory
 .RData
 .Ruserdata
+.Renviron
 
 .DS_Store
+
+*.rtf
+*.xlsx

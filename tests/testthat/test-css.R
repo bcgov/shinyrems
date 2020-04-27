@@ -1,4 +1,4 @@
-# Copyright 2019 Province of British Columbia
+# Copyright 2020 Province of British Columbia
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,4 +15,3 @@ test_that("css functions work", {
   expect_is(css_navbar(), "shiny.tag")
   expect_is(css_hide_errors(), "shiny.tag")
 })
-

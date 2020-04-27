@@ -1,4 +1,4 @@
-# Copyright 2019 Province of British Columbia
+# Copyright 2020 Province of British Columbia
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -10,72 +10,125 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
-leaflet_labels <- function(data){
-  name <- names(data)
-  lapply(1:nrow(data), function(x){
-    data <- data[x,]
-    paste0("<strong>", name, ": </strong>", data[name], "<br>")
-  })
+detected <- function(value, limit) {
+  value > 0 & (is.na(limit) | value > limit)
 }
 
-html_site_map <- function(parameter){
-  p(HTML("These sites have <strong>", parameter, "</strong>data available.
-          Selected sites are shown in red. Hover over marker for more information.
-          MONITORING_LOCATION indicates site, which can be searched in the site dropdown menu to the left.
-         "))
+multiple_units <- function(data) {
+  length(unique(data$Units)) > 1
 }
 
-ems_plot <- function(data, parameter){
-  ggplot2::ggplot(data = data, ggplot2::aes_string(x = "COLLECTION_START", y = "RESULT",
-                                            group = "MONITORING_LOCATION",
-                                            color = "MONITORING_LOCATION")) +
-    ggplot2::geom_line() +
-    ggplot2::geom_point(size = 0.5) +
-    ggplot2::scale_color_discrete("Sites") +
-    ggplot2::xlab("Date") +
-    ggplot2::ylab(parameter) +
-    ggplot2::theme(legend.position = "bottom",
-                   legend.direction = 'vertical')
+### takes aggregated data with EMS_ID_Rename col
+ems_plot <- function(data, plot_type, geom, date_range,
+                     point_size, line_size,
+                     facet, colour, timeframe,
+                     guideline) {
+  data$Detected <- detected(data$Value, data$DetectionLimit)
+  data$EMS_ID <- data$EMS_ID_Renamed
+  data$Detected %<>% factor(levels = c(TRUE, FALSE))
+  data <- data[data$Date >= as.Date(date_range[1]) & data$Date <= as.Date(date_range[2]), ]
+  data$Timeframe <- factor(get_timeframe(data$Date, timeframe))
+
+  gp <- ggplot2::ggplot(data, ggplot2::aes_string(x = "Date", y = "Value")) +
+    ggplot2::scale_color_discrete(drop = FALSE) +
+    ggplot2::expand_limits(y = 0) +
+    ggplot2::facet_wrap(facet,
+      ncol = 1,
+      scales = "free_y"
+    ) +
+    ggplot2::ylab(unique(data$Units)) +
+    ggplot2::theme(legend.position = "bottom") +
+    ggplot2::theme_bw() +
+    ggplot2::theme(legend.position = "bottom")
+
+  if (!is.data.frame(guideline)) {
+    gp <- gp + ggplot2::geom_hline(yintercept = guideline, linetype = "dotted")
+  }
+
+  if (is.data.frame(guideline)) {
+    if (nrow(guideline) == 1) {
+      gp <- gp + ggplot2::geom_hline(
+        yintercept = guideline$UpperLimit,
+        linetype = "dotted"
+      )
+    } else {
+      gp <- gp + ggplot2::geom_line(
+        data = guideline,
+        ggplot2::aes_string(x = "Date", y = "UpperLimit"),
+        linetype = "dotted"
+      )
+    }
+  }
+
+  if (plot_type == "scatter") {
+    if ("show points" %in% geom) {
+      gp <- gp + ggplot2::geom_point(
+        size = point_size,
+        ggplot2::aes_string(
+          shape = "Detected",
+          color = colour
+        )
+      )
+    }
+    if ("show lines" %in% geom) {
+      gp <- gp + ggplot2::geom_line(
+        size = line_size,
+        ggplot2::aes_string(color = colour)
+      )
+    }
+  }
+
+  if (plot_type == "boxplot") {
+    gp <- gp + ggplot2::geom_boxplot(ggplot2::aes_string(
+      x = "Timeframe",
+      y = "Value",
+      fill = colour
+    )) +
+      ggplot2::xlab(timeframe)
+  }
+  gp
 }
 
-ems_leaflet <- function(data, icon){
-  data$LeafLabel <- leaflet_labels(data)
-  leaf <- leaflet::leaflet(data = data) %>%
-    leaflet::addProviderTiles("Esri.WorldImagery",
-                              group = "Satelite") %>%
-    leaflet::addProviderTiles("OpenStreetMap.Mapnik",
-                              group = "Street Map") %>%
-    leaflet::addLayersControl(
-      baseGroups = c("Satelite", "Street Map"),
-      overlayGroups = c("All Sites", "Selected Sites"),
-      options = leaflet::layersControlOptions(collapsed = FALSE),
-      position = "topright") %>%
-    leaflet::addMapPane("paneSites", 410) %>%
-    leaflet::addMapPane("paneSelectedSites", 420) %>%
-    leaflet::addAwesomeMarkers(lng = ~LONGITUDE,
-                               lat  = ~LATITUDE,
-                               group = 'All Sites',
-                               options = leaflet::pathOptions(pane = "paneSites"),
-                               layerId = ~MONITORING_LOCATION,
-                               label = ~lapply(LeafLabel, HTML),
-                               clusterOptions = leaflet::markerClusterOptions(showCoverageOnHover = F,
-                                                                              spiderfyOnMaxZoom = T),
-                               icon = icon)
+plot_outlier <- function(data, by, point_size) {
+  data$Detected <- detected(data$Value, data$DetectionLimit)
+  data$Detected %<>% factor(levels = c(TRUE, FALSE))
+  data$Outlier %<>% factor(levels = c(TRUE, FALSE))
+  gp <- ggplot2::ggplot(data, ggplot2::aes_string(
+    x = "Date",
+    y = "Value",
+    color = "Outlier",
+    shape = "Detected"
+  )) +
+    ggplot2::geom_point(ggplot2::aes_string(),
+      size = point_size
+    ) +
+    ggplot2::scale_color_discrete(drop = FALSE) +
+    ggplot2::expand_limits(y = 0) +
+    # ggplot2::theme_bw() +
+    ggplot2::theme(legend.position = "bottom")
+
+  if ("EMS_ID" %in% by) {
+    if (length(unique(data$Variable)) == 1) {
+      gp <- gp + ggplot2::facet_grid(EMS_ID ~ Variable, scales = "free")
+    } else {
+      gp <- gp + ggplot2::facet_grid(Variable ~ EMS_ID, scales = "free")
+    }
+  } else {
+    gp <- gp + ggplot2::facet_wrap(~Variable, scales = "free", ncol = 1)
+  }
+  gp
 }
 
-ems_leaflet_update <- function(data, icon){
-  leaf <- leaflet::leafletProxy('leafletSites', data = data) %>%
-    leaflet::clearMarkers() %>%
-    leaflet::addAwesomeMarkers(lng = ~LONGITUDE,
-                               lat  = ~LATITUDE,
-                               group = 'Selected Sites',
-                               options = leaflet::pathOptions(pane = "paneSelectedSites"),
-                               layerId = ~MONITORING_LOCATION,
-                               label = ~lapply(LeafLabel, HTML),
-                               icon = icon)
+get_timeframe <- function(date, x = "Year") {
+  date <- dttr2::dtt_date(date)
+  if (x == "Year") {
+    return(dttr2::dtt_year(date))
+  }
+  if (x == "Year-Month") {
+    return(substr(date, 1, 7))
+  }
+  if (x == "Month") {
+    return(dttr2::dtt_month(date))
+  }
+  dttr2::dtt_season(date)
 }
-
-ems_marker <- function(colour){
-  leaflet::makeAwesomeIcon(icon = "flag", markerColor = colour, iconColor = 'white', library = "ion")
-}
-

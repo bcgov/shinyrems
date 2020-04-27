@@ -1,4 +1,4 @@
-# Copyright 2019 Province of British Columbia
+# Copyright 2020 Province of British Columbia
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -10,22 +10,54 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
-#' @import shiny
 app_ui <- function() {
   tagList(
     shinyjs::useShinyjs(),
+    waiter::use_butler(),
+    waiter::use_waiter(),
+    # waiter::waiter_show_on_load(html = waiter_html("Fetching dataset ...")),
     css_navbar(text_selected_color = "#5bc0de"),
     css_hide_errors(),
-    navbarPage(title =  "EMS Database", selected = 'EMS',
-               tabPanel(title = 'EMS',
-                        br(),
-                        mod_ems_ui("ems_ui_1")),
-               tabPanel(title = 'Reference Tables',
-                        br(),
-                        mod_reference_ui("reference_ui_1")),
-               tabPanel(title = 'About',
-                        br(),
-                        mod_about_ui("about_ui_1")
-                        ))
+    navbarPage(
+      title = "ShinyRems", selected = "1. Data",
+      tabPanel(
+        title = "1. Data",
+        br(),
+        mod_data_ui("data_ui_1")
+      ),
+      tabPanel(
+        title = "2. Tidy",
+        br(),
+        mod_tidy_ui("tidy_ui_1")
+      ),
+      tabPanel(
+        title = "3. Clean",
+        br(),
+        mod_clean_ui("clean_ui_1")
+      ),
+      tabPanel(
+        title = "4. Outliers",
+        br(),
+        mod_outlier_ui("outlier_ui_1")
+      ),
+      tabPanel(
+        title = "5. Plots/Statistics",
+        br(),
+        mod_results_ui("results_ui_1")
+      ),
+      # tabPanel(title = "R Code",
+      #          br(),
+      #          mod_rcode_ui("rcode_ui_1")),
+      tabPanel(
+        title = "Reference Tables",
+        br(),
+        mod_reference_ui("reference_ui_1")
+      ),
+      tabPanel(
+        title = "About",
+        br(),
+        mod_about_ui("about_ui_1")
+      )
+    )
   )
 }

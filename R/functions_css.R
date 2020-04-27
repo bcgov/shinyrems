@@ -1,17 +1,42 @@
-css_add <- function(x){
+# Copyright 2020 Province of British Columbia
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and limitations under the License.
+
+
+css_add <- function(x) {
   shiny::tags$head(shiny::tags$style(shiny::HTML(x)))
 }
 
-css_hide_errors <- function(){
+css_hide_errors <- function() {
   css_add(glue::glue("
 .shiny-output-error {{ visibility: hidden; }}
 .shiny-output-error:before {{ visibility: hidden;}}
 "))
 }
 
+css_button <- function() {
+  css_add(".small-dl{
+  padding:4px; font-size:85%;
+}")
+}
+
+css_text <- function() {
+  css_add(".small-txt{
+  padding:4px; font-size:85%;
+}")
+}
+
 css_navbar <- function(text_color = "#E0E0E0", text_selected_color = "#37CBA2",
                        text_size = "15px",
-                       background_color = "#010101", float = "right"){
+                       background_color = "#010101", float = "right") {
   css_add(glue::glue("
 .navbar .navbar-nav {{float: {float};
 }}
@@ -113,4 +138,3 @@ css_navbar <- function(text_color = "#E0E0E0", text_selected_color = "#37CBA2",
 
 "))
 }
-

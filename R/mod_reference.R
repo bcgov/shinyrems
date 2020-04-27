@@ -1,4 +1,4 @@
-# Copyright 2019 Province of British Columbia
+# Copyright 2020 Province of British Columbia
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,22 +23,24 @@
 #' @rdname mod_reference
 #'
 #' @keywords internal
-#' @importFrom shiny NS tagList
-mod_reference_ui <- function(id){
+mod_reference_ui <- function(id) {
   ns <- NS(id)
   fluidPage(
-    fluidRow(
-      selectInput(ns("selectTable"), label = "Select Reference Table",
-                  choices = c("Parameters", "Location Samples",
-                              "Collection Methods", "Sample Classes",
-                              "Species", "Units"),
-                  selected = "Parameters"),
-      button(ns("download")),
-      downloadButton(ns("download_handler"), label = NULL,
-                     style = "visibility: hidden;"),
-      br(), br(),
-      emsTableOutput(ns("table"))
-    )
+    fillRow(
+      height = "90%", width = 350, flex = c(2, 1),
+      selectInput(ns("selectTable"),
+        label = NULL,
+        choices = c(
+          "Limits", "Parameters", "Location Samples - Sample State",
+          "Collection Methods", "Sample Classes",
+          "Species", "Units"
+        ),
+        selected = "Limits"
+      ),
+      dl_button(ns("download"), label = "Download")
+    ),
+    br3(),
+    ems_table_output(ns("table"))
   )
 }
 
@@ -47,25 +49,24 @@ mod_reference_ui <- function(id){
 #' @rdname mod_reference
 #' @keywords internal
 
-mod_reference_server <- function(input, output, session){
+mod_reference_server <- function(input, output, session) {
   ns <- session$ns
 
   table <- reactive({
-    emsDataTable(ems_reference_tables[[input$selectTable]])
+    ems_reference_tables[[input$selectTable]]
   })
 
-  output$table <- DT::renderDT({table()})
-
-  observeEvent(input$download, {
-    shinyjs::runjs(click_js(ns("download_handler")))
+  output$table <- DT::renderDT({
+    ems_data_table(table())
   })
 
-  output$download_handler <- downloadHandler(
-    filename = function(){
+  output$download <- downloadHandler(
+    filename = function() {
       x <- gsub(" ", "", input$selectTable)
       glue::glue("ems_{x}.csv")
     },
     content = function(file) {
       readr::write_csv(table(), file)
-    })
+    }
+  )
 }
