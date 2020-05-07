@@ -12,3 +12,6 @@ CODE_OF_CONDUCT.md
 ^.*\.xlsx$
 save_historic_data.R
 build.R
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
