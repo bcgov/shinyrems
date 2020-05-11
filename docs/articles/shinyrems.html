@@ -109,11 +109,7 @@
 <li><p>View the README at <a href="https://github.com/bcgov/shinyrems">this website</a> to follow the instructions to launch the app. Copy and paste the code into a new R Script file within RStudio: File -&gt; New File -&gt; R Script (Figure 1).</p></li>
 <li><p>Contact Heather Thompson (<a href="mailto:heather.c.thompson@gov.bc.ca" class="email">heather.c.thompson@gov.bc.ca</a>) or Jessica Penno (<a href="mailto:jessica.penno@gov.bc.ca" class="email">jessica.penno@gov.bc.ca</a>) for existing R scripts containing the code in Figure 1 to launch the app.</p></li>
 </ol>
-<div class="figure">
-<img src="../../../R%20Projects/shinyrems/vignettes/img/1.png" alt="Figure 1: R code script in the RStudio program. This is the code to run to open the shinyrems app." width="100%"><p class="caption">
-Figure 1: R code script in the RStudio program. This is the code to run to open the shinyrems app.
-</p>
-</div>
+<p><img src="../../../R%20Projects/shinyrems/vignettes/images/PRE_1.png" width="100%"> Figure 1: R code script in the RStudio program. This is the code to run to open the shinyrems app.</p>
 <p>When initially launching the app, it is recommended to run each line of code by itself. Line 6 in Figure 1 will cache the latest versions of the EMS database onto the users’ computer. This will take awhile. Further help is at <a href="https://github.com/bcgov/rems">this website</a> if needed.</p>
 <p>There are six options for running the app, depending what year of EMS data is required:</p>
 <ul>
@@ -127,26 +123,14 @@ Figure 1: R code script in the RStudio program. This is the code to run to open 
 <p>Pick the option and type it into line 22 as shown in Figure 1 or below. Press the ‘Run’ button on the RStudio menu bar (Figure 1). The app will open in the users’ web browser. For example, the line of code below will launch the app with all EMS data.</p>
 <pre><code><a href="../reference/run_ems_app.html">shinyrems::run_ems_app('all')</a></code></pre>
 <p>After running line 22 above, Figure 2 and Figure 3 show the questions asked in the RStudio console and require the users input. When the text “Listening on http…”, this means the app has launched in the users’ internet browser.</p>
-<div class="figure">
-<img src="../../../R%20Projects/shinyrems/vignettes/img/2.png" alt="Figure 2. A message to answer when the code to launch the app is run. The ‘2yr’ EMS dataset is updated every day. " width="100%"><p class="caption">
-Figure 2. A message to answer when the code to launch the app is run. The ‘2yr’ EMS dataset is updated every day.
-</p>
-</div>
-<div class="figure">
-<img src="../../../R%20Projects/shinyrems/vignettes/img/3.png" alt="Figure 3. A message to answer when the code to launch the app is run. This message confirms a data look up table can be stored on the users’ computer." width="100%"><p class="caption">
-Figure 3. A message to answer when the code to launch the app is run. This message confirms a data look up table can be stored on the users’ computer.
-</p>
-</div>
+<p><img src="../../../R%20Projects/shinyrems/vignettes/images/PRE_2.png" width="100%"> Figure 2. A message to answer when the code to launch the app is run. The ‘2yr’ EMS dataset is updated every day.</p>
+<p><img src="../../../R%20Projects/shinyrems/vignettes/images/PRE_3.png" width="100%"> Figure 3. A message to answer when the code to launch the app is run. This message confirms a data look up table can be stored on the users’ computer.</p>
 </div>
 </div>
 <div id="tab-1-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#tab-1-data" class="anchor"></a>Tab 1: Data</h2>
-<div class="figure">
-<img src="../../../R%20Projects/shinyrems/vignettes/img/4.png" alt="Figure 4. The first screen seen when the app opens in the users web brower. The dataset chosen in the R code will be listed in the top left. Raw data can be chosen multiple ways, with options to view one parameter at a time and at a specific date range." width="100%"><p class="caption">
-Figure 4. The first screen seen when the app opens in the users web brower. The dataset chosen in the R code will be listed in the top left. Raw data can be chosen multiple ways, with options to view one parameter at a time and at a specific date range.
-</p>
-</div>
+<p><img src="../../../R%20Projects/shinyrems/vignettes/images/PRE_4.png" width="100%"> Figure 4. The first screen seen when the app opens in the users web brower. The dataset chosen in the R code will be listed in the top left. Raw data can be chosen multiple ways, with options to view one parameter at a time and at a specific date range.</p>
 <div id="using-2yr-4yr-historic-or-all-options" class="section level3">
 <h3 class="hasAnchor">
 <a href="#using-2yr-4yr-historic-or-all-options" class="anchor"></a>Using 2yr, 4yr, historic or all options</h3>
@@ -156,11 +140,7 @@ Figure 4. The first screen seen when the app opens in the users web brower. The 
 <li><p>By monitoring location or EMS ID. Multiple entries can be entered.</p></li>
 <li><p>The Site Map inset tab (Figure 3) can be used to find a monitoring location. Clicking a marker will add the site to the users list of selected sites. An option to zoom to Freshwater atlas watershed groups is available.</p></li>
 </ol>
-<div class="figure">
-<img src="../../../R%20Projects/shinyrems/vignettes/img/5.png" alt="Figure 5. Raw data can also be found by selecting monitoring site locations on the Site Map inset tab." width="100%"><p class="caption">
-Figure 5. Raw data can also be found by selecting monitoring site locations on the Site Map inset tab.
-</p>
-</div>
+<p><img src="../../../R%20Projects/shinyrems/vignettes/images/PRE_5.png" width="100%"> Figure 5. Raw data can also be found by selecting monitoring site locations on the Site Map inset tab.</p>
 <p>One parameter can be chosen at a time for the site(s) selected. In ANY of selected sites means that the parameters could be in one or more of the sites, in ALL the parameter list updates to what parameters are found in all the sites. A date range can be specified. Note this has bounds depending on the ‘2yr’, ‘4yr’ and/or ‘historic’ dataset chosen. The Get/Update Data button will need to be pushed if changes are made to the data input choices. The raw data from EMS appears in the inset Data tab. Raw data is shown with a subset of 21 columns pertaining to water quality data:</p>
 <pre><code>EMS_ID, MONITORING_LOCATION, LATITUDE, LONGITUDE, LOCATION_TYPE, COLLECTION_START, LOCATION PURPOSE, PERMIT, SAMPLE_CLASS, SAMPLE_STATE, SAMPLE_DESCRIPTOR, PARAMETER_CODE, PARAMETER, ANALYTICAL_METHOD_CODE, ANALYTICAL_METHOD, RESULT_LETTER, RESULT, UNIT, METHOD_DETECTION_LIMIT, MDL_UNIT, QA_INDEX_CODE, UPPER_DEPTH, LOWER_DEPTH.  </code></pre>
 <p>A download raw data button exists to keep track of the raw dataset. Make sure to name it something descriptive.</p>
@@ -168,19 +148,11 @@ Figure 5. Raw data can also be found by selecting monitoring site locations on t
 <div id="using-the-upload-data-option" class="section level3">
 <h3 class="hasAnchor">
 <a href="#using-the-upload-data-option" class="anchor"></a>Using the upload data option</h3>
-<div class="figure">
-<img src="../../../R%20Projects/shinyrems/vignettes/img/6.png" alt="Figure 6. The first screen the user will see when the app opens in the users web browser when the ‘upload’ option was chosen. " width="100%"><p class="caption">
-Figure 6. The first screen the user will see when the app opens in the users web browser when the ‘upload’ option was chosen.
-</p>
-</div>
+<p><img src="../../../R%20Projects/shinyrems/vignettes/images/PRE_6.png" width="100%"> Figure 6. The first screen the user will see when the app opens in the users web browser when the ‘upload’ option was chosen.</p>
 <p>If the user wants to upload a dataset not from EMS, choose the option ‘upload’:</p>
 <pre><code><a href="../reference/run_ems_app.html">shinyrems::run_ems_app('upload')</a></code></pre>
 <p>When the app opens, Figure 4 is the screen the user will see. The user can download the template to view what format the data needs to be in (Figure 5). Data must be in a .csv file to upload into the app. Excel workbooks formats are not accepted. If the datafile is an excel file, export a worksheet to csv.</p>
-<div class="figure">
-<img src="../../../R%20Projects/shinyrems/vignettes/img/7.png" alt="Figure 7. Template of how the users’ data needs to be organized to upload into app." width="100%"><p class="caption">
-Figure 7. Template of how the users’ data needs to be organized to upload into app.
-</p>
-</div>
+<p><img src="../../../R%20Projects/shinyrems/vignettes/images/PRE_7.png" width="100%"> Figure 7. Template of how the users’ data needs to be organized to upload into app.</p>
 </div>
 </div>
 <div id="tab-2--tidy" class="section level2">
@@ -237,11 +209,7 @@ Figure 7. Template of how the users’ data needs to be organized to upload into
 <li><p>MDL Action gives an option what to do with data points below the detection limit. Options are converting result value to zero, half, MDL or NA to leave as is. Note – next versions of the app will have a maximum likelihood estimation censored data model to correctly statistically deal with data below detection limits.</p></li>
 <li><p>Strict matching is an option to match exact parameter names to recognized parameter names. If this is not checked, the users’ dataset will include for example ‘Aluminum Dissolved’ and ‘Aluminum Total’, if the dataset from that EMS_ID includes both those parameters.</p></li>
 </ol>
-<div class="figure">
-<img src="../../../R%20Projects/shinyrems/vignettes/img/8.png" alt="Figure 8. Tab 2 in ShinyRems. This tab is where the users raw data starts to be tidied and includes a few automatic and manual steps to customize the users dataset." width="100%"><p class="caption">
-Figure 8. Tab 2 in ShinyRems. This tab is where the users raw data starts to be tidied and includes a few automatic and manual steps to customize the users dataset.
-</p>
-</div>
+<p><img src="../../../R%20Projects/shinyrems/vignettes/images/PRE_8.png" width="100%"> Figure 8. Tab 2 in ShinyRems. This tab is where the users raw data starts to be tidied and includes a few automatic and manual steps to customize the users dataset.</p>
 <p>The Tidy Tab does a few things automatically:</p>
 <ol style="list-style-type: decimal">
 <li><p>Standardizes EMS variables. It examines EMS parameter codes and converts all the same codes to the same variable name (Figure 7).</p></li>
@@ -265,11 +233,7 @@ Figure 8. Tab 2 in ShinyRems. This tab is where the users raw data starts to be 
 </li>
 <li><p>The timezone is set to PST.</p></li>
 </ol>
-<div class="figure">
-<img src="../../../R%20Projects/shinyrems/vignettes/img/9.png" alt="Figure 9. The Messages inset tab of the Tidy Tab. This shows what is happening automatically in the Tidy Tab." width="100%"><p class="caption">
-Figure 9. The Messages inset tab of the Tidy Tab. This shows what is happening automatically in the Tidy Tab.
-</p>
-</div>
+<p><img src="../../../R%20Projects/shinyrems/vignettes/images/PRE_9.png" width="100%"> Figure 9. The Messages inset tab of the Tidy Tab. This shows what is happening automatically in the Tidy Tab.</p>
 </div>
 <div id="tab-3--clean" class="section level2">
 <h2 class="hasAnchor">
@@ -281,11 +245,7 @@ Figure 9. The Messages inset tab of the Tidy Tab. This shows what is happening a
 <li><p>Summarize by function gives an option of how the replicates can be summarized. Replicates are counted as two or more samples for the same variable on the same day. If the user has retained SAMPLE_CLASS = Replicate, these will be included with SAMPLE_CLASS = Regular in summarizing the same day samples. Options to summarize by ‘mean’, ‘median’, and ‘max’.</p></li>
 <li><p>Maximum CV is an option to specify the coefficient of variation between sample replicates. Replicates are counted as two or more samples for the same variable on the same day. Leave blank for the default value of infinity.</p></li>
 </ol>
-<div class="figure">
-<img src="../../../R%20Projects/shinyrems/vignettes/img/10.png" alt="Figure 10. The main screen of the Clean Tab. This is where various options exist for cleaning the users now tidy dataset." width="100%"><p class="caption">
-Figure 10. The main screen of the Clean Tab. This is where various options exist for cleaning the users now tidy dataset.
-</p>
-</div>
+<p><img src="../../../R%20Projects/shinyrems/vignettes/images/PRE_10.png" width="100%"> Figure 10. The main screen of the Clean Tab. This is where various options exist for cleaning the users now tidy dataset.</p>
 <p>The Clean Tab does a few things automatically: 1. Replaces DateTime column with Date (YYYY-MM-DD).</p>
 <ol start="2" style="list-style-type: decimal">
 <li>General description columns are removed from dataset:
@@ -311,17 +271,9 @@ Figure 10. The main screen of the Clean Tab. This is where various options exist
 <li><p>Manual outlier removal: Click and drag mouse over a data point on the plot to manually select and remove outliers. This will remove it from the dataset.</p></li>
 <li><p>Plot legend: Outliers are identified by colour. Data are identified as Detected – True (above minimum detection limit) or Detected - False (below minimum detection limit; with a &lt; in the Result Letter column).</p></li>
 </ol>
-<div class="figure">
-<img src="../../../R%20Projects/shinyrems/vignettes/img/11.png" alt="Figure 11. The main tab of the Outlier screen. Options here include customizing what constitutes an outlier for the dataset and removing them if desired." width="100%"><p class="caption">
-Figure 11. The main tab of the Outlier screen. Options here include customizing what constitutes an outlier for the dataset and removing them if desired.
-</p>
-</div>
+<p><img src="../../../R%20Projects/shinyrems/vignettes/images/PRE_11.png" width="100%"> Figure 11. The main tab of the Outlier screen. Options here include customizing what constitutes an outlier for the dataset and removing them if desired.</p>
 <p>Final clean data with outliers removed can be downloaded as a .csv (Figure 10).</p>
-<div class="figure">
-<img src="../../../R%20Projects/shinyrems/vignettes/img/12.png" alt="Figure 12. The main screen of the Outliers Tab showing the Final Data inset tab. This shows the final clean dataset with outliers removed." width="100%"><p class="caption">
-Figure 12. The main screen of the Outliers Tab showing the Final Data inset tab. This shows the final clean dataset with outliers removed.
-</p>
-</div>
+<p><img src="../../../R%20Projects/shinyrems/vignettes/images/PRE_12.png" width="100%"> Figure 12. The main screen of the Outliers Tab showing the Final Data inset tab. This shows the final clean dataset with outliers removed.</p>
 </div>
 <div id="tab-5--plotsstatistics" class="section level2">
 <h2 class="hasAnchor">
@@ -341,11 +293,7 @@ Figure 12. The main screen of the Outliers Tab showing the Final Data inset tab.
 </li>
 <li>Plot height allows the plot to get larger.</li>
 </ol>
-<div class="figure">
-<img src="../../../R%20Projects/shinyrems/vignettes/img/13.png" alt="Figure 13. The main plot screen. Here the user can view the initial visualization of the clean dataset with outliers removed. Various options exist for customizing the plot and downloading it to the users computer." width="100%"><p class="caption">
-Figure 13. The main plot screen. Here the user can view the initial visualization of the clean dataset with outliers removed. Various options exist for customizing the plot and downloading it to the users computer.
-</p>
-</div>
+<p><img src="../../../R%20Projects/shinyrems/vignettes/images/PRE_13.png" width="100%"> Figure 13. The main plot screen. Here the user can view the initial visualization of the clean dataset with outliers removed. Various options exist for customizing the plot and downloading it to the users computer.</p>
 <div id="calculating-aquatic-life-water-quality-guidelines" class="section level3">
 <h3 class="hasAnchor">
 <a href="#calculating-aquatic-life-water-quality-guidelines" class="anchor"></a>Calculating aquatic life water quality guidelines</h3>
@@ -358,38 +306,22 @@ Figure 13. The main plot screen. Here the user can view the initial visualizatio
 <li><p>Get modelled estimate models the guideline if there isn’t enough supporting information collected on the same day as the variable to calculate the guideline. If a guideline depends on another variable such as pH, Total Chloride, or Total Hardness, a parametric model is used to predict the pH, Total Chloride and Total Hardness for all dates with a value of any variable.</p></li>
 <li><p>The function will fill in estimated values for dates for when Total Hardness, Total Chloride and pH haven’t been collected but are required to determine the guideline. The model incorporates a seasonal element. If no concentration exists for the day of interest, then the dependent parameter concentration is assumed to be the average recorded value over 30 days. The model predicts the dependent variables and existing values are replaced. If there are less than 12 dependent variable values in all years of data, then an average value is taken. If there is only one year with 12 or more values, a simple seasonal smoother is used. If there is two years with 12 or more values, then a seasonal smoother with a trend is fitted. Otherwise a model with trend and a dynamic seasonal component is fitted.</p></li>
 </ul>
-<div class="figure">
-<img src="../../../R%20Projects/shinyrems/vignettes/img/14.png" alt="Figure 14. The Guideline inset tab showing the options for calcuating the aquatic life guideline of the variable selected in the 1. Data tab." width="100%"><p class="caption">
-Figure 14. The Guideline inset tab showing the options for calcuating the aquatic life guideline of the variable selected in the 1. Data tab.
-</p>
-</div>
+<p><img src="../../../R%20Projects/shinyrems/vignettes/images/PRE_14.png" width="100%"> Figure 14. The Guideline inset tab showing the options for calcuating the aquatic life guideline of the variable selected in the 1. Data tab.</p>
 <p>There is also an option to manually enter a value (Figure 13). This could be a permit limit, water quality objective, another water quality guideline or another benchmark. Both the ‘set manually’ and ‘calculate from data’ option appear as a dashed line on the plot.</p>
-<div class="figure">
-<img src="../../../R%20Projects/shinyrems/vignettes/img/15.png" alt="Figure 15. The Guideline inset tab showing the option to set the guideline manually." width="100%"><p class="caption">
-Figure 15. The Guideline inset tab showing the option to set the guideline manually.
-</p>
-</div>
+<p><img src="../../../R%20Projects/shinyrems/vignettes/images/PRE_15.png" width="100%"> Figure 15. The Guideline inset tab showing the option to set the guideline manually.</p>
 </div>
 </div>
 <div id="summary-statistics" class="section level2">
 <h2 class="hasAnchor">
 <a href="#summary-statistics" class="anchor"></a>Summary Statistics</h2>
 <p>The Summary Statistics inset tab on the Tab 5. Plot/Statistics gives a simple stats summary for each EMS_ID based on the clean dataset with outliers removed (Figure 14). Options include ‘n’, ‘min’, ‘max, ‘mean’, ‘median’, ‘standard deviation’, and ‘standard error’. This table can be downloaded as a .csv.</p>
-<div class="figure">
-<img src="../../../R%20Projects/shinyrems/vignettes/img/16.png" alt="Figure 16. The inset Summary Statistics tab in the main Tab 5. Plot/Statistics. Each EMS_ID will represent a row." width="100%"><p class="caption">
-Figure 16. The inset Summary Statistics tab in the main Tab 5. Plot/Statistics. Each EMS_ID will represent a row.
-</p>
-</div>
+<p><img src="../../../R%20Projects/shinyrems/vignettes/images/PRE_16.png" width="100%"> Figure 16. The inset Summary Statistics tab in the main Tab 5. Plot/Statistics. Each EMS_ID will represent a row.</p>
 </div>
 <div id="tab-6-reference-tables" class="section level2">
 <h2 class="hasAnchor">
 <a href="#tab-6-reference-tables" class="anchor"></a>Tab 6: Reference Tables</h2>
 <p>Tab 6 shows the various EMS reference tables. These include information for each EMS column and its respective options. These tables will be helpful in Tab 2, 3 and 5 as the dataset is refined and guidelines are calculated.</p>
-<div class="figure">
-<img src="../../../R%20Projects/shinyrems/vignettes/img/17.png" alt="Figure 17. The Reference Tables tab which show all options for the various EMS columns. These show the EMS reference tables available from Data BC." width="100%"><p class="caption">
-Figure 17. The Reference Tables tab which show all options for the various EMS columns. These show the EMS reference tables available from Data BC.
-</p>
-</div>
+<p><img src="../../../R%20Projects/shinyrems/vignettes/images/PRE_17.png" width="100%"> Figure 17. The Reference Tables tab which show all options for the various EMS columns. These show the EMS reference tables available from Data BC.</p>
 </div>
 <div id="resources" class="section level2">
 <h2 class="hasAnchor">
