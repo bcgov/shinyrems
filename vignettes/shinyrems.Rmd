@@ -22,6 +22,8 @@ knitr::opts_chunk$set(
   comment = "#>", 
   echo = FALSE
 )
+img_path <- "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images"
+
 ```
 
 ```{r echo=FALSE}
@@ -63,9 +65,7 @@ File -> New File -> R Script (Figure 1).
 
 2. Contact Heather Thompson (heather.c.thompson@gov.bc.ca) or Jessica Penno (jessica.penno@gov.bc.ca) for existing R scripts containing the code in Figure 1 to launch the app.  
 
-```{r, echo = FALSE}
-    embed_png("images/PRE_1.png")
-```
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_1.png" width="100%">
 Figure 1: R code script in the RStudio program. This is the code to run to open the shinyrems app.
 
 When initially launching the app, it is recommended to run each line of code by itself. Line 6 in Figure 1 will cache the latest versions of the EMS database onto the users’ computer. This will take awhile. Further help is at [this website](https://github.com/bcgov/rems) if needed.
@@ -91,21 +91,15 @@ shinyrems::run_ems_app('all')
 
 After running line 22 above, Figure 2 and Figure 3 show the questions asked in the RStudio console and require the users input. When the text “Listening on http…”, this means the app has launched in the users’ internet browser. 
 
-```{r, echo = FALSE}
-    embed_png("images/PRE_2.png")
-```
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_2.png" width="100%">
 Figure 2. A message to answer when the code to launch the app is run. The ‘2yr’ EMS dataset is updated every day.
 
-```{r, echo = FALSE}
-    embed_png("images/PRE_3.png")
-```
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_3.png" width="100%">
 Figure 3. A message to answer when the code to launch the app is run. This message confirms a data look up table can be stored on the users’ computer.
 
 ## Tab 1: Data
 
-```{r, echo = FALSE}
-    embed_png("images/PRE_4.png")
-```
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_4.png" width="100%">
 Figure 4. The first screen seen when the app opens in the users web brower. The dataset chosen in the R code will be listed in the top left. Raw data can be chosen multiple ways, with options to view one parameter at a time and at a specific date range.
 
 ### Using 2yr, 4yr, historic or all options
@@ -117,9 +111,7 @@ When the app opens, Figure 2 is the initial app screen. The dataset chosen in th
 
 3. The Site Map inset tab (Figure 3) can be used to find a monitoring location. Clicking a marker will add the site to the users list of selected sites. An option to zoom to Freshwater atlas watershed groups is available.  
 
-```{r, echo = FALSE}
-    embed_png("images/PRE_5.png")
-```
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_5.png" width="100%">
 Figure 5. Raw data can also be found by selecting monitoring site locations on the Site Map inset tab.
  
 One parameter can be chosen at a time for the site(s) selected.  In ANY of selected sites means that the parameters could be in one or more of the sites, in ALL the parameter list updates to what parameters are found in all the sites. A date range can be specified. Note this has bounds depending on the ‘2yr’, ‘4yr’ and/or ‘historic’ dataset chosen. The Get/Update Data button will need to be pushed if changes are made to the data input choices. The raw data from EMS appears in the inset Data tab.  Raw data is shown with a subset of 21 columns pertaining to water quality data:  
@@ -131,9 +123,7 @@ A download raw data button exists to keep track of the raw dataset. Make sure to
 
 ### Using the upload data option
 
-```{r, echo = FALSE}
-    embed_png("images/PRE_6.png")
-```
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_6.png" width="100%">
 Figure 6. The first screen the user will see when the app opens in the users web browser when the ‘upload’ option was chosen.
 
 If the user wants to upload a dataset not from EMS, choose the option ‘upload’:  
@@ -142,9 +132,7 @@ shinyrems::run_ems_app('upload')
 ```
 When the app opens, Figure 4 is the screen the user will see. The user can download the template to view what format the data needs to be in (Figure 5). Data must be in a .csv file to upload into the app. Excel workbooks formats are not accepted. If the datafile is an excel file, export a worksheet to csv.
  
-```{r, echo = FALSE}
-    embed_png("images/PRE_7.png")
-```
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_7.png" width="100%">
 Figure 7. Template of how the users’ data needs to be organized to upload into app.
 
 ## Tab 2. Tidy
@@ -179,9 +167,7 @@ The Tidy Tab manual options for tidying the dataset include (Figure 6):
 
 4. Strict matching is an option to match exact parameter names to recognized parameter names. If this is not checked, the users’ dataset will include for example ‘Aluminum Dissolved’ and ‘Aluminum Total’, if the dataset from that EMS_ID includes both those parameters.  
 
-```{r, echo = FALSE}
-    embed_png("images/PRE_8.png")
-```
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_8.png" width="100%">
 Figure 8. Tab 2 in ShinyRems. This tab is where the users raw data starts to be tidied and includes a few automatic and manual steps to customize the users dataset.
 
 The Tidy Tab does a few things automatically:  
@@ -207,9 +193,7 @@ The Tidy Tab does a few things automatically:
 
 4. The timezone is set to PST.  
 
-```{r, echo = FALSE}
-    embed_png("images/PRE_9.png")
-```
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_9.png" width="100%">
 Figure 9. The Messages inset tab of the Tidy Tab. This shows what is happening automatically in the Tidy Tab.
 
 ## Tab 3. Clean
@@ -224,9 +208,7 @@ The Clean Tab manual options for cleaning the dataset include (Figure 8):
 
 4. Maximum CV is an option to specify the coefficient of variation between sample replicates. Replicates are counted as two or more samples for the same variable on the same day. Leave blank for the default value of infinity.  
 
-```{r, echo = FALSE}
-    embed_png("images/PRE_10.png")
-```
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_10.png" width="100%">
 Figure 10. The main screen of the Clean Tab. This is where various options exist for cleaning the users now tidy dataset.
  
 The Clean Tab does a few things automatically:
@@ -253,16 +235,12 @@ The Clean Tab does a few things automatically:
 
 7. Plot legend: Outliers are identified by colour. Data are identified as Detected – True (above minimum detection limit) or Detected - False (below minimum detection limit; with a < in the Result Letter column).  
 
-```{r, echo = FALSE}
-    embed_png("images/PRE_11.png")
-```
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_11.png" width="100%">
 Figure 11. The main tab of the Outlier screen. Options here include customizing what constitutes an outlier for the dataset and removing them if desired.
 
 Final clean data with outliers removed can be downloaded as a .csv (Figure 10). 
 
-```{r, echo = FALSE}
-    embed_png("images/PRE_12.png")
-```
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_12.png" width="100%">
 Figure 12. The main screen of the Outliers Tab showing the Final Data inset tab. This shows the final clean dataset with outliers removed.
 
 ## Tab 5. Plots/Statistics
@@ -278,9 +256,7 @@ Figure 11 shows the main Plot tab, with options for customization:
 5. Colour by allows for options to colour by variable or EMS_ID.  
 6. Plot height allows the plot to get larger.  
  
-```{r, echo = FALSE}
-    embed_png("images/PRE_13.png")
-```
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_13.png" width="100%">
 Figure 13. The main plot screen. Here the user can view the initial visualization of the clean dataset with outliers removed. Various options exist for customizing the plot and downloading it to the users computer.
 
 ### Calculating aquatic life water quality guidelines
@@ -298,33 +274,25 @@ Notes on using the guideline feature:
 
 - The function will fill in estimated values for dates for when Total Hardness, Total Chloride and pH haven't been collected but are required to determine the guideline. The model incorporates a seasonal element. If no concentration exists for the day of interest, then the dependent parameter concentration is assumed to be the average recorded value over 30 days. The model predicts the dependent variables and existing values are replaced. If there are less than 12 dependent variable values in all years of data, then an average value is taken. If there is only one year with 12 or more values, a simple seasonal smoother is used. If there is two years with 12 or more values, then a seasonal smoother with a trend is fitted. Otherwise a model with trend and a dynamic seasonal component is fitted.  
 
-```{r, echo = FALSE}
-    embed_png("images/PRE_14.png")
-```
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_14.png" width="100%">
 Figure 14. The Guideline inset tab showing the options for calcuating the aquatic life guideline of the variable selected in the 1. Data tab.
 
 There is also an option to manually enter a value (Figure 13). This could be a permit limit, water quality objective, another water quality guideline or another benchmark. Both the ‘set manually’ and ‘calculate from data’ option appear as a dashed line on the plot.  
 
-```{r, echo = FALSE}
-    embed_png("images/PRE_15.png")
-```
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_15.png" width="100%">
 Figure 15. The Guideline inset tab showing the option to set the guideline manually.
 
 ## Summary Statistics
 The Summary Statistics inset tab on the Tab 5. Plot/Statistics gives a simple stats summary for each EMS_ID based on the clean dataset with outliers removed (Figure 14). Options include ‘n’, ‘min’, ‘max, ‘mean’, ‘median’, ‘standard deviation’, and ‘standard error’. This table can be downloaded as a .csv.
 
-```{r, echo = FALSE}
-    embed_png("images/PRE_16.png")
-```
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_16.png" width="100%">
 Figure 16. The inset Summary Statistics tab in the main Tab 5. Plot/Statistics. Each EMS_ID will represent a row.
 
 ## Tab 6: Reference Tables
 
 Tab 6 shows the various EMS reference tables. These include information for each EMS column and its respective options. These tables will be helpful in Tab 2, 3 and 5 as the dataset is refined and guidelines are calculated. 
 
-```{r, echo = FALSE}
-    embed_png("images/PRE_17.png")
-```
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_17.png" width="100%">
 Figure 17. The Reference Tables tab which show all options for the various EMS columns. These show the EMS reference tables available from Data BC.
 
 ## Resources
