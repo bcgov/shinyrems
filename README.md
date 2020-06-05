@@ -11,8 +11,10 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 <!-- badges: end -->
 
-`shinyrems` is an app that allows you to visualize, analyze and download
-data from the EMS database.
+`shinyrems` is an app that allows you to download, clean, visualize and
+analyze data from the Environmental Monitoring System (EMS) database.
+Create plots and view water quality data with BC aquatic life water
+quality guidelines.
 
 ## Installation
 
