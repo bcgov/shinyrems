@@ -9,3 +9,5 @@
 *.rtf
 *.xlsx
 inst/doc
+
+.vscode
