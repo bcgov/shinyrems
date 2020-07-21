@@ -1,4 +1,3 @@
 EMS_ID,Station,DateTime,Variable,Value,Units,DetectionLimit,ResultLetter
-0124784,RUSSELL SLOUGH,2018-02-21 13:30:00,Aluminum Dissolved,1.1,degC,0.01,<
-character,character,character,character,numeric,character,number,character
+124784,RUSSELL SLOUGH,2018-02-21 13:30,Aluminum Dissolved,1.1,degC,0.01,<
 EMS ID of measurement.,Station of measurement.,Date and time of measurement in y-m-d h:m:s format.,Variable.,Value of measurement.,Units of measurement.,Detection limit.,Relationship to detection limit.
