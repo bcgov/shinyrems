@@ -61,20 +61,21 @@ mod_data_ui <- function(id) {
       )),
       shinyjs::hidden(div(
         id = ns("div_data_upload"),
-        radioButtons(ns("data_type"),
-          label = "Data format",
-          choices = c(
-            "Tidied EMS Data" = "tidy",
-            "Raw EMS Data" = "raw"
-          ),
-          selected = "tidy"
-        ),
+        # radioButtons(ns("data_type"),
+        #   label = "Data format",
+        #   choices = c(
+        #     "Tidied EMS Data" = "tidy",
+        #     "Raw EMS Data" = "raw"
+        #   ),
+        #   selected = "tidy"
+        # ),
         fileInput(ns("upload_data"),
           buttonLabel = span(tagList(icon("upload"), "csv")),
           label = "",
           placeholder = "Upload your own dataset",
           accept = c(".csv")
         ),
+        uiOutput(ns("ui_upload_parameter")),
         dl_button(ns("dl_template"), label = "Download Template")
       ))
     ),
@@ -93,11 +94,6 @@ mod_data_ui <- function(id) {
           title = "Site Map",
           wellPanel(site_map(ns), class = "wellpanel")
         )
-        # tabPanel(title = "R Code",
-        #          br(),
-        #          wellPanel(
-        #            uiOutput(ns("rcode")))
-        #          )
       )
     )
   )
@@ -134,6 +130,7 @@ mod_data_server <- function(input, output, session) {
     updateTabsetPanel(session, "tabset_data", selected = "Data")
     if (dataset == "upload") {
       return({
+        raw_rv$data <- data.frame()
         show("div_data_upload")
         hideTab("tabset_data", target = "Site Map", session = session)
       })
@@ -150,8 +147,7 @@ mod_data_server <- function(input, output, session) {
   raw_rv <- reactiveValues(
     data = empty_raw,
     cols = character(0),
-    template = template_tidy,
-    template_df = template_tidy_df
+    check_data = NULL
   )
   observe({
     if (!all_depth_na(raw_rv$data)) {
@@ -173,17 +169,41 @@ mod_data_server <- function(input, output, session) {
     waiter::waiter_hide()
   })
 
-  observe({
-    if (dataset == "upload") {
-      req(input$upload_data)
-      print(raw_rv$template)
-      check <- check_data_upload(input$upload_data, raw_rv$template)
-      if (is.character(check)) {
-        return(showModal(error_modal(check)))
-      }
-      raw_rv$data <- check
-    }
+  output$ui_upload_parameter <- renderUI({
+    req(raw_rv$check_data)
+    selectInput(ns("upload_parameter"), "Select parameter",
+                choices = raw_rv$check_data$Variable)
   })
+
+  observeEvent(input$upload_data, {
+    data <- readr::read_csv(input$upload_data$datapath)
+    check <- try(check_data_upload(data), silent = TRUE)
+    if (is_try_error(check)) {
+      raw_rv$check_data <- NULL
+      return(showModal(error_modal(check)))
+    } else {
+      raw_rv$check_data <- check
+    }
+    # req(input$upload_parameter)
+
+  })
+
+  observe({
+    req(input$upload_parameter)
+    print(input$upload_parameter)
+    processed <- process_data_upload(raw_rv$check_data, input$upload_parameter)
+    print(processed)
+    raw_rv$data <- processed
+  })
+#
+#   observe({
+#     if (dataset == "upload") {
+#       req(input$upload_data)
+#
+#     }
+#   })
+
+
 
   lookup_location <- reactive({
     req(lookup)
@@ -219,16 +239,16 @@ mod_data_server <- function(input, output, session) {
     unique(translate_site(input$site, lookup, input$site_type))
   })
 
-  observe({
-    req(input$data_type)
-    if (input$data_type == "raw") {
-      raw_rv$template <- template_raw
-      raw_rv$template_df <- template_raw_df
-    } else {
-      raw_rv$template <- template_tidy
-      raw_rv$template_df <- template_tidy_df
-    }
-  })
+  # observe({
+  #   req(input$data_type)
+  #   if (input$data_type == "raw") {
+  #     raw_rv$template <- template_raw
+  #     raw_rv$template_df <- template_raw_df
+  #   } else {
+  #     raw_rv$template <- template_tidy
+  #     raw_rv$template_df <- template_tidy_df
+  #   }
+  # })
 
   output$ui_wsgroup <- renderUI({
     selectInput(ns("wsgroup"),
