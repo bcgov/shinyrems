@@ -61,22 +61,14 @@ mod_data_ui <- function(id) {
       )),
       shinyjs::hidden(div(
         id = ns("div_data_upload"),
-        # radioButtons(ns("data_type"),
-        #   label = "Data format",
-        #   choices = c(
-        #     "Tidied EMS Data" = "tidy",
-        #     "Raw EMS Data" = "raw"
-        #   ),
-        #   selected = "tidy"
-        # ),
+        dl_button(ns("dl_template"), label = "Download Template"),
         fileInput(ns("upload_data"),
           buttonLabel = span(tagList(icon("upload"), "csv")),
           label = "",
           placeholder = "Upload your own dataset",
           accept = c(".csv")
         ),
-        uiOutput(ns("ui_upload_parameter")),
-        dl_button(ns("dl_template"), label = "Download Template")
+        uiOutput(ns("ui_upload_parameter"))
       ))
     ),
     mainPanel(
@@ -115,7 +107,6 @@ mod_data_server <- function(input, output, session) {
   output$ui_dataset <- renderUI({
     title(paste("Dataset:", pretty_dataset(dataset)))
   })
-
 
   all_data <- reactive({
     ems_data
@@ -184,26 +175,13 @@ mod_data_server <- function(input, output, session) {
     } else {
       raw_rv$check_data <- check
     }
-    # req(input$upload_parameter)
-
   })
 
   observe({
     req(input$upload_parameter)
-    print(input$upload_parameter)
     processed <- process_data_upload(raw_rv$check_data, input$upload_parameter)
-    print(processed)
     raw_rv$data <- processed
   })
-#
-#   observe({
-#     if (dataset == "upload") {
-#       req(input$upload_data)
-#
-#     }
-#   })
-
-
 
   lookup_location <- reactive({
     req(lookup)
@@ -238,17 +216,6 @@ mod_data_server <- function(input, output, session) {
   translate_sites <- reactive({
     unique(translate_site(input$site, lookup, input$site_type))
   })
-
-  # observe({
-  #   req(input$data_type)
-  #   if (input$data_type == "raw") {
-  #     raw_rv$template <- template_raw
-  #     raw_rv$template_df <- template_raw_df
-  #   } else {
-  #     raw_rv$template <- template_tidy
-  #     raw_rv$template_df <- template_tidy_df
-  #   }
-  # })
 
   output$ui_wsgroup <- renderUI({
     selectInput(ns("wsgroup"),
@@ -385,21 +352,9 @@ mod_data_server <- function(input, output, session) {
   output$dl_template <- downloadHandler(
     filename = function() "ems_template.csv",
     content = function(file) {
-      readr::write_csv(raw_rv$template_df, file)
+      file.copy(system.file("extdata/ems_template.csv", package = "shinyrems"), file)
     }
   )
-
-  rcode <- reactive({
-    rcode_data(dataset,
-      emsid = translate_sites(),
-      parameter = input$parameter,
-      date = input$date_range, file = input$upload_data$name
-    )
-  })
-
-  output$rcode <- renderUI({
-    rcode()
-  })
 
   return(
     list(
