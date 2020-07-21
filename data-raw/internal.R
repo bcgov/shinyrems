@@ -55,57 +55,6 @@ watershed_groups$lat_center <- cent[, 2]
 
 watershed_groups <- watershed_groups %>% mutate_if(is.factor, as.character)
 
-template_tidy <- list(
-  EMS_ID = list(
-    example = "0124784",
-    type = "character",
-    description = "EMS ID of measurement.",
-    check = c("")
-  ),
-  Station = list(
-    example = "RUSSELL SLOUGH",
-    type = "character",
-    description = "Station of measurement.",
-    check = c("")
-  ),
-  DateTime = list(
-    example = "2018-02-21 13:30:00",
-    type = "character",
-    description = "Date and time of measurement in y-m-d h:m:s format.",
-    check = c(Sys.time())
-  ),
-  Variable = list(
-    example = "Aluminum Dissolved",
-    type = "character",
-    description = "Variable.",
-    check = c("")
-  ),
-  Value = list(
-    example = 1.1,
-    type = "numeric",
-    description = "Value of measurement.",
-    check = c(0)
-  ),
-  Units = list(
-    example = "degC",
-    type = "character",
-    description = "Units of measurement.",
-    check = c("")
-  ),
-  DetectionLimit = list(
-    example = 0.01,
-    type = "number",
-    description = "Detection limit.",
-    check = c(1, NA)
-  ),
-  ResultLetter = list(
-    example = "<",
-    type = "character",
-    description = "Relationship to detection limit.",
-    check = c("<", ">", "M", NA)
-  )
-)
-
 raw_names <- c(
   EMS_ID = "EMS_ID", Station = "MONITORING_LOCATION",
   DateTime = "COLLECTION_START", Variable = "PARAMETER",
@@ -113,19 +62,6 @@ raw_names <- c(
   Units = "UNIT", DetectionLimit = "METHOD_DETECTION_LIMIT",
   ResultLetter = "RESULT_LETTER"
 )
-
-template_to_df <- function(template) {
-  x <- data.frame(variable = c("example", "type", "description"))
-  for (i in names(template)) {
-    x[x$variable == "example", i] <- template[[i]][["example"]]
-    x[x$variable == "type", i] <- template[[i]][["type"]]
-    x[x$variable == "description", i] <- template[[i]][["description"]]
-  }
-  x <- x[, -1]
-  dplyr::as_tibble(x)
-}
-
-template_tidy_df <- template_to_df(template_tidy)
 
 datasets <- c("2yr", "4yr", "historic", "all", "demo", "upload")
 
@@ -203,7 +139,6 @@ ems_reference_tables <- list(
 # limits <- limits_new
 
 usethis::use_data(lookup_historic, lookup_demo,
-  template_tidy, template_tidy_df,
   watershed_groups, empty_raw,
   empty_tidy, empty_standard, empty_clean, empty_outlier,
   datasets, ems_reference_tables, raw_names,
