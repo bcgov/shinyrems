@@ -11,7 +11,6 @@ preprocess_data_upload <- function(data){
 
 process_data_upload <- function(data, variable){
   # if(is.null(variable)) return(data)
-  print(data)
   data <- dplyr::filter(data, Variable == variable)
   return(data)
 }
