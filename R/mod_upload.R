@@ -74,26 +74,31 @@ mod_upload_server <- function(input, output, session) {
   )
 
   output$ui_parameter <- renderUI({
-    req(rv$check_data)
-    params <- rv$check_data$Variable
+    params <- params()
     selectInput(ns("parameter"), "Select parameter",
                 choices = params, selected = params[1])
   })
 
   output$ui_site <- renderUI({
-    req(rv$check_data)
-    stations <- rv$check_data$Station
+    sites <- sites()
     select_input_x(ns("site"), label = "Select site(s)",
-                choices = stations, selected = stations)
+                choices = sites, selected = sites)
+  })
+
+  dates <- reactive({
+    as.Date(range(rv$date_data$DateTime), na.rm = TRUE)
+  })
+
+  params <- reactive({
+    rv$check_data$Variable
+  })
+
+  sites <- reactive({
+    rv$check_data$Station
   })
 
   output$ui_date_range <- renderUI({
-    req(rv$date_data)
-    data <- rv$date_data
-    dates <- c(
-      min(data$DateTime, na.rm = TRUE),
-      max(data$DateTime, na.rm = TRUE)
-    )
+    dates <- dates()
     dateRangeInput(ns("date_range"),
                    label = "Filter data between dates:",
                    start = dates[1], end = dates[2],
@@ -106,10 +111,14 @@ mod_upload_server <- function(input, output, session) {
     check <- try(check_data_upload(data), silent = TRUE)
     if (is_try_error(check)) {
       rv$check_data <- NULL
+      rv$date_data <- NULL
+      updateTabsetPanel(session, "tabset_data", selected = "Uploaded Data")
       return(showModal(error_modal(check)))
     } else {
       rv$check_data <- check
       rv$date_data <- process_dates(check)
+      updateSelectInput(session, "parameter", selected = check$Variable[1])
+      updateTabsetPanel(session, "tabset_data", selected = "Processed Data")
     }
   })
 
@@ -117,6 +126,7 @@ mod_upload_server <- function(input, output, session) {
     req(input$parameter)
     req(input$site)
     req(input$date_range)
+    req(rv$date_data)
     processed <- process_data_upload(rv$date_data,
                                      input$parameter,
                                      input$site,

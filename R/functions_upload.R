@@ -47,13 +47,9 @@ process_dates <- function(data){
   hour <- ifelse(is.na(data$Hour), 0, data$Hour)
   minute <- ifelse(is.na(data$Minute), 0, data$Minute)
 
-  data %>%
-    dplyr::mutate(DateTime = ISOdatetime(Year, Month, Day, hour, minute, second),
-                  Year = NULL,
-                  Month = NULL,
-                  Day = NULL,
-                  Hour = NULL,
-                  Minute = NULL,
-                  Second = NULL)
+  data <- data %>%
+    dplyr::mutate(DateTime = ISOdatetime(Year, Month, Day, hour, minute, second))
+
+  data %>% dplyr::select(EMS_ID, Station, Variable, DateTime, Value:ResultLetter)
 
 }
