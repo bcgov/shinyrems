@@ -98,22 +98,6 @@ mod_data_server <- function(input, output, session) {
   })
 
   ########## ---------- dataset ---------- ##########
-  # observe({
-  #   raw_rv$data <- empty_raw
-  #   hide("div_data_find")
-  #   hide("div_data_upload")
-  #   showTab("tabset_data", target = "Site Map", session = session)
-  #   updateTabsetPanel(session, "tabset_data", selected = "Data")
-  #   if (dataset == "upload") {
-  #     return({
-  #       raw_rv$data <- data.frame()
-  #       show("div_data_upload")
-  #       hideTab("tabset_data", target = "Site Map", session = session)
-  #     })
-  #   }
-  #   show("div_data_find")
-  # })
-
   output$ui_get <- renderUI({
     req(input$site)
     req(input$parameter)
@@ -349,10 +333,7 @@ mod_data_server <- function(input, output, session) {
       data_type = reactive({
         input$data_type
       }),
-      emsid = translate_sites,
-      parameter = reactive({
-        input$parameter
-      }),
+
       date = reactive({
         input$date_range
       }),

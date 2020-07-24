@@ -48,8 +48,6 @@ mod_tidy_ui <- function(id) {
         br(),
         help_output(ns("console_stand"))
       )
-      # tabPanel(title = "R Code",
-      #          wellPanel(uiOutput(ns("rcode"))))
     ))
   )
 }
@@ -160,27 +158,9 @@ mod_tidy_server <- function(input, output, session, raw) {
     }
   )
 
-  rcodetidy <- reactive({
-    rcode_tidy(input$mdl_action, raw$cols())
-  })
-
-  rcodestand <- reactive({
-    rcode_standardize(input$strict)
-  })
-
-  output$rcode <- renderUI({
-    tagList(
-      rcodetidy(),
-      br2(),
-      rcodestand()
-    )
-  })
-
   return(
     list(
       data = stand_data,
-      rcodetidy = rcodetidy,
-      rcodestand = rcodestand,
       mdl_action = reactive({
         input$mdl_action
       }),

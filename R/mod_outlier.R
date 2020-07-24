@@ -71,9 +71,6 @@ mod_outlier_ui <- function(id) {
             br(),
             help_output(ns("console_clean"))
           )
-          # tabPanel(title = "R Code",
-          #          br(),
-          #          wellPanel(uiOutput(ns("rcode"))))
         )
       )
     )
@@ -199,27 +196,6 @@ mod_outlier_server <- function(input, output, session, clean, stand) {
     shinyjs::toggle("div_info_remove", anim = TRUE)
   })
 
-  rcodeclean <- reactive({
-    rcode_clean2(
-      by = clean$by(), max_cv = max_cv(), sds = input$sds,
-      ignore_undetected = input$ignore_undetected,
-      large_only = input$large_only,
-      remove_blanks = clean$remove_blanks(), fun = clean$fun()
-    )
-  })
-
-  rcodeoutlier <- reactive({
-    rcode_outlier(manual_outliers())
-  })
-
-  output$rcode <- renderUI({
-    tagList(
-      rcodeclean(),
-      br2(),
-      rcodeoutlier()
-    )
-  })
-
   output$ui_table_final <- renderUI({
     ems_table_output(ns("table_final"))
   })
@@ -240,8 +216,6 @@ mod_outlier_server <- function(input, output, session, clean, stand) {
   return(
     list(
       data = outlier_data3,
-      rcodeclean = rcodeclean,
-      rcodeoutlier = rcodeoutlier,
       max_cv = max_cv,
       sds = reactive({
         input$sds

@@ -104,9 +104,6 @@ mod_results_ui <- function(id) {
           br2(), br(),
           ems_table_output(ns("table"))
         )
-        # tabPanel(title = "R Code",
-        #          br(),
-        #          wellPanel(uiOutput(ns("rcode"))))
       ))
     )
   )
@@ -395,23 +392,6 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
       rv$guideline <- rv$guideline_calc
     }
   })
-
-  rcodeplot <- reactive({})
-
-  rcodetable <- reactive({})
-
-  return(
-    list(
-      facet = reactive({
-        input$facet
-      }),
-      colour = reactive({
-        input$colour
-      }),
-      rcodeplot = rcodeplot,
-      rcodetable = rcodetable
-    )
-  )
 }
 
 ## To be copied in the UI

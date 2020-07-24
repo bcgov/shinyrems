@@ -52,9 +52,6 @@ mod_clean_ui <- function(id) {
         br(),
         help_output(ns("console_clean"))
       )
-      # tabPanel(title = "R Code",
-      #          br(),
-      #          wellPanel(uiOutput(ns("rcode"))))
     ))
   )
 }
@@ -131,17 +128,6 @@ mod_clean_server <- function(input, output, session, stand) {
 
   observeEvent(input$info_maxcv, {
     shinyjs::toggle("div_info_maxcv", anim = TRUE)
-  })
-
-  # rcode <- reactive({
-  #   rcode_clean(
-  #     by = input$by, max_cv = input$max_cv,
-  #     remove_blanks = input$remove_blanks, fun = eval(parse(text = input$fun))
-  #   )
-  # })
-
-  output$rcode <- renderUI({
-    rcode()
   })
 
   return(

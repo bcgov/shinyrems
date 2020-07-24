@@ -51,9 +51,6 @@ app_ui <- function() {
         br(),
         mod_results_ui("results_ui_1")
       ),
-      # tabPanel(title = "R Code",
-      #          br(),
-      #          mod_rcode_ui("rcode_ui_1")),
       tabPanel(
         title = "Reference Tables",
         br(),
