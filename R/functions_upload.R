@@ -50,6 +50,6 @@ process_dates <- function(data){
   data <- data %>%
     dplyr::mutate(DateTime = ISOdatetime(Year, Month, Day, hour, minute, second))
 
-  data %>% dplyr::select(EMS_ID, Station, Variable, DateTime, Value:ResultLetter)
+  data %>% dplyr::select(Station, Variable, DateTime, Value:ResultLetter, everything())
 
 }

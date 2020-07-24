@@ -6,8 +6,7 @@ test_that("data upload works", {
   expect_equal(check_data_upload(data), data)
 
   data <- data %>%
-    process_dates() %>%
-    dplyr::select(-EMS_ID)
+    process_dates()
 
   # check that uploaded data passes through tabs
   tidy_data <- ems_tidy(data,
@@ -15,7 +14,7 @@ test_that("data upload works", {
                         dataset = "upload",
                         cols = character(0)
   )
-  expect_identical(nrow(tidy_data), 2L)
+  expect_identical(nrow(tidy_data), 3L)
 
   stand_data <- ems_standardize(data, TRUE)
   expect_identical(nrow(stand_data), 2L)
@@ -26,8 +25,23 @@ test_that("data upload works", {
   )
   expect_identical(nrow(agg_data), 2L)
 
-  out_data <- ems_outlier(stand_data, by = "Station", max_cv = Inf, sds = 1, FUN = mean)
+  out_data <- ems_outlier(stand_data, by = "EMS_ID", max_cv = Inf, sds = 1, FUN = mean)
   expect_identical(nrow(stand_data), 2L)
 
+  limits <- wqbc::limits
+
+  #### test plot
+  data <- out_data
+  data$EMS_ID_Renamed <- data$EMS_ID
+  from <- as.Date("2018-01-02")
+  to <- as.Date("2019-09-30")
+
+  x <- ems_plot(data,
+                plot_type = "scatter", geom = c("show lines", "show points"),
+                date_range = c(from, to), point_size = 1, line_size = 1,
+                facet = "EMS_ID", colour = "EMS_ID", timeframe = "Year", guideline = 6
+  )
+  expect_is(x, "ggplot")
+  expect_named(x)
 
 })

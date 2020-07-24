@@ -100,7 +100,7 @@ mod_outlier_server <- function(input, output, session, clean, stand) {
           x = stand$data(),
           by = clean$by(),
           max_cv = max_cv(),
-          remove_blanks = clean$remove_blanks(),
+          remove_blanks = FALSE,
           FUN = eval(parse(text = clean$fun())),
           sds = input$sds,
           ignore_undetected = input$ignore_undetected,

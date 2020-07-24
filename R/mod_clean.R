@@ -74,7 +74,7 @@ mod_clean_server <- function(input, output, session, stand) {
     }
     selected <- intersect(
       names(data),
-      c("EMS_ID", "UPPER_DEPTH", "LOWER_DEPTH")
+      c("EMS_ID", "Station", "UPPER_DEPTH", "LOWER_DEPTH")
     )
     optional <- intersect(
       names(data),
