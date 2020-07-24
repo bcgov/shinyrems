@@ -28,7 +28,6 @@ mod_clean_ui <- function(id) {
   sidebarLayout(
     sidebarPanel(
       class = "sidebar",
-      checkboxInput(ns("remove_blanks"), "Remove blanks", value = TRUE),
       uiOutput(ns("ui_by")),
       radioButtons(ns("fun"),
         label = "Summarize by function",
@@ -100,7 +99,7 @@ mod_clean_server <- function(input, output, session, stand) {
         shinyjs::html("console_clean", "")
         x <- ems_aggregate(stand$data(),
           by = input$by,
-          remove_blanks = input$remove_blanks,
+          remove_blanks = FALSE,
           max_cv = max_cv(),
           FUN = eval(parse(text = input$fun))
         )
@@ -134,12 +133,12 @@ mod_clean_server <- function(input, output, session, stand) {
     shinyjs::toggle("div_info_maxcv", anim = TRUE)
   })
 
-  rcode <- reactive({
-    rcode_clean(
-      by = input$by, max_cv = input$max_cv,
-      remove_blanks = input$remove_blanks, fun = eval(parse(text = input$fun))
-    )
-  })
+  # rcode <- reactive({
+  #   rcode_clean(
+  #     by = input$by, max_cv = input$max_cv,
+  #     remove_blanks = input$remove_blanks, fun = eval(parse(text = input$fun))
+  #   )
+  # })
 
   output$rcode <- renderUI({
     rcode()
