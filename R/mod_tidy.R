@@ -65,10 +65,14 @@ mod_tidy_server <- function(input, output, session, raw) {
 
   tidy_data <- reactive({
     req(raw$data())
+    if(raw$dataset() == "upload"){
+      return(raw$data())
+    }
     ems_tidy(
-      raw$data(), input$mdl_action,
-      raw$data_type(), raw$dataset(),
-      raw$cols()
+      raw$data(),
+      mdl_action = input$mdl_action,
+      dataset = raw$dataset(),
+      cols = character(0)
     )
   })
 
@@ -77,7 +81,13 @@ mod_tidy_server <- function(input, output, session, raw) {
     if (nrow(x) < 1) {
       return(empty_tidy)
     }
-    x[x$SAMPLE_STATE %in% input$sample_state & x$SAMPLE_CLASS %in% input$sample_class, ]
+    if(!is.null(input$sample_state)){
+      x <- x[x$SAMPLE_STATE %in% input$sample_state,]
+    }
+    if(!is.null(input$sample_class)){
+      x <- x[x$SAMPLE_STATE %in% input$sample_class,]
+    }
+    x
   })
 
   stand_data <- reactive({

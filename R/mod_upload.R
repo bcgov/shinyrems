@@ -153,7 +153,7 @@ mod_upload_server <- function(input, output, session) {
   return(
     list(
       dataset = reactive({
-        dataset
+        "upload"
       }),
       data = reactive({
         rv$processed_data

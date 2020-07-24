@@ -129,23 +129,30 @@ ems_data <- function(dataset, emsid, parameter, from_date, to_date, data) {
   )
 }
 
-ems_tidy <- function(data, mdl_action, data_type, dataset, cols) {
-  if (dataset == "upload" && data_type == "tidy") {
+ems_tidy <- function(data, mdl_action, dataset, cols) {
+  if (dataset == "upload") {
     data <- tidy_names_to_raw(data)
   }
-  x <- try(
-    {
-      wqbc::tidy_ems_data(data,
-        mdl_action = mdl_action,
-        cols = cols
-      )
-    },
-    silent = TRUE
+  x <- wqbc::tidy_ems_data(data,
+                      mdl_action = mdl_action,
+                      cols = cols
   )
-  if (is_try_error(x)) {
-    return(empty_tidy)
-  }
+  print(x)
+
   x
+  # x <- try(
+  #   {
+  #     wqbc::tidy_ems_data(data,
+  #       mdl_action = mdl_action,
+  #       cols = cols
+  #     )
+  #   },
+  #   silent = TRUE
+  # )
+  # if (is_try_error(x)) {
+  #   return(empty_tidy)
+  # }
+  # x
 }
 
 ems_standardize <- function(data, strict) {
