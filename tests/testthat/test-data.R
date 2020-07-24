@@ -29,7 +29,7 @@ test_that("ems data functions work", {
   expect_identical(nrow(data), 48L)
 
   tidy_data <- ems_tidy(data,
-    mdl_action = "zero", data_type = "raw",
+    mdl_action = "zero",
     dataset = "2yr", cols = character(0)
   )
   tidy_data2 <- wqbc::tidy_ems_data(data, mdl_action = "zero", cols = character(0))
@@ -62,4 +62,21 @@ test_that("ems data functions work", {
 
   expect_is(x, "ggplot")
   expect_named(x)
+
+  ### check demo data
+  data <- ems_demo_data
+  data <- data %>%
+    dplyr::filter(EMS_ID %in% unique(data$EMS_ID)[1:2],
+                  PARAMETER == unique(data$PARAMETER)[1])
+
+  from <- as.Date("2018-01-02")
+  to <- as.Date("2019-09-30")
+
+  tidy_data <- ems_tidy(data,
+                        mdl_action = "zero",
+                        dataset = "2yr", cols = character(0)
+  )
+  tidy_data2 <- wqbc::tidy_ems_data(data, mdl_action = "zero", cols = character(0))
+  expect_identical(tidy_data, tidy_data2)
+
 })

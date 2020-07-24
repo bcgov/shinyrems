@@ -68,12 +68,13 @@ mod_tidy_server <- function(input, output, session, raw) {
     if(raw$dataset() == "upload"){
       return(raw$data())
     }
-    ems_tidy(
+    x <- ems_tidy(
       raw$data(),
       mdl_action = input$mdl_action,
       dataset = raw$dataset(),
       cols = character(0)
     )
+    x
   })
 
   filter_data <- reactive({
@@ -81,11 +82,11 @@ mod_tidy_server <- function(input, output, session, raw) {
     if (nrow(x) < 1) {
       return(empty_tidy)
     }
-    if(!is.null(input$sample_state)){
+    if("SAMPLE_STATE" %in% names(x)){
       x <- x[x$SAMPLE_STATE %in% input$sample_state,]
     }
-    if(!is.null(input$sample_class)){
-      x <- x[x$SAMPLE_STATE %in% input$sample_class,]
+    if("SAMPLE_CLASS" %in% names(x)){
+      x <- x[x$SAMPLE_CLASS %in% input$sample_class,]
     }
     x
   })
@@ -106,6 +107,7 @@ mod_tidy_server <- function(input, output, session, raw) {
   })
 
   output$ui_sample_state <- renderUI({
+    req("SAMPLE_STATE" %in% names(raw$data()))
     x <- sort(unique(raw$data()$SAMPLE_STATE))
     select_input_x(ns("sample_state"),
       label = "Select values of SAMPLE_STATE to include",
@@ -115,6 +117,7 @@ mod_tidy_server <- function(input, output, session, raw) {
   })
 
   output$ui_sample_class <- renderUI({
+    req("SAMPLE_CLASS" %in% names(raw$data()))
     x <- sort(unique(raw$data()$SAMPLE_CLASS))
     select_input_x(ns("sample_class"),
       label = "Select values of SAMPLE_CLASS to include",

@@ -30,8 +30,6 @@ mod_data_ui <- function(id) {
     sidebarPanel(
       uiOutput(ns("ui_dataset")),
       br(),
-      shinyjs::hidden(div(
-        id = ns("div_data_find"),
         tags$label("Select site(s) or"),
         actionLink(ns("search_map"), label = "find sites on map"),
         checkboxInput(ns("check_permit"),
@@ -56,20 +54,7 @@ mod_data_ui <- function(id) {
         ),
         uiOutput(ns("ui_parameter")),
         uiOutput(ns("ui_date")),
-        uiOutput(ns("ui_get")),
-        br()
-      )),
-      shinyjs::hidden(div(
-        id = ns("div_data_upload"),
-        dl_button(ns("dl_template"), label = "Download Template"),
-        fileInput(ns("upload_data"),
-          buttonLabel = span(tagList(icon("upload"), "csv")),
-          label = "",
-          placeholder = "Upload your own dataset",
-          accept = c(".csv")
-        ),
-        uiOutput(ns("ui_upload_parameter"))
-      ))
+        uiOutput(ns("ui_get"))
     ),
     mainPanel(
       tabsetPanel(
@@ -113,21 +98,21 @@ mod_data_server <- function(input, output, session) {
   })
 
   ########## ---------- dataset ---------- ##########
-  observe({
-    raw_rv$data <- empty_raw
-    hide("div_data_find")
-    hide("div_data_upload")
-    showTab("tabset_data", target = "Site Map", session = session)
-    updateTabsetPanel(session, "tabset_data", selected = "Data")
-    if (dataset == "upload") {
-      return({
-        raw_rv$data <- data.frame()
-        show("div_data_upload")
-        hideTab("tabset_data", target = "Site Map", session = session)
-      })
-    }
-    show("div_data_find")
-  })
+  # observe({
+  #   raw_rv$data <- empty_raw
+  #   hide("div_data_find")
+  #   hide("div_data_upload")
+  #   showTab("tabset_data", target = "Site Map", session = session)
+  #   updateTabsetPanel(session, "tabset_data", selected = "Data")
+  #   if (dataset == "upload") {
+  #     return({
+  #       raw_rv$data <- data.frame()
+  #       show("div_data_upload")
+  #       hideTab("tabset_data", target = "Site Map", session = session)
+  #     })
+  #   }
+  #   show("div_data_find")
+  # })
 
   output$ui_get <- renderUI({
     req(input$site)
@@ -349,13 +334,6 @@ mod_data_server <- function(input, output, session) {
     }
   )
 
-  output$dl_template <- downloadHandler(
-    filename = function() "ems_template.csv",
-    content = function(file) {
-      file.copy(system.file("extdata/ems_template.csv", package = "shinyrems"), file)
-    }
-  )
-
   return(
     list(
       dataset = reactive({
@@ -371,7 +349,6 @@ mod_data_server <- function(input, output, session) {
       data_type = reactive({
         input$data_type
       }),
-      rcode = rcode,
       emsid = translate_sites,
       parameter = reactive({
         input$parameter
