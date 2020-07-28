@@ -1,7 +1,7 @@
 preprocess_data <- function(data){
-  data %<>% dplyr::mutate(dplyr::across(c(Year, Month, Day, Hour, Minute, Second), as.integer),
-                          dplyr::across(c(Station, ResultLetter, Units, Variable), as.character),
-                          dplyr::across(c(Value, DetectionLimit), as.numeric))
+  data %<>% dplyr::mutate(dplyr::across(c(.data$Year, .data$Month, .data$Day, .data$Hour, .data$Minute, .data$Second), as.integer),
+                          dplyr::across(c(.data$Station, .data$ResultLetter, .data$Units, .data$Variable), as.character),
+                          dplyr::across(c(.data$Value, .data$DetectionLimit), as.numeric))
 }
 
 check_data_upload <- function(data){
@@ -12,7 +12,9 @@ check_data_upload <- function(data){
   names <- names(template)
 
   if(!all(names %in% names(data))){
-    err("Uploaded data must have column names: ", err::cc_and(names))
+    chk::err("Uploaded data must have column names: ",
+             err::cc(names, conjunction = "and",
+                     ellipsis = 1000))
   }
 
   check_values(data$Year, c(1900L, 2100L), x_name = "Column 'Year'")
@@ -35,21 +37,25 @@ preprocess_data_upload <- function(data){
 
 process_data_upload <- function(data, variable, site, date_range){
   data <- dplyr::filter(data,
-                        Variable == variable,
-                        Station %in% site,
-                        as.Date(DateTime) >= date_range[1],
-                        as.Date(DateTime) <= date_range[2])
+                        .data$Variable == variable,
+                        .data$Station %in% site,
+                        as.Date(.data$DateTime) >= date_range[1],
+                        as.Date(.data$DateTime) <= date_range[2])
   return(data)
 }
 
 process_dates <- function(data){
-  second <- ifelse(is.na(data$Second), 0, data$Second)
-  hour <- ifelse(is.na(data$Hour), 0, data$Hour)
-  minute <- ifelse(is.na(data$Minute), 0, data$Minute)
+  data %>%
+    dplyr::mutate(
+      hour = dplyr::if_else(is.na(.data$Second), 0, .data$Second),
+      minute = dplyr::if_else(is.na(.data$Minute), 0, .data$Minute),
+      second = dplyr::if_else(is.na(.data$Second), 0, .data$Second),
+      DateTime = ISOdatetime(.data$Year, .data$Month, .data$Day,
+                             .data$hour, .data$minute, .data$second)) %>%
+    dplyr::select(.data$Station, .data$Variable, .data$DateTime,
+                  .data$Value, .data$DetectionLimit, .data$ResultLetter,
+                  dplyr::everything())
 
-  data <- data %>%
-    dplyr::mutate(DateTime = ISOdatetime(Year, Month, Day, hour, minute, second))
-
-  data %>% dplyr::select(Station, Variable, DateTime, Value:ResultLetter, everything())
+  data
 
 }

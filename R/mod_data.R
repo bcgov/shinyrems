@@ -54,7 +54,8 @@ mod_data_ui <- function(id) {
         ),
         uiOutput(ns("ui_parameter")),
         uiOutput(ns("ui_date")),
-        uiOutput(ns("ui_get"))
+        uiOutput(ns("ui_get")),
+      uiOutput(ns("ui_reset"))
     ),
     mainPanel(
       tabsetPanel(
@@ -104,6 +105,17 @@ mod_data_server <- function(input, output, session) {
     button(ns("get"), "Get/Update Data")
   })
 
+  output$ui_reset <- renderUI({
+    req(input$site)
+    req(input$parameter)
+    button(ns("reset"), "Reset Fields")
+  })
+
+  observeEvent(input$reset, {
+    updateSelectInput("parameter", selected = NULL)
+    updateSelectInput("site", selected = NULL)
+  })
+
   raw_rv <- reactiveValues(
     data = empty_raw,
     cols = character(0),
@@ -113,43 +125,6 @@ mod_data_server <- function(input, output, session) {
     if (!all_depth_na(raw_rv$data)) {
       raw_rv$cols <- c("UPPER_DEPTH", "LOWER_DEPTH")
     }
-  })
-
-  observeEvent(input$get, {
-    waiter::waiter_show(html = waiter_html("Fetching requested data ..."))
-    emsid <- translate_sites()
-    raw_rv$data <- ems_data(
-      dataset = dataset,
-      parameter = input$parameter,
-      emsid = emsid,
-      from_date = as.character(input$date_range[1]),
-      to_date = as.character(input$date_range[2]),
-      data = all_data()
-    )
-    waiter::waiter_hide()
-  })
-
-  output$ui_upload_parameter <- renderUI({
-    req(raw_rv$check_data)
-    selectInput(ns("upload_parameter"), "Select parameter",
-                choices = raw_rv$check_data$Variable)
-  })
-
-  observeEvent(input$upload_data, {
-    data <- readr::read_csv(input$upload_data$datapath)
-    check <- try(check_data_upload(data), silent = TRUE)
-    if (is_try_error(check)) {
-      raw_rv$check_data <- NULL
-      return(showModal(error_modal(check)))
-    } else {
-      raw_rv$check_data <- check
-    }
-  })
-
-  observe({
-    req(input$upload_parameter)
-    processed <- process_data_upload(raw_rv$check_data, input$upload_parameter)
-    raw_rv$data <- processed
   })
 
   lookup_location <- reactive({

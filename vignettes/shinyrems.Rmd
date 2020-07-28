@@ -16,7 +16,6 @@ vignette: >
 library(shinyrems)
 library(knitr)
 library(grid)
-library(png)
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>", 
@@ -27,6 +26,7 @@ img_path <- "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/
 ```
 
 ```{r echo=FALSE}
+library(png)
 embed_png <- function(path, dpi = NULL) {
   meta <- attr(png::readPNG(path, native = TRUE, info = TRUE), "info")
   if (!is.null(dpi)) meta$dpi <- rep(dpi, 2)

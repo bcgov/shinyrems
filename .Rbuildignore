@@ -6,6 +6,7 @@ dev_history.R
 $run_dev.*
 ^README\.Rmd$
 CODE_OF_CONDUCT.md
+COMPLIANCE.yaml
 ^LICENSE\.md$
 
 ^.*\.rtf$

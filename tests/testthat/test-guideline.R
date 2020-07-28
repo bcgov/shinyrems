@@ -19,7 +19,6 @@ test_that("calculating guideline works", {
   from_date <- as.Date("1990-01-02")
   to_date <- as.Date("2019-09-30")
   mdl_action <- "zero"
-  data_type <- "raw"
   dataset <- "historic"
   cols <- character(0)
   strict <- TRUE
@@ -37,7 +36,7 @@ test_that("calculating guideline works", {
     from_date = from_date, to_date = to_date, data
   ) %>%
     ems_tidy(
-      mdl_action = mdl_action, data_type = data_type,
+      mdl_action = mdl_action,
       dataset = dataset, cols = cols
     ) %>%
     ems_standardize(strict) %>%
@@ -113,7 +112,7 @@ test_that("calculating guideline works", {
     from_date = from_date, to_date = to_date, data
   ) %>%
     ems_tidy(
-      mdl_action = mdl_action, data_type = data_type,
+      mdl_action = mdl_action,
       dataset = dataset, cols = cols
     ) %>%
     ems_standardize(strict) %>%

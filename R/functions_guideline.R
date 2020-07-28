@@ -35,7 +35,7 @@ ems_data_parameter <- function(data, all_data, dataset, lookup,
     from_date = from_date, to_date = to_date, data = all_data
   )
   data <- ems_tidy(data,
-    mdl_action = mdl_action, data_type = "raw",
+    mdl_action = mdl_action,
     dataset = dataset, cols = cols
   )
   data <- ems_standardize(data, strict = strict)
