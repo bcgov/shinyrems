@@ -54,8 +54,8 @@ mod_data_ui <- function(id) {
         ),
         uiOutput(ns("ui_parameter")),
         uiOutput(ns("ui_date")),
-      inline(uiOutput(ns("ui_reset"))),
-      inline(uiOutput(ns("ui_get")))
+      inline(uiOutput(ns("ui_get"))),
+      inline(uiOutput(ns("ui_reset")))
       ),
     mainPanel(
       tabsetPanel(
