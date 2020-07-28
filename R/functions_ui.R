@@ -9,6 +9,9 @@
 # Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
+inline <- function (x) {
+  div(style = "display: inline-block;vertical-align:top;", x)
+}
 
 title <- function(x) {
   div(h4(x), style = "border-bottom: 1px solid #494949;")

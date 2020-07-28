@@ -54,9 +54,9 @@ mod_data_ui <- function(id) {
         ),
         uiOutput(ns("ui_parameter")),
         uiOutput(ns("ui_date")),
-        uiOutput(ns("ui_get")),
-      uiOutput(ns("ui_reset"))
-    ),
+      inline(uiOutput(ns("ui_reset"))),
+      inline(uiOutput(ns("ui_get")))
+      ),
     mainPanel(
       tabsetPanel(
         selected = "Data",
@@ -106,14 +106,28 @@ mod_data_server <- function(input, output, session) {
   })
 
   output$ui_reset <- renderUI({
-    req(input$site)
-    req(input$parameter)
     button(ns("reset"), "Reset Fields")
   })
 
+  observeEvent(input$get, {
+    waiter::waiter_show(html = waiter_html("Fetching requested data ..."))
+    emsid <- translate_sites()
+    raw_rv$data <- ems_data(
+      dataset = dataset,
+      parameter = input$parameter,
+      emsid = emsid,
+      from_date = as.character(input$date_range[1]),
+      to_date = as.character(input$date_range[2]),
+      data = all_data()
+    )
+    waiter::waiter_hide()
+  })
+
   observeEvent(input$reset, {
-    updateSelectInput("parameter", selected = NULL)
-    updateSelectInput("site", selected = NULL)
+    updateSelectInput(session, "parameter", selected = "")
+    updateSelectInput(session, "permit", selected = "")
+    updateSelectInput(session, "site", selected = "")
+    updateCheckboxInput(session, "check_permit", value = FALSE)
   })
 
   raw_rv <- reactiveValues(
