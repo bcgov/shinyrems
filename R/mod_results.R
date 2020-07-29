@@ -40,9 +40,8 @@ mod_results_ui <- function(id) {
               uiOutput(ns("ui_facet")),
               uiOutput(ns("ui_colour"))
             ),
-            actionLink(ns("rename"), "Rename sites"),
+            button(ns("rename"), "Rename Stations"),
             br(),
-            uiOutput(ns("ui_rename")),
             br(),
             sliderInput(ns("plot_height"),
               label = "Plot Height",
@@ -181,6 +180,14 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     plotOutput(ns("ems_plot"), height = input$plot_height)
   })
 
+  output$ui_site_type <- renderUI({
+    data <- rv$data
+    x <- sort(intersect(names(data), c("Station", "EMS_ID")))
+    if(length(x) < 2) return()
+    radioButtons(ns("site_type"), label = "Label sites by",
+                 choices = x, inline = TRUE)
+  })
+
   output$ems_plot <- renderPlot({
     # suppressWarnings(waiter::show_butler())
     plots()
@@ -242,7 +249,7 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
 
   output$ui_facet <- renderUI({
     data <- rv$data
-    x <- sort(intersect(names(data), c("Variable", "EMS_ID")))
+    x <- sort(intersect(names(data), c("Station", "Variable", "EMS_ID")))
     selectInput(ns("facet"), "Facet by",
       choices = x,
       selected = "Variable"
@@ -251,7 +258,7 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
 
   output$ui_colour <- renderUI({
     data <- rv$data
-    x <- sort(intersect(names(data), c("Variable", "EMS_ID")))
+    x <- sort(intersect(names(data), c("Station", "Variable", "EMS_ID")))
     selectInput(ns("colour"), "Colour by",
       choices = x,
       selected = x[1]
@@ -283,31 +290,32 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
   )
   observe({
     data <- outlier$data()
-    data$EMS_ID_Renamed <- data$EMS_ID
+    data$Site_Renamed <- data$Station
     rv$data <- data
   })
 
   observeEvent(input$finalise, {
     data <- rv$data
-    sites <- unique(data$EMS_ID)
+    sites <- unique(data$Station)
     for (i in sites) {
       x <- input[[i]]
-      data$EMS_ID_Renamed[data$EMS_ID == i] <- x
+      data$Site_Renamed[data$Station == i] <- x
     }
+    removeModal()
     rv$data <- data
   })
 
   observeEvent(input$rename, {
-    shinyjs::toggle("div_rename", anim = TRUE, animType = "slide")
+    showModal(modalDialog(uiOutput(ns("ui_rename"))))
   })
 
   output$ui_rename <- renderUI({
-    sites <- unique(rv$data$EMS_ID)
-    shinyjs::hidden(div(
-      id = ns("div_rename"),
+    # site_col <- input$site_type
+    sites <- unique(rv$data$Station)
+    div(
       lapply(sites, rename_inputs, ns),
       button(ns("finalise"), "Rename")
-    ))
+    )
   })
 
   output$ui_by <- renderUI({

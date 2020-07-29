@@ -24,7 +24,7 @@ ems_plot <- function(data, plot_type, geom, date_range,
                      facet, colour, timeframe,
                      guideline) {
   data$Detected <- detected(data$Value, data$DetectionLimit)
-  data$EMS_ID <- data$EMS_ID_Renamed
+  data$Station <- data$Site_Renamed
   data$Detected %<>% factor(levels = c(TRUE, FALSE))
   data <- data[data$Date >= as.Date(date_range[1]) & data$Date <= as.Date(date_range[2]), ]
   data$Timeframe <- factor(get_timeframe(data$Date, timeframe))

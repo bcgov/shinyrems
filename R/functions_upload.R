@@ -47,15 +47,18 @@ process_data_upload <- function(data, variable, site, date_range){
 process_dates <- function(data){
   data %>%
     dplyr::mutate(
-      hour = dplyr::if_else(is.na(.data$Second), 0, .data$Second),
-      minute = dplyr::if_else(is.na(.data$Minute), 0, .data$Minute),
-      second = dplyr::if_else(is.na(.data$Second), 0, .data$Second),
+      Hour = dplyr::if_else(is.na(.data$Hour), 0L, .data$Hour),
+      Minute = dplyr::if_else(is.na(.data$Minute), 0L, .data$Minute),
+      Second = dplyr::if_else(is.na(.data$Second), 0L, .data$Second),
       DateTime = ISOdatetime(.data$Year, .data$Month, .data$Day,
-                             .data$hour, .data$minute, .data$second)) %>%
+                             .data$Hour, .data$Minute, .data$Second),
+      Hour = NULL,
+      Minute = NULL,
+      Second = NULL,
+      Year = NULL,
+      Month = NULL,
+      Day = NULL) %>%
     dplyr::select(.data$Station, .data$Variable, .data$DateTime,
-                  .data$Value, .data$DetectionLimit, .data$ResultLetter,
-                  dplyr::everything())
-
-  data
-
+                  .data$Value, .data$Units, .data$DetectionLimit,
+                  .data$ResultLetter, everything())
 }

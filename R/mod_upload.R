@@ -73,6 +73,20 @@ mod_upload_server <- function(input, output, session) {
     processed_data = NULL
   )
 
+  dates <- reactive({
+    req(rv$date_data)
+    print(rv$date_data)
+    as.Date(range(rv$date_data$DateTime), na.rm = TRUE)
+  })
+
+  params <- reactive({
+    rv$check_data$Variable
+  })
+
+  sites <- reactive({
+    rv$check_data$Station
+  })
+
   output$ui_parameter <- renderUI({
     params <- params()
     selectInput(ns("parameter"), "Select parameter",
@@ -83,18 +97,6 @@ mod_upload_server <- function(input, output, session) {
     sites <- sites()
     select_input_x(ns("site"), label = "Select site(s)",
                 choices = sites, selected = sites)
-  })
-
-  dates <- reactive({
-    as.Date(range(rv$date_data$DateTime), na.rm = TRUE)
-  })
-
-  params <- reactive({
-    rv$check_data$Variable
-  })
-
-  sites <- reactive({
-    rv$check_data$Station
   })
 
   output$ui_date_range <- renderUI({
@@ -131,6 +133,7 @@ mod_upload_server <- function(input, output, session) {
                                      input$parameter,
                                      input$site,
                                      input$date_range)
+    print(processed)
     rv$processed_data <- processed
   })
 
