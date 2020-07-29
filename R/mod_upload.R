@@ -27,7 +27,8 @@ mod_upload_ui <- function(id) {
   ns <- NS(id)
   sidebarLayout(
     sidebarPanel(
-      title("Upload Data"),
+      title("Upload Data") %>%
+        shinyhelper::helper(content = "upload"),
       br(),
       dl_button(ns("dl_template"), label = "Download Template"),
       fileInput(ns("upload_data"),
@@ -66,6 +67,7 @@ mod_upload_ui <- function(id) {
 
 mod_upload_server <- function(input, output, session) {
   ns <- session$ns
+  shinyhelper::observe_helpers(help_dir = system.file("helpfiles", package = "shinyrems"))
 
   rv <- reactiveValues(
     check_data = NULL,

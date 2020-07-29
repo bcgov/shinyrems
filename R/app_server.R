@@ -12,6 +12,8 @@
 
 app_server <- function(input, output, session) {
 
+  shinyhelper::observe_helpers(help_dir = system.file("helpfiles", package = "shinyrems"))
+
   dataset <- getShinyOption("dataset", "demo")
 
   showModal(session = session, disclaimer_modal)
