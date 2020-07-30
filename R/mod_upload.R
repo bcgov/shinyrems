@@ -77,7 +77,6 @@ mod_upload_server <- function(input, output, session) {
 
   dates <- reactive({
     req(rv$date_data)
-    print(rv$date_data)
     as.Date(range(rv$date_data$DateTime), na.rm = TRUE)
   })
 
@@ -135,7 +134,6 @@ mod_upload_server <- function(input, output, session) {
                                      input$parameter,
                                      input$site,
                                      input$date_range)
-    print(processed)
     rv$processed_data <- processed
   })
 

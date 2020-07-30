@@ -27,7 +27,6 @@ check_data_upload <- function(data){
 
   names <- c("Station", "Variable", "Value",
              "Units", "Year", "Month", "Day")
-  print(names(data))
 
   if(!all(names %in% names(data))){
     chk::err("Uploaded data must have column names: ",
