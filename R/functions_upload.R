@@ -1,15 +1,33 @@
 preprocess_data <- function(data){
-  data %<>% dplyr::mutate(dplyr::across(c(.data$Year, .data$Month, .data$Day, .data$Hour, .data$Minute, .data$Second), as.integer),
-                          dplyr::across(c(.data$Station, .data$ResultLetter, .data$Units, .data$Variable), as.character),
-                          dplyr::across(c(.data$Value, .data$DetectionLimit), as.numeric))
+  data %<>% dplyr::mutate(dplyr::across(c(.data$Year, .data$Month, .data$Day), as.integer),
+                          dplyr::across(c(.data$Station, .data$Units, .data$Variable), as.character),
+                          dplyr::across(c(.data$Value), as.numeric))
+
+  if("Second" %in% names(data)){
+    data$Second %<>% as.integer()
+  }
+  if("Minute" %in% names(data)){
+    data$Minute %<>% as.integer()
+  }
+  if("Hour" %in% names(data)){
+    data$Hour %<>% as.integer()
+  }
+  if("DetectionLimit" %in% names(data)){
+    data$DetectionLimit %<>% as.numeric()
+  }
+  if("ResultLetter" %in% names(data)){
+    data$ResultLetter %<>% as.character()
+  }
+  data
 }
 
 check_data_upload <- function(data){
 
   data <- preprocess_data(data)
 
-  template <- readr::read_csv(system.file("extdata/ems_template.csv", package = "shinyrems"))
-  names <- names(template)
+  names <- c("Station", "Variable", "Value",
+             "Units", "Year", "Month", "Day")
+  print(names(data))
 
   if(!all(names %in% names(data))){
     chk::err("Uploaded data must have column names: ",
@@ -20,13 +38,20 @@ check_data_upload <- function(data){
   check_values(data$Year, c(1900L, 2100L), x_name = "Column 'Year'")
   check_values(data$Month, c(1L, 12L), x_name = "Column 'Month'")
   check_values(data$Day, c(1L, 31L), x_name = "Column 'Day'")
-  check_values(data$Hour, c(0L, 23L, NA), x_name = "Column 'Hour'")
-  check_values(data$Minute, c(0L, 59L, NA), x_name = "Column 'Minute'")
-  check_values(data$Second, c(0L, 59L, NA), x_name = "Column 'Second'")
 
   chk_no_missing(data$Station, x_name = "Column 'Station'")
   chk_no_missing(data$Value, x_name = "Column 'Station'")
   chk_no_missing(data$Variable, x_name = "Column 'Station'")
+
+  if("Second" %in% names(data)){
+    check_values(data$Second, c(0L, 59L, NA), x_name = "Column 'Second'")
+  }
+  if("Minute" %in% names(data)){
+    check_values(data$Minute, c(0L, 59L, NA), x_name = "Column 'Minute'")
+  }
+  if("Hour" %in% names(data)){
+    check_values(data$Hour, c(0L, 23L, NA), x_name = "Column 'Hour'")
+  }
 
   return(data)
 }
@@ -45,11 +70,23 @@ process_data_upload <- function(data, variable, site, date_range){
 }
 
 process_dates <- function(data){
+  hours <- 0L
+  if("Hour" %in% names(data)){
+    hours <- dplyr::if_else(is.na(data$Hour), 0L, data$Hour)
+  }
+  minutes <- 0L
+  if("Minute" %in% names(data)){
+    minutes <- dplyr::if_else(is.na(data$Minute), 0L, data$Minute)
+  }
+  seconds <- 0L
+  if("Second" %in% names(data)){
+    seconds <- dplyr::if_else(is.na(data$Second), 0L, data$Second)
+  }
   data %>%
     dplyr::mutate(
-      Hour = dplyr::if_else(is.na(.data$Hour), 0L, .data$Hour),
-      Minute = dplyr::if_else(is.na(.data$Minute), 0L, .data$Minute),
-      Second = dplyr::if_else(is.na(.data$Second), 0L, .data$Second),
+      Hour = hours,
+      Minute = minutes,
+      Second = seconds,
       DateTime = ISOdatetime(.data$Year, .data$Month, .data$Day,
                              .data$Hour, .data$Minute, .data$Second),
       Hour = NULL,
@@ -59,6 +96,5 @@ process_dates <- function(data){
       Month = NULL,
       Day = NULL) %>%
     dplyr::select(.data$Station, .data$Variable, .data$DateTime,
-                  .data$Value, .data$Units, .data$DetectionLimit,
-                  .data$ResultLetter, everything())
+                  .data$Value, .data$Units, everything())
 }

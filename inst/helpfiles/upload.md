@@ -17,7 +17,7 @@ The following columns are **mandatory**:
 1. **Value**
   - Value of measurement as number
   
-The following columns are **optional**: 
+The following columns are **optional** and can be used by the app: 
 * **DetectionLimit**
   - Detection limit as number
 1. **ResultLetter**
@@ -30,4 +30,4 @@ The following columns are **optional**:
   - Minute of measurement as number from 0 - 59
 1. **Second**
   - Second of measurement as number from 0 - 59
-
+  
