@@ -260,7 +260,8 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
 
   output$ui_colour <- renderUI({
     data <- rv$data
-    x <- sort(intersect(names(data), c("Station", "Variable", "EMS_ID")))
+    colour_vars <- c("Station", "Variable", "EMS_ID", "LOWER_DEPTH", "UPPER_DEPTH")
+    x <- sort(intersect(names(data), colour_vars))
     selectInput(ns("colour"), "Colour by",
       choices = x,
       selected = x[1]

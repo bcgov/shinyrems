@@ -25,6 +25,10 @@ ems_plot_data <- function(data, date_range, timeframe){
   data$Detected %<>% factor(levels = c(TRUE, FALSE))
   data <- data[data$Date >= as.Date(date_range[1]) & data$Date <= as.Date(date_range[2]), ]
   data$Timeframe <- factor(get_timeframe(data$Date, timeframe))
+  if("UPPER_DEPTH" %in% names(data))
+    data$UPPER_DEPTH %<>% as.factor()
+  if("LOWER_DEPTH" %in% names(data))
+    data$LOWER_DEPTH %<>% as.factor()
   data
 }
 

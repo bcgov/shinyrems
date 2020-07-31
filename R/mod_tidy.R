@@ -70,7 +70,7 @@ mod_tidy_server <- function(input, output, session, raw) {
       raw$data(),
       mdl_action = input$mdl_action,
       dataset = raw$dataset(),
-      cols = character(0)
+      cols = raw$cols()
     )
     x
   })
