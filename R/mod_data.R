@@ -32,20 +32,12 @@ mod_data_ui <- function(id) {
       br(),
         tags$label("Select site(s) or"),
         actionLink(ns("search_map"), label = "find sites on map"),
-        checkboxInput(ns("check_permit"),
-          label = "Filter by Permit Number",
-          value = FALSE
-        ),
         uiOutput(ns("ui_permit")),
-      checkboxInput(ns("check_wshedgroup"),
-                    label = "Filter by Watershed Group",
-                    value = FALSE
-      ),
       uiOutput(ns("ui_wshedgroup")),
         radioButtons(ns("site_type"),
           label = NULL,
-          choices = c("Monitoring Location", "EMS ID"),
-          selected = "Monitoring Location", inline = TRUE
+          choices = c("Station", "EMS ID"),
+          selected = "Station", inline = TRUE
         ),
         uiOutput(ns("ui_site")),
         tags$label("Select Parameter"),
@@ -135,9 +127,6 @@ mod_data_server <- function(input, output, session) {
     updateSelectInput(session, "permit", selected = "")
     updateSelectInput(session, "wshedgroup", selected = "")
     updateSelectInput(session, "site", selected = "")
-    updateCheckboxInput(session, "check_permit", value = FALSE)
-    updateCheckboxInput(session, "check_wshedgroup", value = FALSE)
-
   })
 
   rv <- reactiveValues(
@@ -155,12 +144,10 @@ mod_data_server <- function(input, output, session) {
   })
 
   get_permits <- reactive({
-    req(input$check_permit)
     permits(lookup_location, input$wshedgroups)
   })
 
   get_wshedgroups <- reactive({
-    req(input$check_wshedgroup)
     wshedgroups(lookup_location, input$permit)
   })
 
@@ -187,20 +174,22 @@ mod_data_server <- function(input, output, session) {
   })
 
   output$ui_wshedgroup <- renderUI({
-    req(input$check_wshedgroup)
-    selectInput(ns("wshedgroup"),
-                label = NULL,
-                choices = c(get_wshedgroups(), ""),
-                selected = ""
-    )
+    div(p("Filter by watershed (optional)"),
+        selectInput(ns("wshedgroup"),
+                    label = NULL,
+                    choices = c(get_wshedgroups(), ""),
+                    selected = ""
+        ))
+
   })
 
   output$ui_permit <- renderUI({
-    select_input_x(ns("permit"),
-      label = NULL,
-      choices = c(get_permits(), ""),
-      selected = ""
-    )
+    div(p("Filter by permit (optional)"),
+        select_input_x(ns("permit"),
+                       label = NULL,
+                       choices = c(get_permits(), ""),
+                       selected = ""
+        ))
   })
 
   output$ui_site <- renderUI({
@@ -298,7 +287,10 @@ mod_data_server <- function(input, output, session) {
 
   observeEvent(input$leaf_shape_click, {
     ws <- input$leaf_shape_click$id
+    updateCheckboxInput(session, "check_wshedgroup", value = TRUE)
+    shinyjs::show("div_wshedgroup")
     updateSelectInput(session, "wshedgroup", selected = ws)
+
   })
 
   output$ui_table_raw <- renderUI({
