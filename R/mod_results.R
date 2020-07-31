@@ -225,7 +225,7 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
         checkboxGroupInput(ns("geom"),
           label = NULL,
           choices = c("show lines", "show points"),
-          selected = c("show points", "show lines"),
+          selected = c("show points"),
           inline = TRUE
         ),
         fillRow(
@@ -313,7 +313,6 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
   })
 
   output$ui_rename <- renderUI({
-    # site_col <- input$site_type
     sites <- unique(rv$data$Station)
     div(
       lapply(sites, rename_inputs, ns),
