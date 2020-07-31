@@ -138,18 +138,22 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     }
   })
 
-  plots <- reactive({
+  plot <- reactive({
     req(input$date_range)
     req(input$facet)
     req(input$colour)
 
-    ems_plot(
-      rv$data, input$plot_type,
-      input$geom, input$date_range,
-      input$point_size, input$line_size,
-      input$facet, input$colour, input$timeframe,
-      rv$guideline
-    )
+    data <- rv$data
+
+    data <- ems_plot_data(data = rv$data, date_range = input$date_range,
+                          timeframe = input$timeframe)
+    gp <- ems_plot_base(data, facet = input$facet) %>%
+      ems_plot_add_geom(plot_type = input$plot_type, geom = input$geom,
+                        point_size = input$point_size, line_size = input$line_size,
+                        colour = input$colour, timeframe = input$timeframe) %>%
+      ems_plot_add_guideline(guideline = rv$guideline)
+
+    gp
   })
 
   summary_table <- reactive({
@@ -189,9 +193,7 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
   })
 
   output$ems_plot <- renderPlot({
-    # suppressWarnings(waiter::show_butler())
-    plots()
-    # suppressWarnings(waiter::hide_butler())
+    plot()
   })
 
   output$ui_date_range <- renderUI({
@@ -270,7 +272,7 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
       paste0(input$file_plot, ".png")
     },
     content = function(file) {
-      ggplot2::ggsave(file, plots(), device = "png")
+      ggplot2::ggsave(file, plot(), device = "png")
     }
   )
 
@@ -288,6 +290,7 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     guideline = NULL,
     guideline_calc = NULL
   )
+
   observe({
     data <- outlier$data()
     data$Site_Renamed <- data$Station
