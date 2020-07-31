@@ -36,8 +36,8 @@ waiter_html <- function(x) {
 site_map <- function(ns) {
   tagList(
     help_text("Click a marker to add to selected sites. Selected sites
-    are shown in red. Select from dropdown or click polygon to zoom
-                to watershed group. "),
+    are shown in red. Select from dropdown in sidebar or click polygon to zoom
+                to watershed group. Only watershed groups with sites are shown."),
     uiOutput(ns("ui_wsgroup")),
     shinycssloaders::withSpinner(leaflet::leafletOutput(ns("leaf"))),
     br()

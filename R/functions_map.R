@@ -54,7 +54,24 @@ ems_leaflet <- function(watershed_groups, sites, site_type) {
 zoom_to <- function(id, ws) {
   ws <- watershed_groups[watershed_groups$WATERSHED_GROUP_NAME == ws, ]
   leafletProxy(id) %>%
-    setView(lng = ws$lng_center, lat = ws$lat_center, zoom = 8L)
+    setView(lng = ws$lng_center, lat = ws$lat_center, zoom = 8L) %>%
+    removeShape("highlighted_polygon") %>%
+    addPolygons(
+      data = ws,
+      group = "highlighted_polygon",
+      fillOpacity = 0.3, color = "black",
+      fillColor = "blue",
+      weight = 1.5,
+      layerId = ~WATERSHED_GROUP_NAME,
+      label = ~WATERSHED_GROUP_NAME,
+      highlightOptions = highlightOptions(
+        weight = 2,
+        color = "black",
+        bringToFront = FALSE,
+        fillOpacity = 0.3,
+        fillColor = "blue"
+      )
+    )
 }
 
 icon_blue <- makeAwesomeIcon(icon = "flag", markerColor = "blue", iconColor = "black")

@@ -37,6 +37,11 @@ mod_data_ui <- function(id) {
           value = FALSE
         ),
         uiOutput(ns("ui_permit")),
+      checkboxInput(ns("check_wshedgroup"),
+                    label = "Filter by Watershed Group",
+                    value = FALSE
+      ),
+      uiOutput(ns("ui_wshedgroup")),
         radioButtons(ns("site_type"),
           label = NULL,
           choices = c("Monitoring Location", "EMS ID"),
@@ -88,7 +93,9 @@ mod_data_server <- function(input, output, session) {
 
   dataset <- getShinyOption("dataset", "demo")
   lookup <- getShinyOption("lookup", NULL)
+  lookup_location <- getShinyOption("lookup_location", NULL)
   ems_data <- getShinyOption("ems_data", NULL)
+  watershed_groups <- getShinyOption("watershed_groups", NULL)
 
   output$ui_dataset <- renderUI({
     title(paste("Dataset:", pretty_dataset(dataset)))
@@ -112,7 +119,7 @@ mod_data_server <- function(input, output, session) {
   observeEvent(input$get, {
     waiter::waiter_show(html = waiter_html("Fetching requested data ..."))
     emsid <- translate_sites()
-    raw_rv$data <- ems_data(
+    rv$data <- ems_data(
       dataset = dataset,
       parameter = input$parameter,
       emsid = emsid,
@@ -126,38 +133,42 @@ mod_data_server <- function(input, output, session) {
   observeEvent(input$reset, {
     updateSelectInput(session, "parameter", selected = "")
     updateSelectInput(session, "permit", selected = "")
+    updateSelectInput(session, "wshedgroup", selected = "")
     updateSelectInput(session, "site", selected = "")
     updateCheckboxInput(session, "check_permit", value = FALSE)
+    updateCheckboxInput(session, "check_wshedgroup", value = FALSE)
+
   })
 
-  raw_rv <- reactiveValues(
+  rv <- reactiveValues(
     data = empty_raw,
     cols = character(0),
-    check_data = NULL
+    check_data = NULL,
+    site_selected = NULL,
+    site_choices = NULL
   )
-  observe({
-    if (!all_depth_na(raw_rv$data)) {
-      raw_rv$cols <- c("UPPER_DEPTH", "LOWER_DEPTH")
-    }
-  })
 
-  lookup_location <- reactive({
-    req(lookup)
-    get_lookup_location(lookup)
+  observe({
+    if (!all_depth_na(rv$data)) {
+      rv$cols <- c("UPPER_DEPTH", "LOWER_DEPTH")
+    }
   })
 
   get_permits <- reactive({
     req(input$check_permit)
-    permits(lookup)
+    permits(lookup_location, input$wshedgroups)
+  })
+
+  get_wshedgroups <- reactive({
+    req(input$check_wshedgroup)
+    wshedgroups(lookup_location, input$permit)
   })
 
   get_sites <- reactive({
-    permit_sites(input$permit, lookup, input$site_type)
+    filter_sites(input$permit, input$wshedgroup, lookup_location, input$site_type)
   })
 
   get_site_locations <- reactive({
-    req(lookup_location())
-    lookup_location <- lookup_location()
     x <- site_col(input$site_type)
     lookup_location[lookup_location[[x]] %in% get_sites(), ]
   })
@@ -175,17 +186,18 @@ mod_data_server <- function(input, output, session) {
     unique(translate_site(input$site, lookup, input$site_type))
   })
 
-  output$ui_wsgroup <- renderUI({
-    selectInput(ns("wsgroup"),
-      label = "Zoom to watershed group",
-      choices = c(sort(watershed_groups$WATERSHED_GROUP_NAME), ""),
-      selected = ""
+  output$ui_wshedgroup <- renderUI({
+    req(input$check_wshedgroup)
+    selectInput(ns("wshedgroup"),
+                label = NULL,
+                choices = c(get_wshedgroups(), ""),
+                selected = ""
     )
   })
 
   output$ui_permit <- renderUI({
     select_input_x(ns("permit"),
-      label = "Permit number:",
+      label = NULL,
       choices = c(get_permits(), ""),
       selected = ""
     )
@@ -250,7 +262,6 @@ mod_data_server <- function(input, output, session) {
       )
     }
 
-    lookup_location <- lookup_location()
     selected <- lookup_location[lookup_location[[id]] %in% input$site, ]
 
     leafletProxy("leaf") %>%
@@ -276,8 +287,8 @@ mod_data_server <- function(input, output, session) {
   })
 
   observe({
-    req(input$wsgroup)
-    zoom_to("leaf", input$wsgroup)
+    req(input$wshedgroup)
+    zoom_to("leaf", input$wshedgroup)
   })
 
   observeEvent(input$leaf_marker_click, {
@@ -287,7 +298,7 @@ mod_data_server <- function(input, output, session) {
 
   observeEvent(input$leaf_shape_click, {
     ws <- input$leaf_shape_click$id
-    updateSelectInput(session, "wsgroup", selected = ws)
+    updateSelectInput(session, "wshedgroup", selected = ws)
   })
 
   output$ui_table_raw <- renderUI({
@@ -295,7 +306,7 @@ mod_data_server <- function(input, output, session) {
   })
 
   output$table_raw <- DT::renderDT({
-    ems_data_table(raw_rv$data)
+    ems_data_table(rv$data)
   })
 
   output$dl_raw <- downloadHandler(
@@ -303,7 +314,7 @@ mod_data_server <- function(input, output, session) {
       paste0(input$file_raw, ".csv")
     },
     content = function(file) {
-      readr::write_csv(raw_rv$data, file)
+      readr::write_csv(rv$data, file)
     }
   )
 
@@ -313,11 +324,11 @@ mod_data_server <- function(input, output, session) {
         dataset
       }),
       data = reactive({
-        raw_rv$data
+        rv$data
       }),
       all_data = all_data,
       cols = reactive({
-        raw_rv$cols
+        rv$cols
       }),
       data_type = reactive({
         input$data_type

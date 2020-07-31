@@ -29,10 +29,13 @@ site_col <- function(site_type) {
   "MONITORING_LOCATION"
 }
 
-permit_sites <- function(permits, lookup, site_type) {
+filter_sites <- function(permits, wsgroup, lookup, site_type) {
   x <- site_col(site_type)
   if (!is.null(permits) && permits != "") {
-    return(sort(unique(lookup[[x]][which(lookup$PERMIT %in% permits)])))
+    lookup <- lookup[which(lookup$PERMIT %in% permits),]
+  }
+  if (!is.null(wsgroup) && wsgroup != "") {
+    lookup <- lookup[which(lookup$WATERSHED_GROUP_NAME %in% wsgroup),]
   }
   sort(unique(lookup[[x]]))
 }
@@ -48,8 +51,23 @@ site_parameters <- function(sites, lookup, site_type, param_strict) {
   sort(Reduce(intersect, l))
 }
 
-permits <- function(lookup) {
-  sort(setdiff(unique(lookup$PERMIT), NA_character_))
+permits <- function(lookup, wshedgroup) {
+  if(is.null(wshedgroup)){
+    return(sort(setdiff(unique(lookup$PERMIT), NA_character_)))
+  } else {
+    lookup <- lookup[which(lookup$WATERSHED_GROUP_NAME) == wshedgroup,]
+    return(sort(setdiff(unique(lookup$PERMIT), NA_character_)))
+  }
+}
+
+wshedgroups <- function(lookup, permit){
+  sort(lookup$WATERSHED_GROUP_NAME)
+  if(is.null(permit)){
+    return(sort(setdiff(unique(lookup$WATERSHED_GROUP_NAME), NA_character_)))
+  } else {
+    lookup <- lookup[which(lookup$PERMIT %in% permit),]
+    return(sort(setdiff(unique(lookup$WATERSHED_GROUP_NAME), NA_character_)))
+  }
 }
 
 date_range <- function(sites, parameters, lookup, site_type) {
