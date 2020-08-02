@@ -41,32 +41,30 @@ ems_plot_base <- function(data, facet){
                         scales = "free_y"
     ) +
     ggplot2::ylab(unique(data$Units)) +
-    ggplot2::theme(legend.position = "bottom") +
     ggplot2::theme_bw() +
     ggplot2::theme(legend.position = "bottom")
 }
 
 ems_plot_add_guideline <- function(gp, guideline){
-  if (!is.data.frame(guideline)) {
-    gp <- gp + ggplot2::geom_hline(yintercept = guideline,
-                                   linetype = "dotted",
-                                   size = 1)
-  }
 
   if (is.data.frame(guideline)) {
     if (nrow(guideline) == 1) {
-      gp <- gp + ggplot2::geom_hline(
-        yintercept = guideline$UpperLimit,
-        linetype = "dotted",
-        size = 1
-      )
+      gp <- gp + ggplot2::geom_hline(data = guideline,
+                                     ggplot2::aes_string(yintercept = "UpperLimit",
+                                                linetype = factor("UpperLimit"),
+                                                show_guide = TRUE), size = 1) +
+        ggplot2::scale_linetype_manual(name = "Guideline", values = "dashed", labels = "") +
+        ggplot2::guides(fill = ggplot2::guide_legend(override.aes = list(linetype = "blank")))
     } else {
       gp <- gp + ggplot2::geom_line(
         data = guideline,
-        ggplot2::aes_string(x = "Date", y = "UpperLimit"),
-        linetype = "dotted",
+        ggplot2::aes_string(x = "Date", y = "UpperLimit",
+                            linetype = factor("UpperLimit"),
+                            show_guide = TRUE),
         size = 1
-      )
+      ) +
+      ggplot2::scale_linetype_manual(name = "Guideline", values = "dashed", labels = "") +
+        ggplot2::guides(fill = ggplot2::guide_legend(override.aes = list(linetype = "blank")))
     }
   }
   gp

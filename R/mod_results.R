@@ -398,7 +398,7 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
 
   observe({
     if (input$guideline == "set manually") {
-      rv$guideline <- input$user_guideline
+      rv$guideline <- data.frame(UpperLimit = input$user_guideline)
     } else {
       rv$guideline <- rv$guideline_calc
     }
