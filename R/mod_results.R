@@ -62,9 +62,9 @@ mod_results_ui <- function(id) {
               id = ns("div_manual"),
               div(inline(p("Find a guideline using the")),
                   inline(tags$a("Water Quality Guideline app",
-                                href = "https://www.google.ca",
+                                href = "https://bcgov-env.shinyapps.io/bc_wqg/",
                                 target = "_blank"))),
-              numericInput(ns("user_guideline"), label = NULL, 0)
+              numericInput(ns("user_guideline"), label = NULL, value = NULL)
             )),
             shinyjs::hidden(div(
               id = ns("div_calculate"),
@@ -165,8 +165,9 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
       ems_plot_add_geom(plot_type = input$plot_type, geom = input$geom,
                         point_size = input$point_size, line_size = input$line_size,
                         colour = input$colour, timeframe = input$timeframe,
-                        palette = input$palette) %>%
-      ems_plot_add_guideline(guideline = rv$guideline)
+                        palette = input$palette)
+    if(!is.null(rv$guideline))
+      gp <- gp %>% ems_plot_add_guideline(guideline = rv$guideline)
 
     gp
   })
@@ -413,6 +414,7 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
 
   observe({
     if (input$guideline == "set manually") {
+      req(input$user_guideline)
       rv$guideline <- data.frame(UpperLimit = input$user_guideline)
     } else {
       print(rv$guideline_calc)
