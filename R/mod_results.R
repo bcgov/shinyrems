@@ -60,6 +60,10 @@ mod_results_ui <- function(id) {
             ),
             shinyjs::hidden(div(
               id = ns("div_manual"),
+              div(inline(p("Find a guideline using the")),
+                  inline(tags$a("Water Quality Guideline app",
+                                href = "https://www.google.ca",
+                                target = "_blank"))),
               numericInput(ns("user_guideline"), label = NULL, 0)
             )),
             shinyjs::hidden(div(
