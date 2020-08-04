@@ -99,7 +99,17 @@ mod_results_ui <- function(id) {
         tabPanel(
           title = "Plot",
           br(),
-          dl_group("plot", ns),
+          fillRow(
+            height = "90%", width = 650, flex = c(2, 3, 1, 1, 1, 1, 0.7, 1.5),
+            dl_button(ns("dl_plot"), "Download"),
+            textInput(ns("dl_file"), label = NULL, value = "", placeholder = "file name"),
+            p(HTML("width&nbsp"), style = "text-align: right;"),
+            numericInput(ns("dl_width"), label = NULL, value = 9),
+            p(HTML("height&nbsp"), style = "text-align: right;"),
+            numericInput(ns("dl_height"), label = NULL, value = 6),
+            p(HTML("dpi&nbsp"), style = "text-align: right;"),
+            numericInput(ns("dl_dpi"), label = NULL, value = 300)
+          ),
           br2(),
           uiOutput(ns("ui_plot"))
         ),
@@ -286,10 +296,14 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
 
   output$dl_plot <- downloadHandler(
     filename = function() {
-      paste0(input$file_plot, ".png")
+      paste0(input$dl_file, ".png")
     },
     content = function(file) {
-      ggplot2::ggsave(file, plot(), device = "png")
+      ggplot2::ggsave(file, plot(),
+                      width = input$dl_width,
+                      height = input$dl_height,
+                      dpi = input$dl_dpi,
+                      device = "png")
     }
   )
 
