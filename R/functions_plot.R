@@ -34,7 +34,7 @@ ems_plot_data <- function(data, date_range, timeframe){
 
 ems_plot_base <- function(data, facet){
   gp <- ggplot2::ggplot(data, ggplot2::aes_string(x = "Date", y = "Value")) +
-    ggplot2::scale_color_discrete(drop = FALSE) +
+    # ggplot2::scale_color_discrete(drop = FALSE) +
     ggplot2::expand_limits(y = 0) +
     ggplot2::facet_wrap(facet,
                         ncol = 1,
@@ -51,16 +51,14 @@ ems_plot_add_guideline <- function(gp, guideline){
     if (nrow(guideline) == 1) {
       gp <- gp + ggplot2::geom_hline(data = guideline,
                                      ggplot2::aes_string(yintercept = "UpperLimit",
-                                                linetype = factor("UpperLimit"),
-                                                show_guide = TRUE), size = 1) +
+                                                linetype = factor("UpperLimit")), size = 1) +
         ggplot2::scale_linetype_manual(name = "Guideline", values = "dashed", labels = "") +
         ggplot2::guides(fill = ggplot2::guide_legend(override.aes = list(linetype = "blank")))
     } else {
       gp <- gp + ggplot2::geom_line(
         data = guideline,
         ggplot2::aes_string(x = "Date", y = "UpperLimit",
-                            linetype = factor("UpperLimit"),
-                            show_guide = TRUE),
+                            linetype = factor("UpperLimit")),
         size = 1
       ) +
       ggplot2::scale_linetype_manual(name = "Guideline", values = "dashed", labels = "") +
@@ -72,7 +70,7 @@ ems_plot_add_guideline <- function(gp, guideline){
 
 ems_plot_add_geom <- function(gp, plot_type, geom,
                               point_size, line_size,
-                              colour, timeframe){
+                              colour, timeframe, palette){
   if (plot_type == "scatter") {
     if ("show points" %in% geom) {
       gp <- gp + ggplot2::geom_point(
@@ -81,13 +79,15 @@ ems_plot_add_geom <- function(gp, plot_type, geom,
           shape = "Detected",
           color = colour
         )
-      )
+      ) +
+        ggplot2::scale_colour_brewer(palette = palette)
     }
     if ("show lines" %in% geom) {
       gp <- gp + ggplot2::geom_line(
         size = line_size,
         ggplot2::aes_string(color = colour)
-      )
+      ) +
+        ggplot2::scale_colour_brewer(palette = palette)
     }
   }
 
@@ -97,7 +97,8 @@ ems_plot_add_geom <- function(gp, plot_type, geom,
       y = "Value",
       fill = colour
     )) +
-      ggplot2::xlab(timeframe)
+      ggplot2::xlab(timeframe) +
+      ggplot2::scale_fill_brewer(palette = palette)
   }
   gp
 }

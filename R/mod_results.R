@@ -46,7 +46,10 @@ mod_results_ui <- function(id) {
             sliderInput(ns("plot_height"),
               label = "Plot Height",
               value = 500, min = 0, max = 1000, step = 100
-            )
+            ),
+            selectInput(ns("palette"), label = "Palette",
+                        choices = c("Accent", "Dark2", "Paired", "Pastel1",
+                                    "Pastel2", "Set1", "Set2", "Set3"))
           ),
           tabPanel(
             title = "Guideline",
@@ -102,6 +105,13 @@ mod_results_ui <- function(id) {
           dl_group("table", ns),
           br2(), br(),
           ems_table_output(ns("table"))
+        ),
+        tabPanel(
+          title = "Data (with guideline)",
+          br(),
+          dl_group("final_table", ns),
+          br2(), br(),
+          ems_table_output(ns("final_table"))
         )
       ))
     )
@@ -150,7 +160,8 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     gp <- ems_plot_base(data, facet = input$facet) %>%
       ems_plot_add_geom(plot_type = input$plot_type, geom = input$geom,
                         point_size = input$point_size, line_size = input$line_size,
-                        colour = input$colour, timeframe = input$timeframe) %>%
+                        colour = input$colour, timeframe = input$timeframe,
+                        palette = input$palette) %>%
       ems_plot_add_guideline(guideline = rv$guideline)
 
     gp
@@ -400,6 +411,7 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     if (input$guideline == "set manually") {
       rv$guideline <- data.frame(UpperLimit = input$user_guideline)
     } else {
+      print(rv$guideline_calc)
       rv$guideline <- rv$guideline_calc
     }
   })
