@@ -14,34 +14,36 @@ test_that("data upload works", {
                         dataset = "upload",
                         cols = character(0)
   )
-  expect_identical(nrow(tidy_data), 3L)
+  expect_identical(nrow(tidy_data), 19L)
 
   stand_data <- ems_standardize(data, TRUE)
-  expect_identical(nrow(stand_data), 2L)
+  expect_identical(nrow(stand_data), 19L)
 
   agg_data <- ems_aggregate(stand_data,
                             by = "Station", remove_blanks = FALSE,
                             max_cv = Inf, FUN = max
   )
-  expect_identical(nrow(agg_data), 2L)
+  expect_identical(nrow(agg_data), 19L)
 
   out_data <- ems_outlier(stand_data, by = "Station", max_cv = Inf, sds = 1, FUN = mean)
-  expect_identical(nrow(stand_data), 2L)
+  expect_identical(nrow(stand_data), 19L)
 
   limits <- wqbc::limits
 
   #### test plot
   data <- out_data
-  data$EMS_ID_Renamed <- data$EMS_ID
+  data$Site_Renamed <- data$Station
   from <- as.Date("2018-01-02")
   to <- as.Date("2019-09-30")
 
-  x <- ems_plot(data,
-                plot_type = "scatter", geom = c("show lines", "show points"),
-                date_range = c(from, to), point_size = 1, line_size = 1,
-                facet = "EMS_ID", colour = "EMS_ID", timeframe = "Year", guideline = 6
-  )
-  expect_is(x, "ggplot")
-  expect_named(x)
+  x <- ems_plot_data(data, date_range = c(from, to), timeframe = "Year")
+  gp <- ems_plot_base(x, facet = "Station") %>%
+    ems_plot_add_geom(plot_type = "scatter", geom = c("show points"),
+                      point_size = 1, line_size = 1, colour = "Station",
+                      timeframe = "Year", palette = "Set1") %>%
+    ems_plot_add_guideline(guideline = data.frame(UpperLimit = 7))
+
+  expect_is(gp, "ggplot")
+  expect_named(gp)
 
 })
