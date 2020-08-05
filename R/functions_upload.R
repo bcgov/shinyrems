@@ -71,15 +71,15 @@ process_data_upload <- function(data, variable, site, date_range){
 process_dates <- function(data){
   hours <- 0L
   if("Hour" %in% names(data)){
-    hours <- dplyr::if_else(is.na(data$Hour), 0L, data$Hour)
+    hours <- ifelse(is.na(data$Hour), 0, data$Hour)
   }
   minutes <- 0L
   if("Minute" %in% names(data)){
-    minutes <- dplyr::if_else(is.na(data$Minute), 0L, data$Minute)
+    minutes <- ifelse(is.na(data$Minute), 0, data$Minute)
   }
   seconds <- 0L
   if("Second" %in% names(data)){
-    seconds <- dplyr::if_else(is.na(data$Second), 0L, data$Second)
+    seconds <- ifelse(is.na(data$Second), 0, data$Second)
   }
   data %>%
     dplyr::mutate(

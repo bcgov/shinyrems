@@ -16,7 +16,7 @@ additional_parameters <- function(data, lookup, limits = wqbc::limits, codes = w
   param_code <- gsub("-", "_", param_code)
   variable <- codes$Variable[codes$Code %in% param_code]
   guideline <- limits[limits$Variable == variable, ]
-  ccodes <- extract_codes(c(guideline$Condition, guideline$Limit))
+  ccodes <- extract_codes(c(guideline$Condition, guideline$UpperLimit))
   code_to_parameter(ccodes, lookup)
 }
 

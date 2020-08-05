@@ -84,23 +84,20 @@ test_that("calculating guideline works", {
     silent = TRUE
   )
 
-  data$EMS_ID_Renamed <- data$EMS_ID
+  data$Site_Renamed <- data$EMS_ID
 
   #####
   date_range <- c(from_date, to_date)
   timeframe <- "Year"
   facet <- "EMS_ID"
   guideline <- x
-  data$Detected <- detected(data$Value, data$DetectionLimit)
-  data$EMS_ID <- data$EMS_ID_Renamed
-  data$Detected %<>% factor(levels = c(TRUE, FALSE))
-  data <- data[data$Date >= as.Date(date_range[1]) & data$Date <= as.Date(date_range[2]), ]
-  data$Timeframe <- factor(get_timeframe(data$Date, timeframe))
 
-  gp <- ems_plot(
-    data, "scatter", c("show lines", "show points"),
-    c(from_date, to_date), 1, 0.5, "Variable", "EMS_ID", "Year", y
-  )
+  x <- ems_plot_data(data, date_range = date_range, timeframe = "Year")
+  gp <- ems_plot_base(x, facet = "Station") %>%
+    ems_plot_add_geom(plot_type = "scatter", geom = c("show points"),
+                      point_size = 1, line_size = 1, colour = "Station",
+                      timeframe = "Year", palette = "Set1") %>%
+    ems_plot_add_guideline(guideline = y)
 
   expect_is(gp, "ggplot")
 
