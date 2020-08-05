@@ -30,9 +30,10 @@ test_that("ems data functions work", {
 
   tidy_data <- ems_tidy(data,
     mdl_action = "zero",
-    dataset = "2yr", cols = character(0)
+    dataset = "2yr", cols = c("UPPER_DEPTH", "LOWER_DEPTH")
   )
-  tidy_data2 <- wqbc::tidy_ems_data(data, mdl_action = "zero", cols = character(0))
+  tidy_data2 <- wqbc::tidy_ems_data(data, mdl_action = "zero",
+                                    cols = c("UPPER_DEPTH", "LOWER_DEPTH"))
   expect_identical(tidy_data, tidy_data2)
 
   stand_data <- ems_standardize(tidy_data, TRUE)
@@ -40,28 +41,30 @@ test_that("ems data functions work", {
   expect_identical(stand_data, stand_data2)
 
   agg_data <- ems_aggregate(stand_data,
-    by = "EMS_ID", remove_blanks = TRUE,
+    by = "Station", remove_blanks = TRUE,
     max_cv = Inf, FUN = max
   )
   expect_identical(nrow(agg_data), 30L)
 
-  out_data <- ems_outlier(stand_data, by = "EMS_ID", max_cv = Inf, sds = 1, FUN = mean)
+  out_data <- ems_outlier(stand_data, by = c("Station", "UPPER_DEPTH"),
+                          max_cv = Inf, sds = 1, FUN = mean)
   expect_identical(nrow(out_data), 30L)
 
   limits <- wqbc::limits
 
   #### test plot
   data <- out_data
-  data$EMS_ID_Renamed <- data$EMS_ID
+  data$Site_Renamed <- data$Station
 
-  x <- ems_plot(data,
-    plot_type = "scatter", geom = c("show lines", "show points"),
-    date_range = c(from, to), point_size = 1, line_size = 1,
-    facet = "EMS_ID", colour = "EMS_ID", timeframe = "Year", guideline = 6
-  )
+  x <- ems_plot_data(data, date_range = c(from, to), timeframe = "Year")
+  gp <- ems_plot_base(x, facet = "Station") %>%
+    ems_plot_add_geom(plot_type = "scatter", geom = c("show points"),
+                      point_size = 1, line_size = 1, colour = "Station",
+                      timeframe = "Year", palette = "Set1") %>%
+    ems_plot_add_guideline(guideline = 6)
 
-  expect_is(x, "ggplot")
-  expect_named(x)
+  expect_is(gp, "ggplot")
+  expect_named(gp)
 
   ### check demo data
   data <- ems_demo_data
