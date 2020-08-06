@@ -27,7 +27,7 @@ mod_upload_ui <- function(id) {
   ns <- NS(id)
   sidebarLayout(
     sidebarPanel(
-      title("Upload Data") %>% helper("upload"),
+      title("Upload Data") %>% helper("tab1_upload"),
       br(),
       dl_button(ns("dl_template"), label = "Download Template"),
       fileInput(ns("upload_data"),
