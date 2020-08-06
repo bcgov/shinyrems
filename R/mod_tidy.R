@@ -29,11 +29,11 @@ mod_tidy_ui <- function(id) {
     sidebarPanel(
       class = "sidebar",
       br(),
-      uiOutput(ns("ui_sample_state")),
-      uiOutput(ns("ui_sample_class")),
+      uiOutput(ns("ui_sample_state")) %>% helper("tab2_samplestate"),
+      uiOutput(ns("ui_sample_class")) %>% helper("tab2_sampleclass"),
       uiOutput(ns("ui_mdl_action")),
       checkboxInput(ns("strict"), "Strict matching", value = TRUE) %>%
-        embed_help("info_strict", ns, info$strict)
+        helper("tab2_strict")
     ),
     mainPanel(tabsetPanel(
       tabPanel(
@@ -126,11 +126,14 @@ mod_tidy_server <- function(input, output, session, raw) {
 
   output$ui_mdl_action <- renderUI({
     selectInput(ns("mdl_action"),
-      label = "MDL Action",
-      choices = c("zero", "mdl", "half", "na", "none"),
+      label = "Set values below detection limit to",
+      choices = c("zero" = "zero", "detection limit" = "mdl",
+                  "half the detection limit" = "half",
+                  "missing value (NA)" = "na",
+                  "take no action" = "none"),
       selected = "zero"
     ) %>%
-      embed_help("info_mdl", ns, info$mdl_action)
+      helper("tab2_mdlaction")
   })
 
   observeEvent(input$info_mdl, {

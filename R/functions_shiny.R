@@ -67,6 +67,11 @@ show <- function(id, anim = TRUE) {
   shinyjs::show(id, anim = anim)
 }
 
+helper <- function(x, content){
+  shinyhelper::helper(shiny_tag = x, content = content,
+                      colour = "#0275d8")
+}
+
 embed_help <- function(tag, id, ns, help) {
   element <- div(shiny::actionLink(ns(id), shiny::icon("info-circle")),
     class = "pull-right"
@@ -82,3 +87,5 @@ embed_help <- function(tag, id, ns, help) {
     ))
   )
 }
+
+
