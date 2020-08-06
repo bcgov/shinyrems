@@ -28,6 +28,7 @@ mod_tidy_ui <- function(id) {
   sidebarLayout(
     sidebarPanel(
       class = "sidebar",
+      title("Tidy your data") %>% helper("tab2_tidy"),
       br(),
       uiOutput(ns("ui_sample_state")) %>% helper("tab2_samplestate"),
       uiOutput(ns("ui_sample_class")) %>% helper("tab2_sampleclass"),

@@ -28,6 +28,8 @@ mod_clean_ui <- function(id) {
   sidebarLayout(
     sidebarPanel(
       class = "sidebar",
+      title("Clean your data") %>% helper("tab3_clean"),
+      br(),
       uiOutput(ns("ui_by")) %>% helper("tab3_summarizebycol"),
       radioButtons(ns("fun"),
         label = "Summarize by function",
