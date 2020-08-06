@@ -378,7 +378,7 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
       by = clean$by(), sds = outlier$sds(),
       ignore_undetected = outlier$ignore_undetected(),
       large_only = outlier$large_only(),
-      remove_blanks = clean$remove_blanks(),
+      remove_blanks = FALSE,
       max_cv = clean$max_cv(), FUN = eval(parse(text = clean$fun())),
       limits = wqbc::limits
     )
@@ -394,25 +394,31 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     html <- waiter_html("")
     if (length(params) == 0) {
       html <- waiter_html("Calculating guideline ...")
+    } else {
+      html <- waiter_html(paste(
+        "Fetching additional data:",
+        paste(params, collapse = ", ")
+      ))
     }
+    print(html)
     waiter::waiter_show(html = html)
 
     if (length(params) != 0) {
-      waiter::waiter_update(html = waiter_html(paste(
-        "Fetching additional data:",
-        paste(params, collapse = ", ")
-      )))
-      data2 <- data_parameter()
-      all_data <- rbind(data1, data2)
+        data2 <- data_parameter()
+        all_data <- rbind(data1, data2)
     } else {
       all_data <- data1
     }
+
+    print(all_data)
 
     waiter::waiter_update(html = waiter_html("Calculating guideline ..."))
     x <- try(wqbc::calc_limits(all_data,
       clean = FALSE, term = input$term,
       estimate_variables = input$estimate_variables
     ), silent = TRUE)
+
+    print(x)
 
     waiter::waiter_hide()
 
