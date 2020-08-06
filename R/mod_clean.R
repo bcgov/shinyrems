@@ -28,14 +28,16 @@ mod_clean_ui <- function(id) {
   sidebarLayout(
     sidebarPanel(
       class = "sidebar",
-      uiOutput(ns("ui_by")),
+      uiOutput(ns("ui_by")) %>% helper("tab3_summarizebycol"),
       radioButtons(ns("fun"),
         label = "Summarize by function",
         choices = c("mean", "median", "max"),
         selected = "max", inline = TRUE
-      ),
-      numericInput(ns("max_cv"), label = "Maximum CV", value = Inf) %>%
-        embed_help("info_maxcv", ns, info$max_cv)
+      ) %>% helper("tab3_summarizebyfun"),
+      numericInput(ns("max_cv"),
+                   label = "Maximum coefficient of variation for replicates",
+                   value = Inf) %>%
+        helper("tab3_maxcv")
     ),
     mainPanel(tabsetPanel(
       selected = "Clean Data",
