@@ -209,8 +209,8 @@ mod_data_server <- function(input, output, session) {
 
   observe({
     updateSelectizeInput(session = session, inputId = 'parameter',
-                         choices = get_parameters(),
-                         selected = NULL,
+                         choices = c(get_parameters(), ""),
+                         selected = "",
                          server = TRUE)
   })
 
@@ -297,6 +297,16 @@ mod_data_server <- function(input, output, session) {
     shinyjs::show("div_wshedgroup")
     updateSelectInput(session, "wshedgroup", selected = ws)
 
+  })
+
+  observe({
+    req(nrow(rv$data) > 0)
+    x <- rv$data
+    col <- site_col(input$site_type)
+    sites <- unique(x[[col]])
+    sitediff <- setdiff(input$site, sites)
+    if(length(sitediff))
+      return(showModal(sitediff_modal(sitediff)))
   })
 
   output$ui_table_raw <- renderUI({
