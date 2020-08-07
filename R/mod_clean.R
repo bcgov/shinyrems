@@ -37,7 +37,7 @@ mod_clean_ui <- function(id) {
         selected = "max", inline = TRUE
       ) %>% helper("tab3_summarizebyfun"),
       numericInput(ns("max_cv"),
-                   label = "Maximum coefficient of variation for replicates",
+                   label = "Maximum Coefficient of Variation for replicates",
                    value = Inf) %>%
         helper("tab3_maxcv")
     ),
