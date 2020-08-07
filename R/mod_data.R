@@ -119,7 +119,7 @@ mod_data_server <- function(input, output, session) {
   observeEvent(input$get, {
     waiter::waiter_show(html = waiter_html("Fetching requested data ..."))
     emsid <- translate_sites()
-    rv$data <- ems_data(
+    x <- ems_data(
       dataset = dataset,
       parameter = input$parameter,
       emsid = emsid,
@@ -127,6 +127,14 @@ mod_data_server <- function(input, output, session) {
       to_date = as.character(input$date_range[2]),
       data = all_data()
     )
+    rv$data <- x
+    col <- site_col(input$site_type)
+    sites <- unique(x[[col]])
+    sitediff <- setdiff(input$site, sites)
+    for(i in sitediff){
+      showNotification(paste("No data available for site:", i), duration = NULL,
+                       type = "warning")
+    }
     waiter::waiter_hide()
   })
 
@@ -297,16 +305,6 @@ mod_data_server <- function(input, output, session) {
     shinyjs::show("div_wshedgroup")
     updateSelectInput(session, "wshedgroup", selected = ws)
 
-  })
-
-  observe({
-    req(nrow(rv$data) > 0)
-    x <- rv$data
-    col <- site_col(input$site_type)
-    sites <- unique(x[[col]])
-    sitediff <- setdiff(input$site, sites)
-    if(length(sitediff))
-      return(showModal(sitediff_modal(sitediff)))
   })
 
   output$ui_table_raw <- renderUI({
