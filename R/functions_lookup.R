@@ -44,12 +44,6 @@ get_lookup_location <- function(data) {
   # dplyr::as_tibble()
 }
 
-get_lookup_wsgroup <- function(dataset){
-  if(dataset == "demo")
-    return(demo_watershed_groups)
-  watershed_groups
-}
-
 add_lookup_wsgroup <- function(lookup){
   lookup_sf <- sf::st_as_sf(lookup, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
   lookup_sf <- suppressMessages(suppressWarnings(lookup_sf %>% sf::st_join(watershed_groups)))

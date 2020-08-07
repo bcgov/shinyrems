@@ -35,7 +35,9 @@ Imports:
     stringr,
     rlang,
     err,
-    shinyhelper
+    shinyhelper,
+    png,
+    sf
 Suggests:
     testthat (>= 2.1.0),
     usethis,

@@ -95,5 +95,5 @@ process_dates <- function(data){
       Month = NULL,
       Day = NULL) %>%
     dplyr::select(.data$Station, .data$Variable, .data$DateTime,
-                  .data$Value, .data$Units, everything())
+                  .data$Value, .data$Units, dplyr::everything())
 }
