@@ -272,7 +272,7 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
         choices = c("Year", "Year-Month", "Month", "Season"),
         selected = c("Year")
       ) %>%
-        embed_help("info_timeframe", ns, info$timeframe))
+        helper("tab5_timeframe"))
     )
   })
 
