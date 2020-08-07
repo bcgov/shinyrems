@@ -28,7 +28,7 @@ mod_data_ui <- function(id) {
 
   sidebarLayout(
     sidebarPanel(
-      uiOutput(ns("ui_dataset")),
+      uiOutput(ns("ui_dataset")) %>% helper("tab1_data"),
       br(),
         tags$label("Select site(s) or"),
         actionLink(ns("search_map"), label = "find sites on map"),
@@ -40,7 +40,7 @@ mod_data_ui <- function(id) {
           selected = "Station", inline = TRUE
         ),
         uiOutput(ns("ui_site")),
-        tags$label("Select Parameter"),
+        tags$label("Select variable"),
         radioButtons(ns("param_strict"),
           label = NULL,
           choices = c(
