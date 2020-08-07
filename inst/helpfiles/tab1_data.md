@@ -14,7 +14,7 @@ Once site selection is made, variables with data for those sites are then shown 
 
 The minimum and maximum date range are automatically determined from the data. This can then be refined.  
 
-*Note, to get data or to fetch new data based on different site/variable/date selection you must click the 'Get/Update Data' button* 
+*Note, to get data or to fetch new data based on different site/variable/date selection you* **must** *click the* **'Get/Update Data'** *button* 
 
 
 
