@@ -1,10 +1,10 @@
 ### Get data
 
-This allows you to filter data from the EMS database ('historic', '2yr' or 'all' depending on selection at app startup).
+This allows you to filter data from the EMS database by site (Station or EMS_ID), Variable and Date. Multiple sites can be selected. One variable can be selected.
 
-**Sites (Station or EMS_ID)**  
+**Sites**  
 
-All possible sites are shown initially in the dropdown menu. These options can be reduced by selecting a watershed group or permit number. Sites and watershed groups can also be selected using the 'Site Map' tab.  
+All possible sites are shown initially in the dropdown menu. These options can be reduced by selecting a watershed or permit number. Sites and watersheds can also be selected using the 'Site Map' tab.  
 
 **Variables**  
 
