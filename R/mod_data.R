@@ -140,7 +140,6 @@ mod_data_server <- function(input, output, session) {
   observe({
     if (!all_depth_na(rv$data)) {
       rv$cols <- c("UPPER_DEPTH", "LOWER_DEPTH")
-      print(rv$cols)
     }
   })
 

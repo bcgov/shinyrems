@@ -75,6 +75,10 @@ mod_results_ui <- function(id) {
               checkboxInput(ns("estimate_variables"), "Get modelled estimate",
                 value = FALSE
               ) %>% helper("tab5_modelled"),
+              numericInput(ns("guideline_sigfig"),
+                           label = "Guideline significant figures",
+                           value = 2, min = 0, max = 10
+              ),
               actionButton(ns("get"), "Get/update guideline")
             ))
           ),
@@ -122,7 +126,7 @@ mod_results_ui <- function(id) {
           ems_table_output(ns("table"))
         ),
         tabPanel(
-          title = "Data (with guideline)",
+          title = "Guideline Data",
           br(),
           dl_group("final_table", ns),
           br2(), br(),
@@ -204,6 +208,19 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
         dom = "t",
         ordering = FALSE
       )
+    )
+  })
+
+  output$final_table <- DT::renderDT({
+    req(rv$guideline)
+    DT::datatable(rv$guideline,
+                  class = "cell-border stripe compact",
+                  rownames = FALSE,
+                  options = list(
+                    scrollX = TRUE,
+                    dom = "t",
+                    ordering = FALSE
+                  )
     )
   })
 
@@ -401,7 +418,6 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
         paste(params, collapse = ", ")
       ))
     }
-    print(html)
     waiter::waiter_show(html = html)
 
     if (length(params) != 0) {
@@ -411,15 +427,11 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
       all_data <- data1
     }
 
-    print(all_data)
-
     waiter::waiter_update(html = waiter_html("Calculating guideline ..."))
     x <- try(wqbc::calc_limits(all_data,
       clean = FALSE, term = input$term,
       estimate_variables = input$estimate_variables
     ), silent = TRUE)
-
-    print(x)
 
     waiter::waiter_hide()
 
@@ -427,19 +439,29 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
       if (nrow(x) == 0) {
         return(showModal(guideline_modal()))
       }
-      return(rv$guideline_calc <- x)
+      rv$guideline_calc <- x
+      x$UpperLimit <- signif(x$UpperLimit, input$guideline_sigfig)
+      return(rv$guideline <- x)
     } else {
       return(showModal(guideline_modal()))
     }
   })
 
+  observeEvent(input$guideline_sigfig, {
+    req(rv$guideline_calc)
+    x <- rv$guideline_calc
+    x$UpperLimit <- signif(x$UpperLimit, input$guideline_sigfig)
+    rv$guideline <- x
+  })
+
   observe({
     if (input$guideline == "set manually") {
       req(input$user_guideline)
-      rv$guideline <- data.frame(UpperLimit = input$user_guideline)
-    } else {
-      print(rv$guideline_calc)
-      rv$guideline <- rv$guideline_calc
+      data <- outlier$data()
+      data$UpperLimit <- input$user_guideline
+      data <- data %>% dplyr::select(Date, Variable, Value, UpperLimit,
+                                     Units, dplyr::everything())
+      rv$guideline <- data
     }
   })
 }
