@@ -39,7 +39,11 @@ mod_data_ui <- function(id) {
           choices = c("Station", "EMS ID"),
           selected = "Station", inline = TRUE
         ),
-        uiOutput(ns("ui_site")),
+      select_input_x(
+        inputId = ns("site"), label = NULL,
+        choices = NULL,
+        selected = NULL
+      ),
         tags$label("Select variable"),
         radioButtons(ns("param_strict"),
           label = NULL,
@@ -49,7 +53,11 @@ mod_data_ui <- function(id) {
           ),
           selected = "in ANY of selected sites"
         ),
-        uiOutput(ns("ui_parameter")),
+      selectizeInput(ns("parameter"),
+                  label = NULL,
+                  choices = NULL,
+                  selected = NULL
+      ),
         uiOutput(ns("ui_date")),
       inline(uiOutput(ns("ui_get"))),
       inline(uiOutput(ns("ui_reset")))
@@ -192,20 +200,18 @@ mod_data_server <- function(input, output, session) {
         ))
   })
 
-  output$ui_site <- renderUI({
-    select_input_x(ns("site"),
-      label = NULL,
-      choices = c(get_sites(), ""),
-      selected = ""
-    )
+  observe({
+    updateSelectizeInput(session = session, inputId = 'site',
+                         choices = get_sites(),
+                         selected = NULL,
+                         server = TRUE)
   })
 
-  output$ui_parameter <- renderUI({
-    selectInput(ns("parameter"),
-      label = NULL,
-      choices = c(get_parameters(), ""),
-      selected = "", multiple = FALSE
-    )
+  observe({
+    updateSelectizeInput(session = session, inputId = 'parameter',
+                         choices = get_parameters(),
+                         selected = NULL,
+                         server = TRUE)
   })
 
   output$ui_date <- renderUI({
