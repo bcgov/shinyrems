@@ -29,7 +29,6 @@ Imports:
     dttr2,
     waiter,
     shinycssloaders,
-    stringr,
     rlang,
     err,
     shinyhelper,
