@@ -29,17 +29,18 @@ mod_outlier_ui <- function(id) {
     sidebarLayout(
       sidebarPanel(
         class = "sidebar",
+        title("Find and remove outliers") %>% helper("tab4_outlier"),
+        br(),
         numericInput(ns("sds"),
           label = "Standard deviations",
           value = 10
-        ) %>%
-          embed_help("info_sds", ns, info$sds),
+        ) %>% helper("tab4_stddev"),
         checkboxInput(ns("ignore_undetected"), "Ignore values below detection limit", TRUE) %>%
-          embed_help("info_undetected", ns, info$undetected),
+          helper("tab4_ignorevalues"),
         checkboxInput(ns("large_only"), "Large values only", TRUE) %>%
-          embed_help("info_large", ns, info$large),
+          helper("tab4_largevalues"),
         checkboxInput(ns("delete_outliers"), "Remove outliers from plot", FALSE) %>%
-          embed_help("info_remove", ns, info$remove),
+          helper("tab4_removeoutliers"),
         numericInput(ns("point_size"),
           label = "Point Size",
           value = 1.3, min = 0, max = 10
