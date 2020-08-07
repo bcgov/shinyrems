@@ -57,35 +57,36 @@ mod_results_ui <- function(id) {
             radioButtons(ns("guideline"), "How do you want to determine Water Quality Guideline?",
               choices = c("set manually", "calculate from data"),
               "set manually", inline = TRUE
-            ),
+            ) %>% helper("tab5_guideline"),
             shinyjs::hidden(div(
               id = ns("div_manual"),
+              numericInput(ns("user_guideline"), label = NULL, value = NULL),
               div(inline(p("Find a guideline using the")),
                   inline(tags$a("Water Quality Guideline app",
                                 href = "https://bcgov-env.shinyapps.io/bc_wqg/",
-                                target = "_blank"))),
-              numericInput(ns("user_guideline"), label = NULL, value = NULL)
+                                target = "_blank"))) %>% helper("tab5_wqgapp")
             )),
             shinyjs::hidden(div(
               id = ns("div_calculate"),
               radioButtons(ns("term"), "Select term",
                 choices = c("short", "long", "long-daily"),
                 selected = "long", inline = TRUE
-              ),
+              ) %>% helper("tab5_term"),
               checkboxInput(ns("estimate_variables"), "Get modelled estimate",
                 value = FALSE
-              ),
+              ) %>% helper("tab5_modelled"),
               actionButton(ns("get"), "Get/update guideline")
             ))
           ),
           tabPanel(
             title = "Summary Table",
+            h4("Create summary table") %>% helper("tab5_summary"),
             checkboxInput(ns("censored"),
               label = "Account for data censoring", value = TRUE
-            ),
+            ) %>% helper("tab5_censoring"),
             checkboxInput(ns("narm"),
               label = "Exclude missing values", value = TRUE
-            ),
+            ) %>% helper("tab5_narm"),
             uiOutput(ns("ui_by")),
             numericInput(ns("sigfig"),
               label = "Significant figures",
