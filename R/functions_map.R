@@ -13,7 +13,7 @@
 
 ems_leaflet <- function(watershed_groups, sites, site_type) {
   id <- site_col(site_type)
-  leaflet() %>%
+  leaflet(options = leafletOptions(preferCanvas = TRUE)) %>%
     addProviderTiles("Esri.WorldImagery", group = "Satelite") %>%
     addProviderTiles(leaflet::providers$CartoDB.Positron, group = "Basemap") %>%
     addLayersControl(
@@ -41,6 +41,7 @@ ems_leaflet <- function(watershed_groups, sites, site_type) {
       )
     ) %>%
     addAwesomeMarkers(
+      # clusterOptions = markerClusterOptions(),
       data = sites,
       icon = icon_blue,
       lng = ~LONGITUDE,

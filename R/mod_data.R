@@ -30,38 +30,40 @@ mod_data_ui <- function(id) {
     sidebarPanel(
       uiOutput(ns("ui_dataset")) %>% helper("tab1_data"),
       br(),
-        tags$label("Select site(s) or"),
-        actionLink(ns("search_map"), label = "find sites on map"),
-        uiOutput(ns("ui_permit")),
+      tags$label("Select site(s) or"),
+      actionLink(ns("search_map"), label = "find sites on map"),
+      uiOutput(ns("ui_permit")),
       uiOutput(ns("ui_wshedgroup")),
-        radioButtons(ns("site_type"),
-          label = NULL,
-          choices = c("Station", "EMS ID"),
-          selected = "Station", inline = TRUE
-        ),
-      select_input_x(
+      radioButtons(ns("site_type"),
+                   label = NULL,
+                   choices = c("Station", "EMS ID"),
+                   selected = "Station", inline = TRUE
+      ),
+      help_text("use delete or backspace key to remove entries"),
+      selectizeInput(
         inputId = ns("site"), label = NULL,
         choices = NULL,
-        selected = NULL
+        selected = NULL,
+        multiple = TRUE
       ),
-        tags$label("Select variable"),
-        radioButtons(ns("param_strict"),
-          label = NULL,
-          choices = c(
-            "in ANY of selected sites",
-            "in ALL of selected sites"
-          ),
-          selected = "in ANY of selected sites"
-        ),
+      tags$label("Select variable"),
+      radioButtons(ns("param_strict"),
+                   label = NULL,
+                   choices = c(
+                     "in ANY of selected sites",
+                     "in ALL of selected sites"
+                   ),
+                   selected = "in ANY of selected sites"
+      ),
       selectizeInput(ns("parameter"),
-                  label = NULL,
-                  choices = NULL,
-                  selected = NULL
+                     label = NULL,
+                     choices = NULL,
+                     selected = NULL
       ),
-        uiOutput(ns("ui_date")),
+      uiOutput(ns("ui_date")),
       inline(uiOutput(ns("ui_get"))),
       inline(uiOutput(ns("ui_reset")))
-      ),
+    ),
     mainPanel(
       tabsetPanel(
         selected = "Data",
@@ -148,9 +150,7 @@ mod_data_server <- function(input, output, session) {
   rv <- reactiveValues(
     data = empty_raw,
     cols = character(0),
-    check_data = NULL,
-    site_selected = NULL,
-    site_choices = NULL
+    check_data = NULL
   )
 
   observe({
@@ -230,9 +230,9 @@ mod_data_server <- function(input, output, session) {
       lookup, input$site_type
     )
     dateRangeInput(ns("date_range"),
-      label = "Get any available data between dates:",
-      start = dates[1], end = dates[2],
-      min = dates[1], max = dates[2]
+                   label = "Get any available data between dates:",
+                   start = dates[1], end = dates[2],
+                   min = dates[1], max = dates[2]
     )
   })
 
@@ -246,47 +246,79 @@ mod_data_server <- function(input, output, session) {
 
   observe({
     req(input$tabset_data == "Site Map")
-    sites <- get_site_locations()
     id <- site_col(input$site_type)
 
-    if (is.null(input$site)) {
-      return(
+    locations <- get_site_locations()
+
+    if(is.null(input$site)){
+      not_selected <- locations
+      selected <- NULL
+    } else {
+      not_selected <- locations[!(locations[[id]] %in% input$site), ]
+      selected <- locations[locations[[id]] %in% input$site, ]
+      if(nrow(not_selected) == 0){
+        not_selected <- NULL
+      }
+      if(nrow(selected) == 0){
+        selected <- NULL
+      }
+    }
+
+    if(!is.null(selected) && !is.null(not_selected)){
+      return({
         leafletProxy("leaf") %>%
           leaflet::removeShape("Sites") %>%
           addAwesomeMarkers(
-            data = sites,
+            # clusterOptions = markerClusterOptions(),
+            data = not_selected,
             icon = icon_blue,
             lng = ~LONGITUDE,
             lat = ~LATITUDE,
             group = "Sites",
-            layerId = sites[[id]],
-            label = sites[[id]]
+            layerId = not_selected[[id]],
+            label = not_selected[[id]]
+          ) %>%
+          addAwesomeMarkers(
+            data = selected,
+            icon = icon_red,
+            lng = ~LONGITUDE,
+            lat = ~LATITUDE,
+            group = "Sites",
+            layerId = selected[[id]],
+            label = selected[[id]]
           )
-      )
+      })
+    } else if(is.null(not_selected)){
+      return({
+        leafletProxy("leaf") %>%
+          leaflet::removeShape("Sites") %>%
+          addAwesomeMarkers(
+            # clusterOptions = markerClusterOptions(),
+            data = selected,
+            icon = icon_red,
+            lng = ~LONGITUDE,
+            lat = ~LATITUDE,
+            group = "Sites",
+            layerId = selected[[id]],
+            label = selected[[id]]
+          )
+      })
+    } else {
+      return({
+        leafletProxy("leaf") %>%
+          leaflet::removeShape("Sites") %>%
+          addAwesomeMarkers(
+            # clusterOptions = markerClusterOptions(),
+            data = not_selected,
+            icon = icon_blue,
+            lng = ~LONGITUDE,
+            lat = ~LATITUDE,
+            group = "Sites",
+            layerId = not_selected[[id]],
+            label = not_selected[[id]]
+          )
+      })
     }
-
-    selected <- lookup_location[lookup_location[[id]] %in% input$site, ]
-
-    leafletProxy("leaf") %>%
-      leaflet::removeShape("Sites") %>%
-      addAwesomeMarkers(
-        data = sites,
-        icon = icon_blue,
-        lng = ~LONGITUDE,
-        lat = ~LATITUDE,
-        group = "Sites",
-        layerId = sites[[id]],
-        label = sites[[id]]
-      ) %>%
-      addAwesomeMarkers(
-        data = selected,
-        icon = icon_red,
-        lng = ~LONGITUDE,
-        lat = ~LATITUDE,
-        group = "Sites",
-        layerId = selected[[id]],
-        label = selected[[id]]
-      )
   })
 
   observe({
@@ -295,7 +327,12 @@ mod_data_server <- function(input, output, session) {
   })
 
   observeEvent(input$leaf_marker_click, {
+    # id <- site_col(input$site_type)
     sites <- c(input$leaf_marker_click$id, input$site)
+    # selected <- lookup_location[lookup_location[[id]] %in% sites, ]
+    # not_selected <- lookup_location[!(lookup_location[[id]] %in% sites), ]
+    # rv$site_selected <- selected
+    # rv$site_notselected <- not_selected
     updateSelectizeInput(session, "site", selected = sites)
   })
 
@@ -304,7 +341,6 @@ mod_data_server <- function(input, output, session) {
     updateCheckboxInput(session, "check_wshedgroup", value = TRUE)
     shinyjs::show("div_wshedgroup")
     updateSelectInput(session, "wshedgroup", selected = ws)
-
   })
 
   output$ui_table_raw <- renderUI({
