@@ -273,7 +273,7 @@ mod_data_server <- function(input, output, session) {
                                     weight = 2,
                                     lng = ~LONGITUDE,
                                     lat = ~LATITUDE,
-                                    group = "Sites",
+                                    group = "All Sites",
                                     layerId = not_selected[[id]],
                                     label = not_selected[[id]]) %>%
           leaflet::addCircleMarkers(data = selected,
@@ -284,7 +284,7 @@ mod_data_server <- function(input, output, session) {
                                     fillOpacity = 0.6,
                                     lng = ~LONGITUDE,
                                     lat = ~LATITUDE,
-                                    group = "Sites",
+                                    group = "Selected Sites",
                                     layerId = selected[[id]],
                                     label = selected[[id]])
       })
@@ -300,7 +300,7 @@ mod_data_server <- function(input, output, session) {
                                     fillOpacity = 0.6,
                                     lng = ~LONGITUDE,
                                     lat = ~LATITUDE,
-                                    group = "Sites",
+                                    group = "Selected Sites",
                                     layerId = selected[[id]],
                                     label = selected[[id]])
       })
@@ -313,7 +313,7 @@ mod_data_server <- function(input, output, session) {
                                     weight = 2,
                                     lng = ~LONGITUDE,
                                     lat = ~LATITUDE,
-                                    group = "Sites",
+                                    group = "All Sites",
                                     layerId = not_selected[[id]],
                                     label = not_selected[[id]])
       })

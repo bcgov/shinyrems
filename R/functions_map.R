@@ -20,7 +20,8 @@ ems_leaflet <- function(watershed_groups, sites, site_type) {
       baseGroups = c("Basemap", "Satelite"),
       overlayGroups = c(
         "Watershed Groups",
-        "Sites"
+        "All Sites",
+        "Selected Sites"
       ),
       options = layersControlOptions(collapsed = FALSE)
     ) %>%
@@ -47,7 +48,7 @@ ems_leaflet <- function(watershed_groups, sites, site_type) {
                               # icon = icon_blue,
                               lng = ~LONGITUDE,
                               lat = ~LATITUDE,
-                              group = "Sites",
+                              group = "All Sites",
                               layerId = sites[[id]],
                               label = sites[[id]])
     # addAwesomeMarkers(
