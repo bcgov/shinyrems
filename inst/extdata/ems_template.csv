@@ -1,0 +1,4 @@
+Station,Year,Month,Day,Hour,Minute,Second,Variable,Value,Units,DetectionLimit,ResultLetter,EMS_ID
+RUSSELL SLOUGH,2020,12,1,14,34,,Aluminum Dissolved,1.1,degC,0.01,<,E292950
+Station of measurement,Year of measurement,Month of measurement,Day of measurement,Hour of measurement,Minute of measurement,Second of measurement,Variable,Value of measurement,Units of measurement,Detection limit,Relationship to detection limit,EMS ID
+mandatory,mandatory,mandatory,mandatory,optional,optional,optional,mandatory,mandatory,mandatory,optional,optional,optional

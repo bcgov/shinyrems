@@ -18,7 +18,6 @@ Imports:
     dplyr,
     ggplot2,
     shinyjs,
-    DBI,
     leaflet,
     readr,
     DT,
@@ -26,14 +25,15 @@ Imports:
     glue,
     magrittr,
     wqbc,
-    shinyhttr,
     shinyWidgets,
     dttr2,
     waiter,
-    tibble,
     shinycssloaders,
-    stringr,
-    rlang
+    rlang,
+    err,
+    shinyhelper,
+    png,
+    sf
 Suggests:
     testthat (>= 2.1.0),
     usethis,
@@ -44,7 +44,7 @@ Remotes:
     bcgov/wqbc
 URL: https://github.com/poissonconsulting/shinyrems
 BugReports: https://github.com/poissonconsulting/shinyrems/issues
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Encoding: UTF-8
 LazyData: true
 Language: en-US

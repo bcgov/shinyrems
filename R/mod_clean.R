@@ -28,15 +28,18 @@ mod_clean_ui <- function(id) {
   sidebarLayout(
     sidebarPanel(
       class = "sidebar",
-      checkboxInput(ns("remove_blanks"), "Remove blanks", value = TRUE),
-      uiOutput(ns("ui_by")),
+      title("Clean your data") %>% helper("tab3_clean"),
+      br(),
+      uiOutput(ns("ui_by")) %>% helper("tab3_summarizebycol"),
       radioButtons(ns("fun"),
         label = "Summarize by function",
         choices = c("mean", "median", "max"),
         selected = "max", inline = TRUE
-      ),
-      numericInput(ns("max_cv"), label = "Maximum CV", value = Inf) %>%
-        embed_help("info_maxcv", ns, info$max_cv)
+      ) %>% helper("tab3_summarizebyfun"),
+      numericInput(ns("max_cv"),
+                   label = "Maximum Coefficient of Variation for replicates",
+                   value = Inf) %>%
+        helper("tab3_maxcv")
     ),
     mainPanel(tabsetPanel(
       selected = "Clean Data",
@@ -53,9 +56,6 @@ mod_clean_ui <- function(id) {
         br(),
         help_output(ns("console_clean"))
       )
-      # tabPanel(title = "R Code",
-      #          br(),
-      #          wellPanel(uiOutput(ns("rcode"))))
     ))
   )
 }
@@ -75,7 +75,7 @@ mod_clean_server <- function(input, output, session, stand) {
     }
     selected <- intersect(
       names(data),
-      c("EMS_ID", "UPPER_DEPTH", "LOWER_DEPTH")
+      c("EMS_ID", "Station", "UPPER_DEPTH", "LOWER_DEPTH")
     )
     optional <- intersect(
       names(data),
@@ -100,7 +100,7 @@ mod_clean_server <- function(input, output, session, stand) {
         shinyjs::html("console_clean", "")
         x <- ems_aggregate(stand$data(),
           by = input$by,
-          remove_blanks = input$remove_blanks,
+          remove_blanks = FALSE,
           max_cv = max_cv(),
           FUN = eval(parse(text = input$fun))
         )
@@ -132,17 +132,6 @@ mod_clean_server <- function(input, output, session, stand) {
 
   observeEvent(input$info_maxcv, {
     shinyjs::toggle("div_info_maxcv", anim = TRUE)
-  })
-
-  rcode <- reactive({
-    rcode_clean(
-      by = input$by, max_cv = input$max_cv,
-      remove_blanks = input$remove_blanks, fun = eval(parse(text = input$fun))
-    )
-  })
-
-  output$rcode <- renderUI({
-    rcode()
   })
 
   return(

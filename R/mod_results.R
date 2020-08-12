@@ -40,14 +40,16 @@ mod_results_ui <- function(id) {
               uiOutput(ns("ui_facet")),
               uiOutput(ns("ui_colour"))
             ),
-            actionLink(ns("rename"), "Rename sites"),
+            button(ns("rename"), "Rename Stations"),
             br(),
-            uiOutput(ns("ui_rename")),
             br(),
             sliderInput(ns("plot_height"),
               label = "Plot Height",
               value = 500, min = 0, max = 1000, step = 100
-            )
+            ),
+            selectInput(ns("palette"), label = "Palette",
+                        choices = c("Accent", "Dark2", "Paired", "Pastel1",
+                                    "Pastel2", "Set1", "Set2", "Set3"))
           ),
           tabPanel(
             title = "Guideline",
@@ -55,31 +57,40 @@ mod_results_ui <- function(id) {
             radioButtons(ns("guideline"), "How do you want to determine Water Quality Guideline?",
               choices = c("set manually", "calculate from data"),
               "set manually", inline = TRUE
-            ),
+            ) %>% helper("tab5_guideline"),
             shinyjs::hidden(div(
               id = ns("div_manual"),
-              numericInput(ns("user_guideline"), label = NULL, 0)
+              numericInput(ns("user_guideline"), label = NULL, value = NULL),
+              div(inline(p("Find a guideline using the")),
+                  inline(tags$a("Water Quality Guideline app",
+                                href = "https://bcgov-env.shinyapps.io/bc_wqg/",
+                                target = "_blank"))) %>% helper("tab5_wqgapp")
             )),
             shinyjs::hidden(div(
               id = ns("div_calculate"),
               radioButtons(ns("term"), "Select term",
                 choices = c("short", "long", "long-daily"),
                 selected = "long", inline = TRUE
-              ),
+              ) %>% helper("tab5_term"),
               checkboxInput(ns("estimate_variables"), "Get modelled estimate",
                 value = FALSE
+              ) %>% helper("tab5_modelled"),
+              numericInput(ns("guideline_sigfig"),
+                           label = "Guideline significant figures",
+                           value = 2, min = 0, max = 10
               ),
               actionButton(ns("get"), "Get/update guideline")
             ))
           ),
           tabPanel(
             title = "Summary Table",
+            h4("Create summary table") %>% helper("tab5_summary"),
             checkboxInput(ns("censored"),
               label = "Account for data censoring", value = TRUE
-            ),
+            ) %>% helper("tab5_censoring"),
             checkboxInput(ns("narm"),
               label = "Exclude missing values", value = TRUE
-            ),
+            ) %>% helper("tab5_narm"),
             uiOutput(ns("ui_by")),
             numericInput(ns("sigfig"),
               label = "Significant figures",
@@ -93,7 +104,17 @@ mod_results_ui <- function(id) {
         tabPanel(
           title = "Plot",
           br(),
-          dl_group("plot", ns),
+          fillRow(
+            height = "90%", width = 650, flex = c(2, 3, 1, 1, 1, 1, 0.7, 1.5),
+            dl_button(ns("dl_plot"), "Download"),
+            textInput(ns("dl_file"), label = NULL, value = "", placeholder = "file name"),
+            p(HTML("width&nbsp"), style = "text-align: right;"),
+            numericInput(ns("dl_width"), label = NULL, value = 9),
+            p(HTML("height&nbsp"), style = "text-align: right;"),
+            numericInput(ns("dl_height"), label = NULL, value = 6),
+            p(HTML("dpi&nbsp"), style = "text-align: right;"),
+            numericInput(ns("dl_dpi"), label = NULL, value = 300)
+          ),
           br2(),
           uiOutput(ns("ui_plot"))
         ),
@@ -103,10 +124,14 @@ mod_results_ui <- function(id) {
           dl_group("table", ns),
           br2(), br(),
           ems_table_output(ns("table"))
+        ),
+        tabPanel(
+          title = "Guideline Data",
+          br(),
+          dl_group("final_table", ns),
+          br2(), br(),
+          ems_table_output(ns("final_table"))
         )
-        # tabPanel(title = "R Code",
-        #          br(),
-        #          wellPanel(uiOutput(ns("rcode"))))
       ))
     )
   )
@@ -142,18 +167,24 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     }
   })
 
-  plots <- reactive({
+  plot <- reactive({
     req(input$date_range)
     req(input$facet)
     req(input$colour)
 
-    ems_plot(
-      rv$data, input$plot_type,
-      input$geom, input$date_range,
-      input$point_size, input$line_size,
-      input$facet, input$colour, input$timeframe,
-      rv$guideline
-    )
+    data <- rv$data
+
+    data <- ems_plot_data(data = rv$data, date_range = input$date_range,
+                          timeframe = input$timeframe)
+    gp <- ems_plot_base(data, facet = input$facet) %>%
+      ems_plot_add_geom(plot_type = input$plot_type, geom = input$geom,
+                        point_size = input$point_size, line_size = input$line_size,
+                        colour = input$colour, timeframe = input$timeframe,
+                        palette = input$palette)
+    if(!is.null(rv$guideline))
+      gp <- gp %>% ems_plot_add_guideline(guideline = rv$guideline)
+
+    gp
   })
 
   summary_table <- reactive({
@@ -180,14 +211,33 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     )
   })
 
+  output$final_table <- DT::renderDT({
+    req(rv$guideline)
+    DT::datatable(rv$guideline,
+                  class = "cell-border stripe compact",
+                  rownames = FALSE,
+                  options = list(
+                    scrollX = TRUE,
+                    dom = "t",
+                    ordering = FALSE
+                  )
+    )
+  })
+
   output$ui_plot <- renderUI({
     plotOutput(ns("ems_plot"), height = input$plot_height)
   })
 
+  output$ui_site_type <- renderUI({
+    data <- rv$data
+    x <- sort(intersect(names(data), c("Station", "EMS_ID")))
+    if(length(x) < 2) return()
+    radioButtons(ns("site_type"), label = "Label sites by",
+                 choices = x, inline = TRUE)
+  })
+
   output$ems_plot <- renderPlot({
-    # suppressWarnings(waiter::show_butler())
-    plots()
-    # suppressWarnings(waiter::hide_butler())
+    plot()
   })
 
   output$ui_date_range <- renderUI({
@@ -219,7 +269,7 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
         checkboxGroupInput(ns("geom"),
           label = NULL,
           choices = c("show lines", "show points"),
-          selected = c("show points", "show lines"),
+          selected = c("show points"),
           inline = TRUE
         ),
         fillRow(
@@ -239,13 +289,13 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
         choices = c("Year", "Year-Month", "Month", "Season"),
         selected = c("Year")
       ) %>%
-        embed_help("info_timeframe", ns, info$timeframe))
+        helper("tab5_timeframe"))
     )
   })
 
   output$ui_facet <- renderUI({
     data <- rv$data
-    x <- sort(intersect(names(data), c("Variable", "EMS_ID")))
+    x <- sort(intersect(names(data), c("Station", "Variable", "EMS_ID")))
     selectInput(ns("facet"), "Facet by",
       choices = x,
       selected = "Variable"
@@ -254,7 +304,8 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
 
   output$ui_colour <- renderUI({
     data <- rv$data
-    x <- sort(intersect(names(data), c("Variable", "EMS_ID")))
+    colour_vars <- c("Station", "Variable", "EMS_ID", "LOWER_DEPTH", "UPPER_DEPTH")
+    x <- sort(intersect(names(data), colour_vars))
     selectInput(ns("colour"), "Colour by",
       choices = x,
       selected = x[1]
@@ -263,10 +314,14 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
 
   output$dl_plot <- downloadHandler(
     filename = function() {
-      paste0(input$file_plot, ".png")
+      paste0(input$dl_file, ".png")
     },
     content = function(file) {
-      ggplot2::ggsave(file, plots(), device = "png")
+      ggplot2::ggsave(file, plot(),
+                      width = input$dl_width,
+                      height = input$dl_height,
+                      dpi = input$dl_dpi,
+                      device = "png")
     }
   )
 
@@ -284,33 +339,34 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     guideline = NULL,
     guideline_calc = NULL
   )
+
   observe({
     data <- outlier$data()
-    data$EMS_ID_Renamed <- data$EMS_ID
+    data$Site_Renamed <- data$Station
     rv$data <- data
   })
 
   observeEvent(input$finalise, {
     data <- rv$data
-    sites <- unique(data$EMS_ID)
+    sites <- unique(data$Station)
     for (i in sites) {
       x <- input[[i]]
-      data$EMS_ID_Renamed[data$EMS_ID == i] <- x
+      data$Site_Renamed[data$Station == i] <- x
     }
+    removeModal()
     rv$data <- data
   })
 
   observeEvent(input$rename, {
-    shinyjs::toggle("div_rename", anim = TRUE, animType = "slide")
+    showModal(modalDialog(uiOutput(ns("ui_rename"))))
   })
 
   output$ui_rename <- renderUI({
-    sites <- unique(rv$data$EMS_ID)
-    shinyjs::hidden(div(
-      id = ns("div_rename"),
+    sites <- unique(rv$data$Station)
+    div(
       lapply(sites, rename_inputs, ns),
       button(ns("finalise"), "Rename")
-    ))
+    )
   })
 
   output$ui_by <- renderUI({
@@ -340,7 +396,7 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
       by = clean$by(), sds = outlier$sds(),
       ignore_undetected = outlier$ignore_undetected(),
       large_only = outlier$large_only(),
-      remove_blanks = clean$remove_blanks(),
+      remove_blanks = FALSE,
       max_cv = clean$max_cv(), FUN = eval(parse(text = clean$fun())),
       limits = wqbc::limits
     )
@@ -356,16 +412,17 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     html <- waiter_html("")
     if (length(params) == 0) {
       html <- waiter_html("Calculating guideline ...")
+    } else {
+      html <- waiter_html(paste(
+        "Fetching additional data:",
+        paste(params, collapse = ", ")
+      ))
     }
     waiter::waiter_show(html = html)
 
     if (length(params) != 0) {
-      waiter::waiter_update(html = waiter_html(paste(
-        "Fetching additional data:",
-        paste(params, collapse = ", ")
-      )))
-      data2 <- data_parameter()
-      all_data <- rbind(data1, data2)
+        data2 <- data_parameter()
+        all_data <- rbind(data1, data2)
     } else {
       all_data <- data1
     }
@@ -382,36 +439,31 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
       if (nrow(x) == 0) {
         return(showModal(guideline_modal()))
       }
-      return(rv$guideline_calc <- x)
+      rv$guideline_calc <- x
+      x$UpperLimit <- signif(x$UpperLimit, input$guideline_sigfig)
+      return(rv$guideline <- x)
     } else {
       return(showModal(guideline_modal()))
     }
   })
 
-  observe({
-    if (input$guideline == "set manually") {
-      rv$guideline <- input$user_guideline
-    } else {
-      rv$guideline <- rv$guideline_calc
-    }
+  observeEvent(input$guideline_sigfig, {
+    req(rv$guideline_calc)
+    x <- rv$guideline_calc
+    x$UpperLimit <- signif(x$UpperLimit, input$guideline_sigfig)
+    rv$guideline <- x
   })
 
-  rcodeplot <- reactive({})
-
-  rcodetable <- reactive({})
-
-  return(
-    list(
-      facet = reactive({
-        input$facet
-      }),
-      colour = reactive({
-        input$colour
-      }),
-      rcodeplot = rcodeplot,
-      rcodetable = rcodetable
-    )
-  )
+  observe({
+    if (input$guideline == "set manually") {
+      req(input$user_guideline)
+      data <- outlier$data()
+      data$UpperLimit <- input$user_guideline
+      data <- data %>% dplyr::select(Date, Variable, Value, UpperLimit,
+                                     Units, dplyr::everything())
+      rv$guideline <- data
+    }
+  })
 }
 
 ## To be copied in the UI

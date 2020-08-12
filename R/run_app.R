@@ -44,11 +44,24 @@ run_ems_app <- function(dataset = "2yr") {
     ems_data <- check_all_data()
   }
 
-  lookup <- get_lookup(dataset)
+  lookup <- NULL
+  lookup_location <- NULL
+  if(dataset != "upload"){
+    lookup <- get_lookup(dataset)
+    lookup_location <- lookup %>%
+      dplyr::filter(!is.na(.data$LONGITUDE)) %>%
+      dplyr::filter(!is.na(.data$LATITUDE)) %>%
+      get_lookup_location() %>%
+      add_lookup_wsgroup()
+    wsheds <- setdiff(unique(lookup_location$WATERSHED_GROUP_NAME), NA)
+    watershed_groups <- watershed_groups[which(watershed_groups$WATERSHED_GROUP_NAME %in% wsheds),]
+  }
 
   shinyOptions(
     dataset = dataset,
     lookup = lookup,
+    lookup_location = lookup_location,
+    watershed_groups = watershed_groups,
     ems_data = ems_data
   )
 

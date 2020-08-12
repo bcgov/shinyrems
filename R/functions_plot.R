@@ -19,47 +19,58 @@ multiple_units <- function(data) {
 }
 
 ### takes aggregated data with EMS_ID_Rename col
-ems_plot <- function(data, plot_type, geom, date_range,
-                     point_size, line_size,
-                     facet, colour, timeframe,
-                     guideline) {
+ems_plot_data <- function(data, date_range, timeframe){
   data$Detected <- detected(data$Value, data$DetectionLimit)
-  data$EMS_ID <- data$EMS_ID_Renamed
+  data$Station <- data$Site_Renamed
   data$Detected %<>% factor(levels = c(TRUE, FALSE))
   data <- data[data$Date >= as.Date(date_range[1]) & data$Date <= as.Date(date_range[2]), ]
   data$Timeframe <- factor(get_timeframe(data$Date, timeframe))
+  if("UPPER_DEPTH" %in% names(data))
+    data$UPPER_DEPTH %<>% as.factor()
+  if("LOWER_DEPTH" %in% names(data))
+    data$LOWER_DEPTH %<>% as.factor()
+  data
+}
 
+ems_plot_base <- function(data, facet){
   gp <- ggplot2::ggplot(data, ggplot2::aes_string(x = "Date", y = "Value")) +
-    ggplot2::scale_color_discrete(drop = FALSE) +
+    # ggplot2::scale_color_discrete(drop = FALSE) +
     ggplot2::expand_limits(y = 0) +
     ggplot2::facet_wrap(facet,
-      ncol = 1,
-      scales = "free_y"
+                        ncol = 1,
+                        scales = "free_y"
     ) +
     ggplot2::ylab(unique(data$Units)) +
-    ggplot2::theme(legend.position = "bottom") +
     ggplot2::theme_bw() +
     ggplot2::theme(legend.position = "bottom")
+}
 
-  if (!is.data.frame(guideline)) {
-    gp <- gp + ggplot2::geom_hline(yintercept = guideline, linetype = "dotted")
-  }
+ems_plot_add_guideline <- function(gp, guideline){
 
   if (is.data.frame(guideline)) {
     if (nrow(guideline) == 1) {
-      gp <- gp + ggplot2::geom_hline(
-        yintercept = guideline$UpperLimit,
-        linetype = "dotted"
-      )
+      gp <- gp + ggplot2::geom_hline(data = guideline,
+                                     ggplot2::aes_string(yintercept = "UpperLimit",
+                                                linetype = factor("UpperLimit")), size = 1) +
+        ggplot2::scale_linetype_manual(name = "Guideline", values = "dashed", labels = "") +
+        ggplot2::guides(fill = ggplot2::guide_legend(override.aes = list(linetype = "blank")))
     } else {
       gp <- gp + ggplot2::geom_line(
         data = guideline,
-        ggplot2::aes_string(x = "Date", y = "UpperLimit"),
-        linetype = "dotted"
-      )
+        ggplot2::aes_string(x = "Date", y = "UpperLimit",
+                            linetype = factor("UpperLimit")),
+        size = 1
+      ) +
+      ggplot2::scale_linetype_manual(name = "Guideline", values = "dashed", labels = "") +
+        ggplot2::guides(fill = ggplot2::guide_legend(override.aes = list(linetype = "blank")))
     }
   }
+  gp
+}
 
+ems_plot_add_geom <- function(gp, plot_type, geom,
+                              point_size, line_size,
+                              colour, timeframe, palette){
   if (plot_type == "scatter") {
     if ("show points" %in% geom) {
       gp <- gp + ggplot2::geom_point(
@@ -68,13 +79,15 @@ ems_plot <- function(data, plot_type, geom, date_range,
           shape = "Detected",
           color = colour
         )
-      )
+      ) +
+        ggplot2::scale_colour_brewer(palette = palette)
     }
     if ("show lines" %in% geom) {
       gp <- gp + ggplot2::geom_line(
         size = line_size,
         ggplot2::aes_string(color = colour)
-      )
+      ) +
+        ggplot2::scale_colour_brewer(palette = palette)
     }
   }
 
@@ -84,7 +97,8 @@ ems_plot <- function(data, plot_type, geom, date_range,
       y = "Value",
       fill = colour
     )) +
-      ggplot2::xlab(timeframe)
+      ggplot2::xlab(timeframe) +
+      ggplot2::scale_fill_brewer(palette = palette)
   }
   gp
 }

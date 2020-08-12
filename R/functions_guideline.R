@@ -16,7 +16,7 @@ additional_parameters <- function(data, lookup, limits = wqbc::limits, codes = w
   param_code <- gsub("-", "_", param_code)
   variable <- codes$Variable[codes$Code %in% param_code]
   guideline <- limits[limits$Variable == variable, ]
-  ccodes <- extract_codes(c(guideline$Condition, guideline$Limit))
+  ccodes <- extract_codes(c(guideline$Condition, guideline$UpperLimit))
   code_to_parameter(ccodes, lookup)
 }
 
@@ -35,7 +35,7 @@ ems_data_parameter <- function(data, all_data, dataset, lookup,
     from_date = from_date, to_date = to_date, data = all_data
   )
   data <- ems_tidy(data,
-    mdl_action = mdl_action, data_type = "raw",
+    mdl_action = mdl_action,
     dataset = dataset, cols = cols
   )
   data <- ems_standardize(data, strict = strict)
