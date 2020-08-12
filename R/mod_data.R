@@ -268,55 +268,54 @@ mod_data_server <- function(input, output, session) {
       return({
         leafletProxy("leaf") %>%
           leaflet::removeShape("Sites") %>%
-          addAwesomeMarkers(
-            # clusterOptions = markerClusterOptions(),
-            data = not_selected,
-            icon = icon_blue,
-            lng = ~LONGITUDE,
-            lat = ~LATITUDE,
-            group = "Sites",
-            layerId = not_selected[[id]],
-            label = not_selected[[id]]
-          ) %>%
-          addAwesomeMarkers(
-            data = selected,
-            icon = icon_red,
-            lng = ~LONGITUDE,
-            lat = ~LATITUDE,
-            group = "Sites",
-            layerId = selected[[id]],
-            label = selected[[id]]
-          )
+          leaflet::addCircleMarkers(data = not_selected,
+                                    radius = 5,
+                                    weight = 2,
+                                    lng = ~LONGITUDE,
+                                    lat = ~LATITUDE,
+                                    group = "Sites",
+                                    layerId = not_selected[[id]],
+                                    label = not_selected[[id]]) %>%
+          leaflet::addCircleMarkers(data = selected,
+                                    radius = 5,
+                                    weight = 2,
+                                    color = "red",
+                                    fillColor = "red",
+                                    fillOpacity = 0.6,
+                                    lng = ~LONGITUDE,
+                                    lat = ~LATITUDE,
+                                    group = "Sites",
+                                    layerId = selected[[id]],
+                                    label = selected[[id]])
       })
     } else if(is.null(not_selected)){
       return({
         leafletProxy("leaf") %>%
           leaflet::removeShape("Sites") %>%
-          addAwesomeMarkers(
-            # clusterOptions = markerClusterOptions(),
-            data = selected,
-            icon = icon_red,
-            lng = ~LONGITUDE,
-            lat = ~LATITUDE,
-            group = "Sites",
-            layerId = selected[[id]],
-            label = selected[[id]]
-          )
+          leaflet::addCircleMarkers(data = selected,
+                                    radius = 5,
+                                    weight = 2,
+                                    color = "red",
+                                    fillColor = "red",
+                                    fillOpacity = 0.6,
+                                    lng = ~LONGITUDE,
+                                    lat = ~LATITUDE,
+                                    group = "Sites",
+                                    layerId = selected[[id]],
+                                    label = selected[[id]])
       })
     } else {
       return({
         leafletProxy("leaf") %>%
           leaflet::removeShape("Sites") %>%
-          addAwesomeMarkers(
-            # clusterOptions = markerClusterOptions(),
-            data = not_selected,
-            icon = icon_blue,
-            lng = ~LONGITUDE,
-            lat = ~LATITUDE,
-            group = "Sites",
-            layerId = not_selected[[id]],
-            label = not_selected[[id]]
-          )
+          leaflet::addCircleMarkers(data = not_selected,
+                                    radius = 5,
+                                    weight = 2,
+                                    lng = ~LONGITUDE,
+                                    lat = ~LATITUDE,
+                                    group = "Sites",
+                                    layerId = not_selected[[id]],
+                                    label = not_selected[[id]])
       })
     }
   })
@@ -327,19 +326,12 @@ mod_data_server <- function(input, output, session) {
   })
 
   observeEvent(input$leaf_marker_click, {
-    # id <- site_col(input$site_type)
     sites <- c(input$leaf_marker_click$id, input$site)
-    # selected <- lookup_location[lookup_location[[id]] %in% sites, ]
-    # not_selected <- lookup_location[!(lookup_location[[id]] %in% sites), ]
-    # rv$site_selected <- selected
-    # rv$site_notselected <- not_selected
     updateSelectizeInput(session, "site", selected = sites)
   })
 
   observeEvent(input$leaf_shape_click, {
     ws <- input$leaf_shape_click$id
-    updateCheckboxInput(session, "check_wshedgroup", value = TRUE)
-    shinyjs::show("div_wshedgroup")
     updateSelectInput(session, "wshedgroup", selected = ws)
   })
 
