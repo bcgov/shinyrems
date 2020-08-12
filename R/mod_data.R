@@ -249,75 +249,41 @@ mod_data_server <- function(input, output, session) {
     id <- site_col(input$site_type)
 
     locations <- get_site_locations()
+    not_selected <- locations[!(locations[[id]] %in% input$site), ]
+    selected <- locations[locations[[id]] %in% input$site, ]
 
-    if(is.null(input$site)){
-      not_selected <- locations
-      selected <- NULL
-    } else {
-      not_selected <- locations[!(locations[[id]] %in% input$site), ]
-      selected <- locations[locations[[id]] %in% input$site, ]
-      if(nrow(not_selected) == 0){
-        not_selected <- NULL
-      }
-      if(nrow(selected) == 0){
-        selected <- NULL
-      }
+    leaf <- leafletProxy("leaf") %>%
+      leaflet::removeShape("All Sites") %>%
+      leaflet::removeShape("Selected Sites")
+
+    if(nrow(not_selected) > 0){
+      leaf <- leaf %>%
+        leaflet::addCircleMarkers(data = not_selected,
+                                  radius = 5,
+                                  weight = 2,
+                                  lng = ~LONGITUDE,
+                                  lat = ~LATITUDE,
+                                  group = "All Sites",
+                                  layerId = not_selected[[id]],
+                                  label = not_selected[[id]])
     }
 
-    if(!is.null(selected) && !is.null(not_selected)){
-      return({
-        leafletProxy("leaf") %>%
-          leaflet::removeShape("Sites") %>%
-          leaflet::addCircleMarkers(data = not_selected,
-                                    radius = 5,
-                                    weight = 2,
-                                    lng = ~LONGITUDE,
-                                    lat = ~LATITUDE,
-                                    group = "All Sites",
-                                    layerId = not_selected[[id]],
-                                    label = not_selected[[id]]) %>%
-          leaflet::addCircleMarkers(data = selected,
-                                    radius = 5,
-                                    weight = 2,
-                                    color = "red",
-                                    fillColor = "red",
-                                    fillOpacity = 0.6,
-                                    lng = ~LONGITUDE,
-                                    lat = ~LATITUDE,
-                                    group = "Selected Sites",
-                                    layerId = selected[[id]],
-                                    label = selected[[id]])
-      })
-    } else if(is.null(not_selected)){
-      return({
-        leafletProxy("leaf") %>%
-          leaflet::removeShape("Sites") %>%
-          leaflet::addCircleMarkers(data = selected,
-                                    radius = 5,
-                                    weight = 2,
-                                    color = "red",
-                                    fillColor = "red",
-                                    fillOpacity = 0.6,
-                                    lng = ~LONGITUDE,
-                                    lat = ~LATITUDE,
-                                    group = "Selected Sites",
-                                    layerId = selected[[id]],
-                                    label = selected[[id]])
-      })
-    } else {
-      return({
-        leafletProxy("leaf") %>%
-          leaflet::removeShape("Sites") %>%
-          leaflet::addCircleMarkers(data = not_selected,
-                                    radius = 5,
-                                    weight = 2,
-                                    lng = ~LONGITUDE,
-                                    lat = ~LATITUDE,
-                                    group = "All Sites",
-                                    layerId = not_selected[[id]],
-                                    label = not_selected[[id]])
-      })
+    if(nrow(selected) > 0){
+      leaf <- leaf %>%
+        leaflet::addCircleMarkers(data = selected,
+                                  radius = 5,
+                                  weight = 2,
+                                  color = "red",
+                                  fillColor = "red",
+                                  fillOpacity = 0.6,
+                                  lng = ~LONGITUDE,
+                                  lat = ~LATITUDE,
+                                  group = "Selected Sites",
+                                  layerId = selected[[id]],
+                                  label = selected[[id]])
     }
+
+    leaf
   })
 
   observe({
