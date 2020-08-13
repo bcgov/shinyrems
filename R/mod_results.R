@@ -167,6 +167,11 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     }
   })
 
+  observe({
+    outlier$data()
+    rv$guideline <- NULL
+  })
+
   plot <- reactive({
     req(input$date_range)
     req(input$facet)
@@ -403,12 +408,16 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
   })
 
   observeEvent(input$get, {
+    rv$guideline_calc <- NULL
     data1 <- outlier$data()
     dataset <- data$dataset()
     all_data <- data$all_data()
     lookup <- data$lookup()
 
-    params <- additional_parameters(data1, lookup)
+    params <- try(additional_parameters(data1, lookup), silent = TRUE)
+    if(is_try_error(params)){
+      return(showModal(guideline_modal(params)))
+    }
     html <- waiter_html("")
     if (length(params) == 0) {
       html <- waiter_html("Calculating guideline ...")
@@ -443,7 +452,7 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
       x$UpperLimit <- signif(x$UpperLimit, input$guideline_sigfig)
       return(rv$guideline <- x)
     } else {
-      return(showModal(guideline_modal()))
+      return(showModal(guideline_modal(x)))
     }
   })
 

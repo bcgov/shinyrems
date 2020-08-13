@@ -12,9 +12,24 @@
 
 
 additional_parameters <- function(data, lookup, limits = wqbc::limits, codes = wqbc::codes) {
-  param_code <- paste0("EMS_", unique(data$Code))
-  param_code <- gsub("-", "_", param_code)
-  variable <- codes$Variable[codes$Code %in% param_code]
+  data_variable <- unique(data$Variable)
+  data_code <- unique(data$Code)
+
+  # try matching limits Variable from data Variable
+  if(!(unique(data$Variable) %in% limits$Variable)){
+    param_code <- paste0("EMS_", data_code)
+    param_code <- gsub("-", "_", param_code)
+    variable <- codes$Variable[codes$Code %in% param_code]
+  } else {
+    variable <- data_variable
+  }
+  err_text <- paste0("Could not find variable '", data_variable, "'or code '", data_code, "' in limits table. See Limits table in 'Reference Tables' tab or visit the Water Quality Guideline app (https://bcgov-env.shinyapps.io/bc_wqg/)")
+
+  if(!length(variable)){
+    err(err_text)
+  } else if(!(variable %in% unique(limits$Variable))){
+    err(err_text)
+  }
   guideline <- limits[limits$Variable == variable, ]
   ccodes <- extract_codes(c(guideline$Condition, guideline$UpperLimit))
   code_to_parameter(ccodes, lookup)

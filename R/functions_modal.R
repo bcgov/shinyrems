@@ -1,5 +1,6 @@
 guideline_modal <- function(x = "There is insufficient data to calculate the water quality guideline.
                             You could try to get a modelled estimate, change the term, or set the guideline manually.") {
+  x <- gsub("Error :", "", x)
   modalDialog(
     title = "",
     footer = modalButton(label = "Got it"),
