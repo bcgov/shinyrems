@@ -443,7 +443,6 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
                                         max_cv = clean$max_cv(), FUN = eval(parse(text = clean$fun())),
                                         limits = wqbc::limits
         ), silent = TRUE)
-        print(data2)
         if(is_try_error(data2)){
           waiter::waiter_hide()
           return(showModal(guideline_modal(data2)))
