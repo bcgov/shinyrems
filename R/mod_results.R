@@ -387,26 +387,6 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     shinyjs::toggle("div_info_timeframe", anim = TRUE)
   })
 
-  # data_parameter <- reactive({
-  #   data1 <- outlier$data()
-  #   dataset <- data$dataset()
-  #   all_data <- data$all_data()
-  #   lookup <- data$lookup()
-  #   ems_data_parameter(data1,
-  #     all_data = all_data, dataset = dataset,
-  #     lookup = lookup,
-  #     from_date = data$date()[1], to_date = data$date()[2],
-  #     mdl_action = tidy$mdl_action(),
-  #     cols = data$cols(), strict = tidy$strict(),
-  #     by = clean$by(), sds = outlier$sds(),
-  #     ignore_undetected = outlier$ignore_undetected(),
-  #     large_only = outlier$large_only(),
-  #     remove_blanks = FALSE,
-  #     max_cv = clean$max_cv(), FUN = eval(parse(text = clean$fun())),
-  #     limits = wqbc::limits
-  #   )
-  # })
-
   observeEvent(input$get, {
     rv$guideline_calc <- NULL
     data1 <- outlier$data()
