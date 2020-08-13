@@ -134,17 +134,17 @@ mod_data_server <- function(input, output, session) {
     sites <- unique(x[[col]])
     sitediff <- setdiff(input$site, sites)
     for(i in sitediff){
-      showNotification(paste("No data available for site:", i), duration = NULL,
+      showNotification(paste("No data available for site:", i), duration = 10,
                        type = "warning")
     }
     waiter::waiter_hide()
   })
 
   observeEvent(input$reset, {
-    updateSelectInput(session, "parameter", selected = "")
+    updateSelectizeInput(session, "parameter", selected = "")
     updateSelectInput(session, "permit", selected = "")
     updateSelectInput(session, "wshedgroup", selected = "")
-    updateSelectInput(session, "site", selected = "")
+    updateSelectizeInput(session, "site", selected = "")
   })
 
   rv <- reactiveValues(
@@ -219,7 +219,7 @@ mod_data_server <- function(input, output, session) {
     updateSelectizeInput(session = session, inputId = 'parameter',
                          choices = c(get_parameters(), ""),
                          selected = "",
-                         server = TRUE)
+                         server = FALSE)
   })
 
   output$ui_date <- renderUI({
