@@ -15,7 +15,8 @@ test_that("calculating guideline works", {
 
   # site <- c("FRASER RIVER AT RED PASS.", "FRASER RIVER AT MARGUERITE")
   emsid <- c("0400764")
-  param <- c("Zinc Total")
+  emsid <- "0200029"
+  param <- c("Mercury Total")
   from_date <- as.Date("1990-01-02")
   to_date <- as.Date("2019-09-30")
   mdl_action <- "zero"
@@ -46,12 +47,19 @@ test_that("calculating guideline works", {
       remove_blanks = remove_blanks, FUN = FUN
     )
 
+  # saveRDS(data, "~/Desktop/data.rds")
+
   ### get data for additional params - Hardness
   # this doesnt work because missing data for hardness
   x <- wqbc::calc_limits(data, by = "EMS_ID", term = "long", estimate_variables = FALSE)
   expect_identical(nrow(x), 0L)
   expect_identical(code_to_parameter("EMS_0107", get_lookup(dataset)), "Hardness Total (Total)")
 
+  ### test additional params
+  data2 <- data
+  data2$Variable <- "foo"
+  data2$Code <- "foo"
+  expect_error(additional_parameters(data2, lookup))
   # get additional param data
   params <- additional_parameters(data, lookup)
   expect_identical(params, "Hardness Total (Total)")
@@ -67,6 +75,7 @@ test_that("calculating guideline works", {
   )
 
   all_data <- rbind(data, data2)
+  saveRDS(all_data, "~/Desktop/data2.rds")
   x <- wqbc::calc_limits(all_data, clean = FALSE, term = "long", estimate_variables = TRUE)
   expect_identical(nrow(x), 1L)
 
