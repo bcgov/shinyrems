@@ -212,7 +212,7 @@ mod_data_server <- function(input, output, session) {
     updateSelectizeInput(session = session, inputId = 'site',
                          choices = get_sites(),
                          selected = NULL,
-                         server = TRUE)
+                         server = FALSE)
   })
 
   observe({
