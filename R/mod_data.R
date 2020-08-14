@@ -209,10 +209,14 @@ mod_data_server <- function(input, output, session) {
   })
 
   observe({
+    server <- FALSE
+    if(dataset %in% c("all", "historic")){
+      server = TRUE
+    }
     updateSelectizeInput(session = session, inputId = 'site',
                          choices = get_sites(),
                          selected = NULL,
-                         server = FALSE)
+                         server = server)
   })
 
   observe({
