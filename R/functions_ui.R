@@ -17,6 +17,10 @@ title <- function(x) {
   div(h4(x), style = "border-bottom: 1px solid #494949;")
 }
 
+subtitle <- function(x) {
+  tags$label(x)
+}
+
 dl_group <- function(x, ns) {
   fillRow(
     height = "90%", width = 300, flex = c(2, 3),
