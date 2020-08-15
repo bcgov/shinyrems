@@ -365,6 +365,8 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
   })
 
   observeEvent(input$add_manual, {
+    if(input$add_manual > 3)
+      return(showModal(guideline_modal("Only 3 manual guidelines are allowed.")))
     insertUI(
       selector = paste0("#", ns("empty")),
       where = "beforeEnd",
@@ -384,6 +386,8 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
   })
 
   observeEvent(input$add_calculated, {
+    if(input$add_calculated > 3)
+      return(showModal(guideline_modal("Only 3 calculated guidelines are allowed.")))
     insertUI(
       selector = paste0("#", ns("empty")),
       where = "beforeEnd",
