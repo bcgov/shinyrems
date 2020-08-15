@@ -54,9 +54,9 @@ mod_results_ui <- function(id) {
           tabPanel(
             title = "Guideline",
             br(),
-            fillRow(actionButton(ns("add_manual"), "Add manual guideline"),
-                    actionButton(ns("add_calculated"), "Add calculated guideline"),
-                    height = "40px"),
+            fillRow(actionButton(ns("add_manual"), "Add manual"),
+                    actionButton(ns("add_calculated"), "Add calculated"),
+                    height = "40px", width = 220, flex = c(1, 1)) %>% helper("tab5_guideline"),
             br(),
             fluidRow(div(id = ns("empty"))),
           ),
