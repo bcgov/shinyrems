@@ -152,6 +152,13 @@ mod_upload_server <- function(input, output, session) {
     ems_data_table(rv$processed_data)
   })
 
+  output$dl_template <- downloadHandler(
+    filename = function() paste0("ems_template.csv"),
+    content = function(file) {
+      file.copy(system.file("extdata/ems_template.csv", package = "shinyrems"), file)
+    })
+
+
   return(
     list(
       dataset = reactive({

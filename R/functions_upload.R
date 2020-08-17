@@ -1,7 +1,14 @@
 preprocess_data <- function(data){
-  data %<>% dplyr::mutate(dplyr::across(c(.data$Year, .data$Month, .data$Day), as.integer),
-                          dplyr::across(c(.data$Station, .data$Units, .data$Variable), as.character),
-                          dplyr::across(c(.data$Value), as.numeric))
+
+  data$Year %<>% as.integer()
+  data$Month %<>% as.integer()
+  data$Day %<>% as.integer()
+
+  data$Station %<>% as.character()
+  data$Units %<>% as.character()
+  data$Variable %<>% as.character()
+
+  data$Value %<>% as.numeric()
 
   if("Second" %in% names(data)){
     data$Second %<>% as.integer()

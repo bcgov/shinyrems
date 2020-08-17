@@ -16,6 +16,8 @@ The following columns are **mandatory**:
   - Variable of measurement (e.g. parameter name)
 1. **Value**
   - Value of measurement as number
+1. **Units**
+  - Unit of measurement 
   
 The following columns are **optional** and can be used by the app: 
 * **DetectionLimit**
