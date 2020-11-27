@@ -145,6 +145,7 @@ mod_data_server <- function(input, output, session) {
     updateSelectInput(session, "permit", selected = "")
     updateSelectInput(session, "wshedgroup", selected = "")
     updateSelectizeInput(session, "site", selected = "")
+    updateTextInput(session, "file_raw", value = "")
   })
 
   rv <- reactiveValues(
