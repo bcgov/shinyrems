@@ -7,4 +7,3 @@ Options are:
 * 'half the detection limit' - set the value to half the detection limit
 * 'detection limit' - set the value equal to the detection limit
 * 'missing value (NA)' - set the value to NA
-* 'take no action' - leave values as they are

@@ -128,8 +128,7 @@ mod_tidy_server <- function(input, output, session, raw) {
       label = "Set values below detection limit to",
       choices = c("zero" = "zero", "detection limit" = "mdl",
                   "half the detection limit" = "half",
-                  "missing value (NA)" = "na",
-                  "take no action" = "none"),
+                  "missing value (NA)" = "na"),
       selected = "zero"
     ) %>%
       helper("tab2_mdlaction")
