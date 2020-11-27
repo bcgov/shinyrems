@@ -32,9 +32,7 @@ mod_tidy_ui <- function(id) {
       br(),
       uiOutput(ns("ui_sample_state")) %>% helper("tab2_samplestate"),
       uiOutput(ns("ui_sample_class")) %>% helper("tab2_sampleclass"),
-      uiOutput(ns("ui_mdl_action")),
-      checkboxInput(ns("strict"), "Strict matching", value = TRUE) %>%
-        helper("tab2_strict")
+      uiOutput(ns("ui_mdl_action"))
     ),
     mainPanel(tabsetPanel(
       tabPanel(
@@ -95,7 +93,7 @@ mod_tidy_server <- function(input, output, session, raw) {
     withCallingHandlers(
       {
         shinyjs::html("console_stand", "")
-        x <- ems_standardize(filter_data(), input$strict)
+        x <- ems_standardize(filter_data(), strict = TRUE)
       },
       message = function(m) {
         shinyjs::html(id = "console_stand", html = HTML(paste(m$message, "<br>")), add = TRUE)

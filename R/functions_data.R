@@ -170,7 +170,7 @@ ems_tidy <- function(data, mdl_action, dataset, cols) {
 ems_standardize <- function(data, strict) {
   x <- try(
     {
-      wqbc::standardize_wqdata(data, strict)
+      wqbc::standardize_wqdata(data, strict = strict)
     },
     silent = TRUE
   )
