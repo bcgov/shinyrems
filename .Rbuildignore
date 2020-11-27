@@ -16,3 +16,4 @@ build.R
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+^.*\.docx$
