@@ -16,7 +16,7 @@ app_server <- function(input, output, session) {
 
   dataset <- getShinyOption("dataset", "demo")
 
-  showModal(session = session, disclaimer_modal)
+  showModal(session = session, disclaimer_modal(dataset))
 
   callModule(mod_about_server, "about_ui_1")
 

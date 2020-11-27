@@ -5,7 +5,17 @@
 # Shinyrems allows the user to view site location, filter, clean and plot data. The app uses the R packages rems and wqbc. Shinyrems is meant to provide the user an efficient way to view water quality data and compare to various benchmarks. It is up to the user to ensure correctness of the raw data, outlier detection, water quality guideline calculation and summary statistics.
 # "
 
-disclaimer_modal <- modalDialog(title = "Disclaimer",
-                                includeMarkdown(system.file("extdata/disclaimer.md",
-                                                            package = "shinyrems")),
-                                footer = modalButton("Got it"), easyClose = TRUE)
+disclaimer_modal <- function(dataset){
+  if(dataset == "upload"){
+    x <- tagList(includeMarkdown(system.file("extdata/instructions.md",
+                                             package = "shinyrems")),
+                 includeMarkdown(system.file("extdata/disclaimer.md",
+                                             package = "shinyrems")))
+  } else {
+    x <- includeMarkdown(system.file("extdata/disclaimer.md",
+                                     package = "shinyrems"))
+  }
+  modalDialog(title = NULL,
+              x,
+              footer = modalButton("Got it"), easyClose = TRUE)
+}
