@@ -139,10 +139,10 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     req(input$plot_type)
     if (input$plot_type == "scatter") {
       show("div_geom")
-      hide("timeframe")
+      hide("div_timeframe")
     } else {
       hide("div_geom")
-      show("timeframe")
+      show("div_timeframe")
     }
   })
 
@@ -272,12 +272,14 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
           )
         )
       )),
-      shinyjs::hidden(selectInput(ns("timeframe"),
+      shinyjs::hidden(div(
+        id = ns("div_timeframe"),
+        selectInput(ns("timeframe"),
         label = "Group by time window",
         choices = c("Year", "Year-Month", "Month", "Season"),
         selected = c("Year")
-      ) %>%
-        helper("tab5_timeframe"))
+      ))) %>%
+        helper("tab5_timeframe")
     )
   })
 
