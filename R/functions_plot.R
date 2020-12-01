@@ -128,10 +128,12 @@ get_timeframe <- function(date, x = "Year") {
     return(dttr2::dtt_year(date))
   }
   if (x == "Year-Month") {
-    return(substr(date, 1, 7))
+    ch <- format(sort(date), "%Y-%b")
+    fac <- factor(ch, unique(ch))
+    return(fac)
   }
   if (x == "Month") {
-    return(dttr2::dtt_month(date))
+    return(factor(month.abb[dttr2::dtt_month(date)], levels = month.abb))
   }
   dttr2::dtt_season(date)
 }
