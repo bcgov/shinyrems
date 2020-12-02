@@ -116,6 +116,12 @@ plot_outlier <- function(data, by, point_size) {
     } else {
       gp <- gp + ggplot2::facet_grid(Variable ~ EMS_ID, scales = "free")
     }
+  } else if ("Station" %in% by) {
+    if (length(unique(data$Variable)) == 1) {
+      gp <- gp + ggplot2::facet_grid(Station ~ Variable, scales = "free")
+    } else {
+      gp <- gp + ggplot2::facet_grid(Variable ~ Station, scales = "free")
+    }
   } else {
     gp <- gp + ggplot2::facet_wrap(~Variable, scales = "free", ncol = 1)
   }

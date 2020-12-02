@@ -2,7 +2,7 @@ preprocess_data <- function(data){
 
   chk::chk_superset(names(data), c("Year", "Month", "Day",
                                    "Station", "Units", "Variable",
-                                   "Value", "test"), x_name = "Column names in uploaded data")
+                                   "Value"), x_name = "Column names in uploaded data")
 
   data$Year %<>% as.integer()
   data$Month %<>% as.integer()
