@@ -49,7 +49,12 @@ mod_results_ui <- function(id) {
             ),
             selectInput(ns("palette"), label = "Palette",
                         choices = c("Accent", "Dark2", "Paired", "Pastel1",
-                                    "Pastel2", "Set1", "Set2", "Set3"))
+                                    "Pastel2", "Set1", "Set2", "Set3")),
+            numericInput(ns("ncol"), "Number of columns",
+                         value = 1, min = 1, max = 20) %>%
+              helper("tab5_ncol"),
+            checkboxInput(ns("scales"), label = "Standardize Y-axis scales", value = TRUE) %>%
+              helper("tab5_scales")
           ),
           tabPanel(
             title = "Guideline",
@@ -163,7 +168,7 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
 
     data <- ems_plot_data(data = rv$data, date_range = input$date_range,
                           timeframe = input$timeframe)
-    gp <- ems_plot_base(data, facet = input$facet) %>%
+    gp <- ems_plot_base(data, facet = input$facet, ncol = input$ncol, scales = input$scales) %>%
       ems_plot_add_geom(plot_type = input$plot_type, geom = input$geom,
                         point_size = input$point_size, line_size = input$line_size,
                         colour = input$colour, timeframe = input$timeframe,

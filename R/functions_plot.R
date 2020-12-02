@@ -32,13 +32,14 @@ ems_plot_data <- function(data, date_range, timeframe){
   data
 }
 
-ems_plot_base <- function(data, facet){
+ems_plot_base <- function(data, facet, ncol, scales){
+  scales <- ifelse(scales, "fixed", "free")
   gp <- ggplot2::ggplot(data, ggplot2::aes_string(x = "Date", y = "Value")) +
     # ggplot2::scale_color_discrete(drop = FALSE) +
     ggplot2::expand_limits(y = 0) +
     ggplot2::facet_wrap(facet,
-                        ncol = 1,
-                        scales = "free_y"
+                        ncol = ncol,
+                        scales = scales
     ) +
     ggplot2::ylab(unique(data$Units)) +
     ggplot2::theme_bw() +
