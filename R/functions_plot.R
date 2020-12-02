@@ -45,11 +45,12 @@ ems_plot_base <- function(data, facet){
     ggplot2::theme(legend.position = "bottom")
 }
 
-ems_plot_add_guideline <- function(gp, guideline){
+ems_plot_add_guideline <- function(gp, guideline, guideline_colour){
 
   gp <- gp + ggplot2::geom_line(
             data = guideline,
-            ggplot2::aes_string(x = "Date", y = "UpperLimit", linetype = "Guideline"), size = 0.8) +
+            ggplot2::aes_string(x = "Date", y = "UpperLimit", linetype = "Guideline"),
+            size = 0.8, color = guideline_colour) +
             ggplot2::scale_linetype_manual(values=c("dashed", "dotted", "dotdash",
                                            "longdash", "twodash", "solid"))
 
