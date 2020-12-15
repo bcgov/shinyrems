@@ -3,11 +3,12 @@
 There are two options:
 
 ### Set manually
-It might be helpful to visit the [Water Quality Guideline app](https://bcgov-env.shinyapps.io/bc_wqg/) to find a guideline for a particular variable and to set the value of any additional parameters manually.
+Any benchmark value may be entered here. Examples include permit limits, water quality objectives, or water quality guidelines that are not calculated see Limits in the Reference Tables tab or visit the [Water Quality Guideline app](https://bcgov-env.shinyapps.io/bc_wqg/)).
 
 ### Calculate from data
 
-Calculates the approved upper water quality thresholds for freshwater life in British Columbia. Only limits whose conditions are met are returned.
+Calculates the approved upper water quality thresholds for freshwater life in British Columbia (see Limits in Reference Tables tab for approved upper thresholds). 
+Only limits whose conditions are met are returned.
 
 Two options may be set by the user: 'term' and 'Get modelled estimate'.
 
