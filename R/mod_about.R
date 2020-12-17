@@ -35,7 +35,11 @@ mod_about_ui <- function(id) {
       h4(paste("Welcome!")),
       br(),
       h5(
-        "This app is an interface to the rems and wqbc R packages. For more information, see the ",
+        "See the", a("User Guide", href = "https://bcgov.github.io/shinyrems/articles/shinyrems.html"),
+        "for a more detailed explanation of app usage."
+      ),
+      h5(
+        "The app is an interface to the rems and wqbc R packages. For more information, see the ",
         a("rems", href = "https://github.com/bcgov/rems"), "and",
         a("wqbc", href = "https://github.com/bcgov/wqbc"), "GitHub pages."
       ),

@@ -31,6 +31,10 @@ Please remember to restart your R session after installation.
 
 ## Usage
 
+See the [User
+Guide](https://bcgov.github.io/shinyrems/articles/shinyrems.html) for a
+more detailed explanation of app usage.
+
 ShinyRems app can be run with various EMS datasets that must be
 downloaded and stored on the user’s computer. Prior to app startup, you
 will be prompted to download data if required and you will be notified

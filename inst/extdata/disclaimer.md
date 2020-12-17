@@ -1,3 +1,5 @@
+See the [User Guide](https://bcgov.github.io/shinyrems/articles/shinyrems.html) for a more detailed explanation of app usage.
+
 ### Disclaimer
 
 Shinyrems is a web application to analyze water quality data. There are three options for viewing data:  
