@@ -48,7 +48,10 @@ mod_outlier_ui <- function(id) {
         sliderInput(ns("plot_height"),
           label = "Plot Height",
           value = 500, min = 0, max = 1000, step = 100
-        )
+        ),
+        numericInput(ns("ncol"), "Number of columns",
+                     value = 1, min = 1, max = 20) %>%
+          helper("tab5_ncol")
       ),
       mainPanel(
         tabsetPanel(
@@ -118,10 +121,6 @@ mod_outlier_server <- function(input, output, session, clean, stand) {
     outlier_rv$data <- outlier_data()
   })
 
-  # observeEvent(input$table_clean_rows_selected, {
-  #   clean_rv$data <- add_outlier_table(clean_rv$data, input$table_clean_rows_selected)
-  # })
-
   manual_outliers <- reactive({
     which(add_outlier_brush(outlier_rv$data, input$plot_brush)$Outlier)
   })
@@ -170,7 +169,7 @@ mod_outlier_server <- function(input, output, session, clean, stand) {
 
   output$plot_clean <- renderPlot({
     suppressWarnings(waiter::show_butler())
-    p <- plot_outlier(outlier_data2(), clean$by(), input$point_size)
+    p <- plot_outlier(outlier_data2(), clean$by(), input$point_size, ncol = input$ncol)
     suppressWarnings(waiter::hide_butler())
     p
   })
@@ -226,6 +225,9 @@ mod_outlier_server <- function(input, output, session, clean, stand) {
       }),
       large_only = reactive({
         input$large_only
+      }),
+      by = reactive({
+        sort(c("Variable", clean$by()))
       })
     )
   )

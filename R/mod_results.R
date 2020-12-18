@@ -54,7 +54,7 @@ mod_results_ui <- function(id) {
               helper("tab5_scales"),
             uiOutput(ns("ui_order")),
             br(),
-            button(ns("rename"), "Rename Stations")
+            uiOutput(ns("ui_button_rename"))
           ),
           tabPanel(
             title = "Guideline",
@@ -292,21 +292,16 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
   })
 
   output$ui_facet <- renderUI({
-    data <- isolate(rv$data)
-    x <- sort(intersect(names(data), c("Station", "Variable", "EMS_ID")))
     selectInput(ns("facet"), "Facet by",
-      choices = x,
+      choices = outlier$by(),
       selected = "Variable"
     )
   })
 
   output$ui_colour <- renderUI({
-    data <- isolate(rv$data)
-    colour_vars <- c("Station", "Variable", "EMS_ID", "LOWER_DEPTH", "UPPER_DEPTH")
-    x <- sort(intersect(names(data), colour_vars))
     selectInput(ns("colour"), "Colour by",
-      choices = x,
-      selected = x[1]
+      choices = outlier$by(),
+      selected = outlier$by()[1]
     )
   })
 
@@ -334,7 +329,9 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
 
   observe({
     data <- outlier$data()
-    data$Station <- ordered(data$Station)
+    if("Station" %in% names(data)){
+      data$Station <- ordered(data$Station)
+    }
     rv$data <- data
   })
 
@@ -355,6 +352,12 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     showModal(modalDialog(uiOutput(ns("ui_rename"))))
   })
 
+  output$ui_button_rename <- renderUI({
+    if(!("Station" %in% outlier$by()))
+      return(NULL)
+    button(ns("rename"), "Rename Stations")
+  })
+
   output$ui_rename <- renderUI({
     sites <- unique(rv$data$Station)
     div(
@@ -364,6 +367,8 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
   })
 
   output$ui_order <- renderUI({
+    if(!("Station" %in% outlier$by()))
+      return(NULL)
     stations <- levels(rv$data$Station)
     shinyjqui::orderInput(ns("order"), label = "Drag stations in desired order",
                           items = stations)

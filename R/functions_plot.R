@@ -92,7 +92,7 @@ ems_plot_add_geom <- function(gp, plot_type, geom,
   gp
 }
 
-plot_outlier <- function(data, by, point_size) {
+plot_outlier <- function(data, by, point_size, ncol) {
   data$Detected <- detected(data$Value, data$DetectionLimit)
   data$Detected %<>% factor(levels = c(TRUE, FALSE))
   data$Outlier %<>% factor(levels = c(TRUE, FALSE))
@@ -110,20 +110,12 @@ plot_outlier <- function(data, by, point_size) {
     # ggplot2::theme_bw() +
     ggplot2::theme(legend.position = "bottom")
 
-  if ("EMS_ID" %in% by) {
-    if (length(unique(data$Variable)) == 1) {
-      gp <- gp + ggplot2::facet_grid(EMS_ID ~ Variable, scales = "free")
-    } else {
-      gp <- gp + ggplot2::facet_grid(Variable ~ EMS_ID, scales = "free")
-    }
-  } else if ("Station" %in% by) {
-    if (length(unique(data$Variable)) == 1) {
-      gp <- gp + ggplot2::facet_grid(Station ~ Variable, scales = "free")
-    } else {
-      gp <- gp + ggplot2::facet_grid(Variable ~ Station, scales = "free")
-    }
+  if ("Station" %in% by) {
+    gp <- gp + ggplot2::facet_wrap("Station", scales = "free", ncol = ncol)
+  } else if ("EMS_ID" %in% by) {
+    gp <- gp + ggplot2::facet_wrap("EMS_ID", scales = "free", ncol = ncol)
   } else {
-    gp <- gp + ggplot2::facet_wrap(~Variable, scales = "free", ncol = 1)
+    gp <- gp + ggplot2::facet_wrap("Variable", scales = "free", ncol = ncol)
   }
   gp
 }
