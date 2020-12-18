@@ -45,10 +45,14 @@ ems_data_parameter <- function(data, all_data, dataset, lookup,
   emsid <- unique(data$EMS_ID)
   params <- additional_parameters(data, lookup)
 
-  data <- ems_data(dataset,
-                   emsid = emsid, parameter = params,
-                   from_date = from_date, to_date = to_date, data = all_data
-  )
+  if(dataset == "upload"){
+    data <- all_data[which(all_data$Variable %in% params),]
+  } else {
+    data <- ems_data(dataset,
+                     emsid = emsid, parameter = params,
+                     from_date = from_date, to_date = to_date, data = all_data)
+  }
+
   if(!nrow(data)){
     err(paste0("There is no available data for the additional parameter(s): ", err::cc_and(params), " at the selected sites and date range. This is required to calculate the limits. Try setting guideline manually, or visit the Water Quality Guideline app (https://bcgov-env.shinyapps.io/bc_wqg/), where you can set the value for additional parameters manually."))
   }
@@ -56,7 +60,6 @@ ems_data_parameter <- function(data, all_data, dataset, lookup,
                    mdl_action = mdl_action,
                    dataset = dataset, cols = cols
   )
-  data <- ems_standardize(data, strict = strict)
   data <- ems_outlier(data,
                       by = by, max_cv = max_cv, sds = sds,
                       ignore_undetected = ignore_undetected, large_only = large_only,

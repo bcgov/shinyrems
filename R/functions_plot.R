@@ -54,8 +54,6 @@ ems_plot_add_guideline <- function(gp, guideline, guideline_colour){
             size = 0.8, color = guideline_colour) +
             ggplot2::scale_linetype_manual(values=c("dashed", "dotted", "dotdash",
                                            "longdash", "twodash", "solid"))
-
-
   gp
 }
 

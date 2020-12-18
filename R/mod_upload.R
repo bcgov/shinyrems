@@ -66,6 +66,9 @@ mod_upload_ui <- function(id) {
 
 mod_upload_server <- function(input, output, session) {
   ns <- session$ns
+
+  lookup <- getShinyOption("lookup", NULL)
+
   shinyhelper::observe_helpers(help_dir = system.file("helpfiles", package = "shinyrems"))
 
   rv <- reactiveValues(
@@ -158,14 +161,22 @@ mod_upload_server <- function(input, output, session) {
       file.copy(system.file("extdata/ems_template.csv", package = "shinyrems"), file)
     })
 
-
   return(
     list(
       dataset = reactive({
         "upload"
       }),
+      lookup = reactive({
+        lookup
+      }),
       data = reactive({
         rv$processed_data
+      }),
+      all_data = reactive({
+        rv$date_data
+      }),
+      date = reactive({
+        input$date_range
       })
     )
   )

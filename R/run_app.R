@@ -55,6 +55,9 @@ run_ems_app <- function(dataset = "2yr") {
       add_lookup_wsgroup()
     wsheds <- setdiff(unique(lookup_location$WATERSHED_GROUP_NAME), NA)
     watershed_groups <- watershed_groups[which(watershed_groups$WATERSHED_GROUP_NAME %in% wsheds),]
+  } else {
+    # if upload get historic lookup so doesnt require download
+    lookup <- lookup_historic
   }
 
   shinyOptions(
