@@ -125,7 +125,7 @@ mod_tidy_server <- function(input, output, session, raw) {
 
   output$ui_mdl_action <- renderUI({
     selectInput(ns("mdl_action"),
-      label = "Set values below detection limit to",
+      label = "Set values at or below detection limit to",
       choices = c("zero" = "zero", "detection limit" = "mdl",
                   "half the detection limit" = "half",
                   "missing value (NA)" = "na"),

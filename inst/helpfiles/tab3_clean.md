@@ -7,5 +7,5 @@ This step does the following:
 * Calculates a summary value (max, mean or median) for replicates, which are defined as two or more readings for the same variable on the same date. Data can also be summarized by additional columns such as Station.
 
 There are two underlying functions in the `wqbc` R package being used: 
-* `clean_wqdata`
-* `standardize_wqdata`
+* [clean_wqdata](http://bcgov.github.io/wqbc/reference/clean_wqdata.html)
+* [standardize_wqdata](http://bcgov.github.io/wqbc/reference/standardize_wqdata.html)

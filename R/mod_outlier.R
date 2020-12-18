@@ -35,7 +35,7 @@ mod_outlier_ui <- function(id) {
           label = "Standard deviations",
           value = 10
         ) %>% helper("tab4_stddev"),
-        checkboxInput(ns("ignore_undetected"), "Ignore values below detection limit", TRUE) %>%
+        checkboxInput(ns("ignore_undetected"), "Ignore values at or below detection limit", TRUE) %>%
           helper("tab4_ignorevalues"),
         checkboxInput(ns("large_only"), "Large values only", TRUE) %>%
           helper("tab4_largevalues"),

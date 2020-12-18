@@ -6,4 +6,4 @@ This step does two main things:
 * Sets the timezone to PST
 * Filter out unwanted values of SAMPLE_CLASS and SAMPLE_STATE (e.g. blanks and replicates)
 
-The underlying function being used in the `wqbc` R package is `tidy_ems_data`. The filtering is done separately.
+The underlying function being used in the `wqbc` R package is [tidy_ems_data](http://bcgov.github.io/wqbc/reference/tidy_ems_data.html). The filtering is done separately.

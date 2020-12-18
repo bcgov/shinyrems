@@ -70,7 +70,7 @@ mod_results_ui <- function(id) {
           ),
           tabPanel(
             title = "Summary Table",
-            h4("Create summary table") %>% helper("tab5_summary"),
+            h4("Calculate summary table") %>% helper("tab5_summary"),
             checkboxInput(ns("censored"),
               label = "Account for data censoring", value = TRUE
             ) %>% helper("tab5_censoring"),
