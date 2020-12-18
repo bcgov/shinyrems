@@ -26,7 +26,7 @@ test_that("ems data functions work", {
   expect_identical(unique(data$EMS_ID), emsid)
   expect_identical(unique(data$PARAMETER), param)
   expect_true(as.Date(max(data$COLLECTION_START)) <= to)
-  expect_identical(nrow(data), 48L)
+  expect_identical(nrow(data), 49L)
 
   tidy_data <- ems_tidy(data,
     mdl_action = "zero",
@@ -55,13 +55,20 @@ test_that("ems data functions work", {
   #### test plot
   data <- out_data
   data$Site_Renamed <- data$Station
+  guideline <- data.frame(UpperLimit = rep(1, 2),
+                          id = 1,
+                          calculated = FALSE,
+                          Guideline = rep("test", 2),
+                          Variable = unique(data$Variable),
+                          Date = c(rep(min(data$Date), 2),
+                                   rep(max(data$Date), 2)))
 
   x <- ems_plot_data(data, date_range = c(from, to), timeframe = "Year")
-  gp <- ems_plot_base(x, facet = "Station") %>%
+  gp <- ems_plot_base(x, facet = "Station", scales = TRUE, ncol = 1) %>%
     ems_plot_add_geom(plot_type = "scatter", geom = c("show points"),
                       point_size = 1, line_size = 1, colour = "Station",
                       timeframe = "Year", palette = "Set1") %>%
-    ems_plot_add_guideline(guideline = 6)
+    ems_plot_add_guideline(guideline = guideline, guideline_colour = "black")
 
   expect_is(gp, "ggplot")
   expect_named(gp)
