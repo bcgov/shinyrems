@@ -40,9 +40,6 @@ mod_results_ui <- function(id) {
               uiOutput(ns("ui_facet")),
               uiOutput(ns("ui_colour"))
             ),
-            button(ns("rename"), "Rename Stations"),
-            br(),
-            br(),
             sliderInput(ns("plot_height"),
               label = "Plot Height",
               value = 500, min = 0, max = 1000, step = 100
@@ -54,7 +51,10 @@ mod_results_ui <- function(id) {
                          value = 1, min = 1, max = 20) %>%
               helper("tab5_ncol"),
             checkboxInput(ns("scales"), label = "Standardize Y-axis scales", value = TRUE) %>%
-              helper("tab5_scales")
+              helper("tab5_scales"),
+            uiOutput(ns("ui_order")),
+            br(),
+            button(ns("rename"), "Rename Stations")
           ),
           tabPanel(
             title = "Guideline",
@@ -292,7 +292,7 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
   })
 
   output$ui_facet <- renderUI({
-    data <- rv$data
+    data <- isolate(rv$data)
     x <- sort(intersect(names(data), c("Station", "Variable", "EMS_ID")))
     selectInput(ns("facet"), "Facet by",
       choices = x,
@@ -301,7 +301,7 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
   })
 
   output$ui_colour <- renderUI({
-    data <- rv$data
+    data <- isolate(rv$data)
     colour_vars <- c("Station", "Variable", "EMS_ID", "LOWER_DEPTH", "UPPER_DEPTH")
     x <- sort(intersect(names(data), colour_vars))
     selectInput(ns("colour"), "Colour by",
@@ -334,17 +334,19 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
 
   observe({
     data <- outlier$data()
-    data$Site_Renamed <- data$Station
+    data$Station <- ordered(data$Station)
     rv$data <- data
   })
 
   observeEvent(input$finalise, {
     data <- rv$data
     sites <- unique(data$Station)
+    data$Station <- as.character(data$Station)
     for (i in sites) {
       x <- input[[i]]
-      data$Site_Renamed[data$Station == i] <- x
+      data$Station[data$Station == i] <- x
     }
+    data$Station <- ordered(data$Station)
     removeModal()
     rv$data <- data
   })
@@ -359,6 +361,16 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
       lapply(sites, rename_inputs, ns),
       button(ns("finalise"), "Rename")
     )
+  })
+
+  output$ui_order <- renderUI({
+    stations <- levels(rv$data$Station)
+    shinyjqui::orderInput(ns("order"), label = "Drag stations in desired order",
+                          items = stations)
+  })
+
+  observeEvent(input$order_order, {
+    rv$data$Station <- ordered(rv$data$Station, levels = input$order_order)
   })
 
   output$ui_by <- renderUI({

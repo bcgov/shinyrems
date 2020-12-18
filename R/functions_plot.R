@@ -21,7 +21,7 @@ multiple_units <- function(data) {
 ### takes aggregated data with EMS_ID_Rename col
 ems_plot_data <- function(data, date_range, timeframe){
   data$Detected <- detected(data$Value, data$DetectionLimit)
-  data$Station <- data$Site_Renamed
+  # data$Station <- data$Site_Renamed
   data$Detected %<>% factor(levels = c(TRUE, FALSE))
   data <- data[data$Date >= as.Date(date_range[1]) & data$Date <= as.Date(date_range[2]), ]
   data$Timeframe <- factor(get_timeframe(data$Date, timeframe))
