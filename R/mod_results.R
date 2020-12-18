@@ -174,7 +174,7 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
                         colour = input$colour, timeframe = input$timeframe,
                         palette = input$palette)
 
-    if(!is.null(rv$guideline)){
+    if(!is.null(rv$guideline) & input$plot_type != "boxplot"){
       x <- rv$guideline
       x <- x[c("Date", "Guideline", "Variable", "UpperLimit")]
       gp <- gp %>% ems_plot_add_guideline(guideline = x, guideline_colour = input$guideline_colour)
