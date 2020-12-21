@@ -11,6 +11,7 @@
 # See the License for the specific language governing permissions and limitations under the License.
 
 #' @import leaflet shiny glue
+#' @rawNamespace import(chk, except = p)
 #' @importFrom stats median sd setNames
 #' @importFrom rlang .data
 #' @importFrom utils zip

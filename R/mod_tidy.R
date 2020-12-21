@@ -28,12 +28,11 @@ mod_tidy_ui <- function(id) {
   sidebarLayout(
     sidebarPanel(
       class = "sidebar",
+      title("Tidy your data") %>% helper("tab2_tidy"),
       br(),
-      uiOutput(ns("ui_sample_state")),
-      uiOutput(ns("ui_sample_class")),
-      uiOutput(ns("ui_mdl_action")),
-      checkboxInput(ns("strict"), "Strict matching", value = TRUE) %>%
-        embed_help("info_strict", ns, info$strict)
+      uiOutput(ns("ui_sample_state")) %>% helper("tab2_samplestate"),
+      uiOutput(ns("ui_sample_class")) %>% helper("tab2_sampleclass"),
+      uiOutput(ns("ui_mdl_action"))
     ),
     mainPanel(tabsetPanel(
       tabPanel(
@@ -48,8 +47,6 @@ mod_tidy_ui <- function(id) {
         br(),
         help_output(ns("console_stand"))
       )
-      # tabPanel(title = "R Code",
-      #          wellPanel(uiOutput(ns("rcode"))))
     ))
   )
 }
@@ -65,11 +62,16 @@ mod_tidy_server <- function(input, output, session, raw) {
 
   tidy_data <- reactive({
     req(raw$data())
-    ems_tidy(
-      raw$data(), input$mdl_action,
-      raw$data_type(), raw$dataset(),
-      raw$cols()
+    if(raw$dataset() == "upload"){
+      return(raw$data())
+    }
+    x <- ems_tidy(
+      raw$data(),
+      mdl_action = input$mdl_action,
+      dataset = raw$dataset(),
+      cols = raw$cols()
     )
+    x
   })
 
   filter_data <- reactive({
@@ -77,7 +79,13 @@ mod_tidy_server <- function(input, output, session, raw) {
     if (nrow(x) < 1) {
       return(empty_tidy)
     }
-    x[x$SAMPLE_STATE %in% input$sample_state & x$SAMPLE_CLASS %in% input$sample_class, ]
+    if("SAMPLE_STATE" %in% names(x)){
+      x <- x[x$SAMPLE_STATE %in% input$sample_state,]
+    }
+    if("SAMPLE_CLASS" %in% names(x)){
+      x <- x[x$SAMPLE_CLASS %in% input$sample_class,]
+    }
+    x
   })
 
   stand_data <- reactive({
@@ -85,7 +93,7 @@ mod_tidy_server <- function(input, output, session, raw) {
     withCallingHandlers(
       {
         shinyjs::html("console_stand", "")
-        x <- ems_standardize(filter_data(), input$strict)
+        x <- ems_standardize(filter_data(), strict = TRUE)
       },
       message = function(m) {
         shinyjs::html(id = "console_stand", html = HTML(paste(m$message, "<br>")), add = TRUE)
@@ -96,6 +104,7 @@ mod_tidy_server <- function(input, output, session, raw) {
   })
 
   output$ui_sample_state <- renderUI({
+    req("SAMPLE_STATE" %in% names(raw$data()))
     x <- sort(unique(raw$data()$SAMPLE_STATE))
     select_input_x(ns("sample_state"),
       label = "Select values of SAMPLE_STATE to include",
@@ -105,6 +114,7 @@ mod_tidy_server <- function(input, output, session, raw) {
   })
 
   output$ui_sample_class <- renderUI({
+    req("SAMPLE_CLASS" %in% names(raw$data()))
     x <- sort(unique(raw$data()$SAMPLE_CLASS))
     select_input_x(ns("sample_class"),
       label = "Select values of SAMPLE_CLASS to include",
@@ -115,11 +125,13 @@ mod_tidy_server <- function(input, output, session, raw) {
 
   output$ui_mdl_action <- renderUI({
     selectInput(ns("mdl_action"),
-      label = "MDL Action",
-      choices = c("zero", "mdl", "half", "na", "none"),
+      label = "Set values at or below detection limit to",
+      choices = c("zero" = "zero", "detection limit" = "mdl",
+                  "half the detection limit" = "half",
+                  "missing value (NA)" = "na"),
       selected = "zero"
     ) %>%
-      embed_help("info_mdl", ns, info$mdl_action)
+      helper("tab2_mdlaction")
   })
 
   observeEvent(input$info_mdl, {
@@ -147,27 +159,9 @@ mod_tidy_server <- function(input, output, session, raw) {
     }
   )
 
-  rcodetidy <- reactive({
-    rcode_tidy(input$mdl_action, raw$cols())
-  })
-
-  rcodestand <- reactive({
-    rcode_standardize(input$strict)
-  })
-
-  output$rcode <- renderUI({
-    tagList(
-      rcodetidy(),
-      br2(),
-      rcodestand()
-    )
-  })
-
   return(
     list(
       data = stand_data,
-      rcodetidy = rcodetidy,
-      rcodestand = rcodestand,
       mdl_action = reactive({
         input$mdl_action
       }),

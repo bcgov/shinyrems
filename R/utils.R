@@ -16,3 +16,6 @@ se <- function(x) {
   sd(x, na.rm = TRUE) /
     sqrt(length(x[!is.na(x)]))
 }
+
+str_extract_all <- function(x, y) regmatches(x, gregexpr(y, x))
+

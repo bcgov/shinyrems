@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 # shinyrems
 
 <!-- badges: start -->
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![img](https://img.shields.io/badge/Lifecycle-Maturing-007EC6)](https://github.com/bcgov/repomountie/blob/master/doc/lifecycle-badges.md)
 [![Apache license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 <!-- badges: end -->
 
@@ -35,6 +35,8 @@ remotes::install_github("bcgov/shinyrems")
 Please remember to restart your R session after installation.
 
 ## Usage
+See the [User Guide](https://bcgov.github.io/shinyrems/articles/shinyrems.html) for a more detailed explanation of app usage. 
+
 ShinyRems app can be run with various EMS datasets that must be downloaded and stored on the user's computer. Prior to app startup, you will be prompted to download data if required and you will be notified if data updates are available.
 
 There are six possible run modes corresponding to different 

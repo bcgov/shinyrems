@@ -29,17 +29,18 @@ mod_outlier_ui <- function(id) {
     sidebarLayout(
       sidebarPanel(
         class = "sidebar",
+        title("Find and remove outliers") %>% helper("tab4_outlier"),
+        br(),
         numericInput(ns("sds"),
           label = "Standard deviations",
           value = 10
-        ) %>%
-          embed_help("info_sds", ns, info$sds),
-        checkboxInput(ns("ignore_undetected"), "Ignore values below detection limit", TRUE) %>%
-          embed_help("info_undetected", ns, info$undetected),
+        ) %>% helper("tab4_stddev"),
+        checkboxInput(ns("ignore_undetected"), "Ignore values at or below detection limit", TRUE) %>%
+          helper("tab4_ignorevalues"),
         checkboxInput(ns("large_only"), "Large values only", TRUE) %>%
-          embed_help("info_large", ns, info$large),
+          helper("tab4_largevalues"),
         checkboxInput(ns("delete_outliers"), "Remove outliers from plot", FALSE) %>%
-          embed_help("info_remove", ns, info$remove),
+          helper("tab4_removeoutliers"),
         numericInput(ns("point_size"),
           label = "Point Size",
           value = 1.3, min = 0, max = 10
@@ -47,7 +48,10 @@ mod_outlier_ui <- function(id) {
         sliderInput(ns("plot_height"),
           label = "Plot Height",
           value = 500, min = 0, max = 1000, step = 100
-        )
+        ),
+        numericInput(ns("ncol"), "Number of columns",
+                     value = 1, min = 1, max = 20) %>%
+          helper("tab5_ncol")
       ),
       mainPanel(
         tabsetPanel(
@@ -71,9 +75,6 @@ mod_outlier_ui <- function(id) {
             br(),
             help_output(ns("console_clean"))
           )
-          # tabPanel(title = "R Code",
-          #          br(),
-          #          wellPanel(uiOutput(ns("rcode"))))
         )
       )
     )
@@ -100,7 +101,7 @@ mod_outlier_server <- function(input, output, session, clean, stand) {
           x = stand$data(),
           by = clean$by(),
           max_cv = max_cv(),
-          remove_blanks = clean$remove_blanks(),
+          remove_blanks = FALSE,
           FUN = eval(parse(text = clean$fun())),
           sds = input$sds,
           ignore_undetected = input$ignore_undetected,
@@ -119,10 +120,6 @@ mod_outlier_server <- function(input, output, session, clean, stand) {
   observe({
     outlier_rv$data <- outlier_data()
   })
-
-  # observeEvent(input$table_clean_rows_selected, {
-  #   clean_rv$data <- add_outlier_table(clean_rv$data, input$table_clean_rows_selected)
-  # })
 
   manual_outliers <- reactive({
     which(add_outlier_brush(outlier_rv$data, input$plot_brush)$Outlier)
@@ -172,7 +169,7 @@ mod_outlier_server <- function(input, output, session, clean, stand) {
 
   output$plot_clean <- renderPlot({
     suppressWarnings(waiter::show_butler())
-    p <- plot_outlier(outlier_data2(), clean$by(), input$point_size)
+    p <- plot_outlier(outlier_data2(), clean$by(), input$point_size, ncol = input$ncol)
     suppressWarnings(waiter::hide_butler())
     p
   })
@@ -199,27 +196,6 @@ mod_outlier_server <- function(input, output, session, clean, stand) {
     shinyjs::toggle("div_info_remove", anim = TRUE)
   })
 
-  rcodeclean <- reactive({
-    rcode_clean2(
-      by = clean$by(), max_cv = max_cv(), sds = input$sds,
-      ignore_undetected = input$ignore_undetected,
-      large_only = input$large_only,
-      remove_blanks = clean$remove_blanks(), fun = clean$fun()
-    )
-  })
-
-  rcodeoutlier <- reactive({
-    rcode_outlier(manual_outliers())
-  })
-
-  output$rcode <- renderUI({
-    tagList(
-      rcodeclean(),
-      br2(),
-      rcodeoutlier()
-    )
-  })
-
   output$ui_table_final <- renderUI({
     ems_table_output(ns("table_final"))
   })
@@ -240,8 +216,6 @@ mod_outlier_server <- function(input, output, session, clean, stand) {
   return(
     list(
       data = outlier_data3,
-      rcodeclean = rcodeclean,
-      rcodeoutlier = rcodeoutlier,
       max_cv = max_cv,
       sds = reactive({
         input$sds
@@ -251,6 +225,9 @@ mod_outlier_server <- function(input, output, session, clean, stand) {
       }),
       large_only = reactive({
         input$large_only
+      }),
+      by = reactive({
+        sort(c("Variable", clean$by()))
       })
     )
   )

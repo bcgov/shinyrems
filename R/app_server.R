@@ -11,11 +11,22 @@
 # See the License for the specific language governing permissions and limitations under the License.
 
 app_server <- function(input, output, session) {
+
+  shinyhelper::observe_helpers(help_dir = system.file("helpfiles", package = "shinyrems"))
+
+  dataset <- getShinyOption("dataset", "demo")
+
+  showModal(session = session, disclaimer_modal(dataset))
+
   callModule(mod_about_server, "about_ui_1")
 
   callModule(mod_reference_server, "reference_ui_1")
 
-  data <- callModule(mod_data_server, "data_ui_1")
+  if(dataset == "upload"){
+    data <- callModule(mod_upload_server, "upload_ui_1")
+  } else {
+    data <- callModule(mod_data_server, "data_ui_1")
+  }
 
   tidy <- callModule(mod_tidy_server, "tidy_ui_1", data)
 
@@ -23,9 +34,6 @@ app_server <- function(input, output, session) {
 
   outlier <- callModule(mod_outlier_server, "outlier_ui_1", clean, tidy)
 
-  results <- callModule(mod_results_server, "results_ui_1", data, tidy, clean, outlier)
+  callModule(mod_results_server, "results_ui_1", data, tidy, clean, outlier)
 
-  # guideline <- callModule(mod_guideline_server, "guideline_ui_1", results)
-
-  callModule(mod_rcode_server, "rcode_ui_1", data, tidy, clean, outlier, results)
 }

@@ -5,8 +5,7 @@
 
 <!-- badges: start -->
 
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![img](https://img.shields.io/badge/Lifecycle-Maturing-007EC6)](https://github.com/bcgov/repomountie/blob/master/doc/lifecycle-badges.md)
 [![Apache
 license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 <!-- badges: end -->
@@ -32,6 +31,10 @@ Please remember to restart your R session after installation.
 
 ## Usage
 
+See the [User
+Guide](https://bcgov.github.io/shinyrems/articles/shinyrems.html) for a
+more detailed explanation of app usage.
+
 ShinyRems app can be run with various EMS datasets that must be
 downloaded and stored on the user’s computer. Prior to app startup, you
 will be prompted to download data if required and you will be notified
@@ -39,15 +42,15 @@ if data updates are available.
 
 There are six possible run modes corresponding to different datasets:
 
-  - **‘demo’** - uses a demo dataset that requires no download of EMS
+-   **‘demo’** - uses a demo dataset that requires no download of EMS
     data  
-  - **‘2yr’** - uses most recent 2 years of EMS data (from 2018-01-01 to
+-   **‘2yr’** - uses most recent 2 years of EMS data (from 2018-01-01 to
     present)
-  - **‘4yr’** - uses most recent 4 years of EMS data from 2016-01-01 to
+-   **‘4yr’** - uses most recent 4 years of EMS data from 2016-01-01 to
     present)  
-  - **‘historic’** - uses historic EMS data (up to 2018-01-01)  
-  - **‘all’** - uses combined “2yr” and “historic” EMS data
-  - **‘upload’** - allows user to upload their own data following
+-   **‘historic’** - uses historic EMS data (up to 2018-01-01)  
+-   **‘all’** - uses combined “2yr” and “historic” EMS data
+-   **‘upload’** - allows user to upload their own data following
     correct format
 
 To select a run mode, provide the value (as it appears above) to
@@ -79,13 +82,13 @@ to abide by its terms.
 ## License
 
     Copyright 2019 Province of British Columbia
-    
+
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at 
-    
+
        http://www.apache.org/licenses/LICENSE-2.0
-    
+
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.

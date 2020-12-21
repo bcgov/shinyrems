@@ -11,6 +11,12 @@
 # See the License for the specific language governing permissions and limitations under the License.
 
 app_ui <- function() {
+  dataset <- getShinyOption("dataset", "demo")
+  if(dataset == "upload"){
+    mod_data <- mod_upload_ui("upload_ui_1")
+  } else {
+    mod_data <- mod_data_ui("data_ui_1")
+  }
   tagList(
     shinyjs::useShinyjs(),
     waiter::use_butler(),
@@ -23,7 +29,7 @@ app_ui <- function() {
       tabPanel(
         title = "1. Data",
         br(),
-        mod_data_ui("data_ui_1")
+        mod_data
       ),
       tabPanel(
         title = "2. Tidy",
@@ -45,9 +51,6 @@ app_ui <- function() {
         br(),
         mod_results_ui("results_ui_1")
       ),
-      # tabPanel(title = "R Code",
-      #          br(),
-      #          mod_rcode_ui("rcode_ui_1")),
       tabPanel(
         title = "Reference Tables",
         br(),

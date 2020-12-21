@@ -19,47 +19,47 @@ multiple_units <- function(data) {
 }
 
 ### takes aggregated data with EMS_ID_Rename col
-ems_plot <- function(data, plot_type, geom, date_range,
-                     point_size, line_size,
-                     facet, colour, timeframe,
-                     guideline) {
+ems_plot_data <- function(data, date_range, timeframe){
   data$Detected <- detected(data$Value, data$DetectionLimit)
-  data$EMS_ID <- data$EMS_ID_Renamed
+  # data$Station <- data$Site_Renamed
   data$Detected %<>% factor(levels = c(TRUE, FALSE))
   data <- data[data$Date >= as.Date(date_range[1]) & data$Date <= as.Date(date_range[2]), ]
   data$Timeframe <- factor(get_timeframe(data$Date, timeframe))
+  if("UPPER_DEPTH" %in% names(data))
+    data$UPPER_DEPTH %<>% as.factor()
+  if("LOWER_DEPTH" %in% names(data))
+    data$LOWER_DEPTH %<>% as.factor()
+  data
+}
 
+ems_plot_base <- function(data, facet, ncol, scales){
+  scales <- ifelse(scales, "fixed", "free")
   gp <- ggplot2::ggplot(data, ggplot2::aes_string(x = "Date", y = "Value")) +
-    ggplot2::scale_color_discrete(drop = FALSE) +
+    # ggplot2::scale_color_discrete(drop = FALSE) +
     ggplot2::expand_limits(y = 0) +
     ggplot2::facet_wrap(facet,
-      ncol = 1,
-      scales = "free_y"
+                        ncol = ncol,
+                        scales = scales
     ) +
     ggplot2::ylab(unique(data$Units)) +
-    ggplot2::theme(legend.position = "bottom") +
     ggplot2::theme_bw() +
     ggplot2::theme(legend.position = "bottom")
+}
 
-  if (!is.data.frame(guideline)) {
-    gp <- gp + ggplot2::geom_hline(yintercept = guideline, linetype = "dotted")
-  }
+ems_plot_add_guideline <- function(gp, guideline, guideline_colour){
 
-  if (is.data.frame(guideline)) {
-    if (nrow(guideline) == 1) {
-      gp <- gp + ggplot2::geom_hline(
-        yintercept = guideline$UpperLimit,
-        linetype = "dotted"
-      )
-    } else {
-      gp <- gp + ggplot2::geom_line(
-        data = guideline,
-        ggplot2::aes_string(x = "Date", y = "UpperLimit"),
-        linetype = "dotted"
-      )
-    }
-  }
+  gp <- gp + ggplot2::geom_line(
+            data = guideline,
+            ggplot2::aes_string(x = "Date", y = "UpperLimit", linetype = "Guideline"),
+            size = 0.8, color = guideline_colour) +
+            ggplot2::scale_linetype_manual(values=c("dashed", "dotted", "dotdash",
+                                           "longdash", "twodash", "solid"))
+  gp
+}
 
+ems_plot_add_geom <- function(gp, plot_type, geom,
+                              point_size, line_size,
+                              colour, timeframe, palette){
   if (plot_type == "scatter") {
     if ("show points" %in% geom) {
       gp <- gp + ggplot2::geom_point(
@@ -68,13 +68,15 @@ ems_plot <- function(data, plot_type, geom, date_range,
           shape = "Detected",
           color = colour
         )
-      )
+      ) +
+        ggplot2::scale_colour_brewer(palette = palette)
     }
     if ("show lines" %in% geom) {
       gp <- gp + ggplot2::geom_line(
         size = line_size,
         ggplot2::aes_string(color = colour)
-      )
+      ) +
+        ggplot2::scale_colour_brewer(palette = palette)
     }
   }
 
@@ -84,12 +86,13 @@ ems_plot <- function(data, plot_type, geom, date_range,
       y = "Value",
       fill = colour
     )) +
-      ggplot2::xlab(timeframe)
+      ggplot2::xlab(timeframe) +
+      ggplot2::scale_fill_brewer(palette = palette)
   }
   gp
 }
 
-plot_outlier <- function(data, by, point_size) {
+plot_outlier <- function(data, by, point_size, ncol) {
   data$Detected <- detected(data$Value, data$DetectionLimit)
   data$Detected %<>% factor(levels = c(TRUE, FALSE))
   data$Outlier %<>% factor(levels = c(TRUE, FALSE))
@@ -107,14 +110,12 @@ plot_outlier <- function(data, by, point_size) {
     # ggplot2::theme_bw() +
     ggplot2::theme(legend.position = "bottom")
 
-  if ("EMS_ID" %in% by) {
-    if (length(unique(data$Variable)) == 1) {
-      gp <- gp + ggplot2::facet_grid(EMS_ID ~ Variable, scales = "free")
-    } else {
-      gp <- gp + ggplot2::facet_grid(Variable ~ EMS_ID, scales = "free")
-    }
+  if ("Station" %in% by) {
+    gp <- gp + ggplot2::facet_wrap("Station", scales = "free", ncol = ncol)
+  } else if ("EMS_ID" %in% by) {
+    gp <- gp + ggplot2::facet_wrap("EMS_ID", scales = "free", ncol = ncol)
   } else {
-    gp <- gp + ggplot2::facet_wrap(~Variable, scales = "free", ncol = 1)
+    gp <- gp + ggplot2::facet_wrap("Variable", scales = "free", ncol = ncol)
   }
   gp
 }
@@ -125,10 +126,12 @@ get_timeframe <- function(date, x = "Year") {
     return(dttr2::dtt_year(date))
   }
   if (x == "Year-Month") {
-    return(substr(date, 1, 7))
+    ch <- format(sort(date), "%Y-%b")
+    fac <- factor(ch, unique(ch))
+    return(fac)
   }
   if (x == "Month") {
-    return(dttr2::dtt_month(date))
+    return(factor(month.abb[dttr2::dtt_month(date)], levels = month.abb))
   }
   dttr2::dtt_season(date)
 }

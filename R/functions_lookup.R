@@ -43,3 +43,10 @@ get_lookup_location <- function(data) {
     )
   # dplyr::as_tibble()
 }
+
+add_lookup_wsgroup <- function(lookup){
+  lookup_sf <- sf::st_as_sf(lookup, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
+  lookup_sf <- suppressMessages(suppressWarnings(lookup_sf %>% sf::st_join(watershed_groups)))
+  lookup$WATERSHED_GROUP_NAME <- lookup_sf$WATERSHED_GROUP_NAME
+  lookup
+}

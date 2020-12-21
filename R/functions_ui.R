@@ -9,9 +9,16 @@
 # Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
+inline <- function (x) {
+  div(style = "display: inline-block;vertical-align:top;", x)
+}
 
 title <- function(x) {
   div(h4(x), style = "border-bottom: 1px solid #494949;")
+}
+
+subtitle <- function(x) {
+  tags$label(x)
 }
 
 dl_group <- function(x, ns) {
@@ -32,9 +39,10 @@ waiter_html <- function(x) {
 
 site_map <- function(ns) {
   tagList(
-    help_text("Click a marker to add to selected sites. Selected sites
-    are shown in red. Select from dropdown or click polygon to zoom
-                to watershed group. "),
+    help_text("Click a circle marker to add to selected sites. Selected sites
+    are shown in red. Click a watershed polygon (or select watershed from dropdown in sidebar)
+              to zoom to that watershed and filter site choices.
+              Only watershed groups with sites are shown."),
     uiOutput(ns("ui_wsgroup")),
     shinycssloaders::withSpinner(leaflet::leafletOutput(ns("leaf"))),
     br()
@@ -44,17 +52,6 @@ site_map <- function(ns) {
 error_modal <- function(x) {
   modalDialog(
     title = "Please fix the following error and resubmit:",
-    footer = modalButton(label = "Got it"),
-    tagList(
-      p(x)
-    )
-  )
-}
-
-guideline_modal <- function(x = "There is insufficient data to calculate the water quality guideline.
-                            You could try to get a modelled estimate, change the term, or set the guideline manually.") {
-  modalDialog(
-    title = "",
     footer = modalButton(label = "Got it"),
     tagList(
       p(x)
@@ -80,31 +77,3 @@ rename_inputs <- function(site, ns) {
     textInput(ns(site), label = paste("rename", site, "to"))
   )
 }
-
-info <- list(
-  mdl_action = "What to do with values below the detection limit.
-Options are 'zero' (set the value to 0; the default), 'half' (set the value
-to half the MDL), 'mdl' (set the value to equal to the MDL), or 'na'
-(set the value to NA). Can also be set to 'none' to leave as is.",
-  max_cv = "A number indicating the maximum permitted coefficient
-             of variation for replicates. Leave input blank for default value
-             of infinity.",
-  sds = "The number of standard deviations above which a value
-             is considered an outlier.",
-  strict = "In the tidying process, ShinyRems attempts to match
-             selected Parameter names to recognised Parameter names.
-             With strict matching on, all words are required to match a recognised Parameter name.
-             With strict matching off, only the first word is required to match.
-             See 'Messages' tab for details on what actions were performed.",
-  undetected = "Whether to ignore values below the detection limit
-             when calculating the average deviation and identifying outliers.",
-  large = "Whether only large values which exceed the selected number of
-             standard deviations should be identified as outliers.",
-  remove = "Whether to view the plots with outliers removed.
-             Note, all outliers (manually or automatically selected)
-             are removed from the data before proceeding to the next tab,
-             regardless of whether this checkbox is selected.",
-  timeframe = "Seasons are defined as: Spring (March to May),
-             Summer (June to August),
-             Autumn (September to November), Winter (December to February)"
-)
