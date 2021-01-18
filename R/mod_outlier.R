@@ -93,7 +93,7 @@ mod_outlier_server <- function(input, output, session, clean, stand) {
   outlier_data <- reactive({
     req(stand$data())
     req(clean$by())
-    suppressWarnings(waiter::show_butler())
+    suppressWarnings(waiter::waiter_show())
     withCallingHandlers(
       {
         shinyjs::html("console_clean", "")
@@ -112,7 +112,7 @@ mod_outlier_server <- function(input, output, session, clean, stand) {
         shinyjs::html(id = "console_clean", html = HTML(paste(m$message, "<br>")), add = TRUE)
       }
     )
-    suppressWarnings(waiter::hide_butler())
+    suppressWarnings(waiter::waiter_hide())
     x
   })
 
@@ -168,9 +168,9 @@ mod_outlier_server <- function(input, output, session, clean, stand) {
   })
 
   output$plot_clean <- renderPlot({
-    suppressWarnings(waiter::show_butler())
+    suppressWarnings(waiter::waiter_show())
     p <- plot_outlier(outlier_data2(), clean$by(), input$point_size, ncol = input$ncol)
-    suppressWarnings(waiter::hide_butler())
+    suppressWarnings(waiter::waiter_hide())
     p
   })
 

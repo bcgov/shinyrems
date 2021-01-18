@@ -71,6 +71,8 @@ mod_tidy_server <- function(input, output, session, raw) {
       dataset = raw$dataset(),
       cols = raw$cols()
     )
+    print(raw$data())
+    print(x)
     x
   })
 
@@ -89,7 +91,7 @@ mod_tidy_server <- function(input, output, session, raw) {
   })
 
   stand_data <- reactive({
-    suppressWarnings(waiter::show_butler())
+    suppressWarnings(waiter::waiter_show())
     withCallingHandlers(
       {
         shinyjs::html("console_stand", "")
@@ -99,7 +101,7 @@ mod_tidy_server <- function(input, output, session, raw) {
         shinyjs::html(id = "console_stand", html = HTML(paste(m$message, "<br>")), add = TRUE)
       }
     )
-    suppressWarnings(waiter::hide_butler())
+    suppressWarnings(waiter::waiter_hide())
     x
   })
 

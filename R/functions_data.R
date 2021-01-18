@@ -161,6 +161,7 @@ ems_tidy <- function(data, mdl_action, dataset, cols) {
     },
     silent = TRUE
   )
+  print(x)
   if (is_try_error(x)) {
     return(empty_tidy)
   }
