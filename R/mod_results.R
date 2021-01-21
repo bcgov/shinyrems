@@ -184,14 +184,14 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
   })
 
   summary_table <- reactive({
-    suppressWarnings(waiter::show_butler())
+    suppressWarnings(waiter::waiter_show())
     x <- wqbc::summarise_wqdata(rv$data,
       by = input$by,
       censored = input$censored,
       na.rm = input$narm
     ) %>%
       dplyr::mutate_if(is.numeric, function(x) signif(x, input$sigfig))
-    suppressWarnings(waiter::hide_butler())
+    suppressWarnings(waiter::waiter_hide())
     x
   })
 

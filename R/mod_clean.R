@@ -94,7 +94,7 @@ mod_clean_server <- function(input, output, session, stand) {
   )
 
   clean_data <- reactive({
-    suppressWarnings(waiter::show_butler())
+    suppressWarnings(waiter::waiter_show())
     withCallingHandlers(
       {
         shinyjs::html("console_clean", "")
@@ -109,7 +109,7 @@ mod_clean_server <- function(input, output, session, stand) {
         shinyjs::html(id = "console_clean", html = HTML(paste(m$message, "<br>")), add = TRUE)
       }
     )
-    suppressWarnings(waiter::hide_butler())
+    suppressWarnings(waiter::waiter_hide())
     x
   })
 

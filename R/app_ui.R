@@ -19,7 +19,6 @@ app_ui <- function() {
   }
   tagList(
     shinyjs::useShinyjs(),
-    waiter::use_butler(),
     waiter::use_waiter(),
     # waiter::waiter_show_on_load(html = waiter_html("Fetching dataset ...")),
     css_navbar(text_selected_color = "#5bc0de"),
