@@ -65,7 +65,7 @@ Once R and RStudio are installed on the users’ computer, there are two options
 1. View the README at [this website](https://github.com/bcgov/shinyrems) to follow the instructions to launch the app. Copy and paste the code into a new R Script file within RStudio:
 File -> New File -> R Script (Figure 1).  
 
-2. Contact Heather Thompson (heather.c.thompson@gov.bc.ca) or Jessica Penno (jessica.penno@gov.bc.ca) for existing R scripts containing the code in Figure 1 to launch the app.  
+2. Contact Heather Thompson (heather.c.thompson@gov.bc.ca) or Karly Harker (karly.harker@gov.bc.ca) for existing R scripts containing the code in Figure 1 to launch the app.  
 
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_1.png" width="100%">
 Figure 1: R code script in the RStudio program. This is the code to run to open the shinyrems app.
@@ -74,24 +74,28 @@ When initially launching the app, it is recommended to run each line of code by 
 
 There are six options for running the app, depending what year of EMS data is required:  
 
-- demo’ - uses a demo dataset that requires no download of EMS data.  
+- demo’ - uses a demo dataset that requires no download of EMS data  
 
-- ‘2yr’ - uses the most recent 2 years of EMS data (from 2019-01-01 to present).  
+- ‘2yr’ - uses the most recent 2 years of EMS data  
 
-- ‘4yr’ - uses the most recent 4 years of EMS data from 2017-01-01 to present).  
+- ‘4yr’ - uses the most recent 4 years of EMS data 
 
-- ‘historic’ - uses the historic EMS data (up to 2019-01-01).  
+- ‘historic’ - uses the historic EMS data  (1965 - (Current Year - 2 Years))
 
-- ‘all’ - uses combined “2yr” and “historic” EMS data.  
+- ‘all’ - uses combined “2yr” and “historic” EMS data  
 
 - ‘upload’ - allows user to upload their own data following correct format. For details see “Using the upload data option” section below.  
 
-Pick the option and type it into line 22 as shown in Figure 1 or below. Press the ‘Run’ button on the RStudio menu bar (Figure 1). The app will open in the users’ web browser. For example, the line of code below will launch the app with all EMS data. 
+See the BC Data Catalogue for more information about the [EMS datasets](https://catalogue.data.gov.bc.ca/dataset/bc-environmental-monitoring-system-results).
+
+
+Pick the option required and type it into line 22 as shown in Figure 1 or below. Press the ‘Run’ button on the RStudio menu bar (Figure 1). The app will open in the users’ web browser. For example, the line of code below will launch the app with all EMS data. 
 ```
 shinyrems::run_ems_app('all')
 ```
 
-After running line 22 above, Figure 2 and Figure 3 show the questions asked in the RStudio console and require the users input. When the text “Listening on http…”, this means the app has launched in the users’ internet browser. 
+After running line 22 above, Figure 2 and Figure 3 show the questions asked in the RStudio console and require the users input. 
+When the text “Listening on http…”, this means the app has launched in the users’ internet browser. 
 
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_2.png" width="100%">
 Figure 2. A message to answer when the code to launch the app is run. The ‘2yr’ EMS dataset is updated every day.
@@ -99,10 +103,12 @@ Figure 2. A message to answer when the code to launch the app is run. The ‘2yr
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_3.png" width="100%">
 Figure 3. A message to answer when the code to launch the app is run. This message confirms a data look up table can be stored on the users’ computer.
 
-## Tab 1: Data
+
+## ShinyRems App Features
+### Tab 1: Data
 
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_4.png" width="100%">
-Figure 4. The first screen seen when the app opens in the users web brower. The dataset chosen in the R code will be listed in the top left. Raw data can be chosen multiple ways, with options to view one parameter at a time and at a specific date range.
+Figure 4. The first screen seen when the app opens in the users web browser. The dataset chosen in the R code will be listed in the top left. Raw data can be chosen multiple ways, with options to view one parameter at a time and at a specific date range.
 
 ### Using 2yr, 4yr, historic or all options
 When the app opens, Figure 2 is the initial app screen. The dataset chosen in the R code will be displayed in the top left of the screen. In the left-hand menu, the options for choosing the raw EMS dataset are:  
