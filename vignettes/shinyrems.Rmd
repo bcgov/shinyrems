@@ -38,7 +38,7 @@ embed_png <- function(path, dpi = NULL) {
 ```
 
 
-ShinyRems is an online application that allows a user to view, clean, plot and calculate simple statistics using data from the B.C. government Environmental Monitoring System (EMS) database. 
+ShinyRems is an online application that allows a user to view, clean, plot and calculate simple statistics using water quality data from the B.C. government Environmental Monitoring System (EMS) database. 
 
 ## Using the App
 - The shinyrems app is still in the development phase. If the app greys out and/or freezes, reload the internet browser. If that doesn’t fix the issue, close the web browser, revisit RStudio and rerun the launch code to restart the app.  
