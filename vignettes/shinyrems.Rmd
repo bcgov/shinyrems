@@ -41,7 +41,7 @@ embed_png <- function(path, dpi = NULL) {
 ShinyRems is an online application that allows a user to view, clean, plot and calculate simple statistics using water quality data from the B.C. government Environmental Monitoring System (EMS) database. 
 
 ## Using the App
-- The shinyrems app is still in the development phase. If the app greys out and/or freezes, reload the internet browser. If that doesn’t fix the issue, close the web browser, revisit RStudio and rerun the launch code to restart the app.  
+- The shinyrems app is in a completed phase, however like any application bugs do occur. If the app greys out and/or freezes, reload the internet browser. If that doesn’t fix the issue, close the web browser, revisit RStudio and rerun the launch code to restart the app. 
 
 - The app requires Chrome or Firefox internet browsers to run. If Internet Explorer is the users default internet browser, once the app opens in Internet Explorer, the user can copy and paste the web link into Chrome or Firefox.  
 
@@ -49,7 +49,9 @@ ShinyRems is an online application that allows a user to view, clean, plot and c
 
 - In the app: variable = parameter, limit = guideline  
 
-- A key feature of the app, and to keep track of the changes that occur to the dataset each tab, is to download the dataset after each stage of data manipulation from raw, tidying, cleaning, outlier removal, plotting and summary statistics.  
+- A key feature of the app, and to keep track of the changes that occur to the dataset each tab, a data download option is available after each stage of data manipulation from raw, tidying, cleaning, outlier removal, plotting and summary statistics. 
+
+- Blue question mark circles are present throughout the app to explain what each option is asking and how those choices will affect the dataset. 
 
 ## Getting Started
 This app must be launched from the RStudio program. The app then opens in the users’ computer’s internet browser. Given the EMS database is so large, the app accesses EMS data cached on the users’ computer and why the app cannot be directly opened from a web link. 
