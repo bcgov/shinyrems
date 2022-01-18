@@ -199,11 +199,30 @@ If the datafile is an excel file, export a worksheet to csv.
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_7.png" width="100%">
 Figure 7. Template of how the users’ data needs to be organized to upload into app.
 
-## Tab 2. Tidy
+### Tab 2. Tidy
 
-The Tidy Tab manual options for tidying the dataset include (Figure 6):  
+This step does two main things:
 
-1. Select SAMPLE_STATE to include in dataset. The options present in the dataset will automatically show up. For more information see the Reference Tables Tab. Options include:  
+- Retains and renames required columns (e.g. PARAMETER to Variable) (Figure 8).
+  - Columns are simplified to 15. The default columns retained are:
+    - "EMS_ID"
+    - "MONITORING_LOCATION" (Renamed to "Station")
+    - "COLLECTION_START" (Renamed to "DateTime")
+    - "PARAMETER" (Renamed to "Variable") 
+    - "PARAMETER_CODE" (Renamed to "Code")
+    - "RESULT" (Renamed to "Value") 
+    - "UNIT" (Renamed to "Units")
+    - "METHOD_DETECTION_LIMIT" (Renamed to "DetectionLimit")
+    - "RESULT_LETTER" (Renamed to "ResultLetter")
+    - "SAMPLE_STATE"
+    - "SAMPLE_CLASS"
+    - "SAMPLE_DESCRIPTOR"
+- Sets the timezone to PST
+- Filter out unwanted values of SAMPLE_CLASS and SAMPLE_STATE (e.g. blanks and replicates)
+
+The Tidy Tab manual options for tidying the dataset include (Figure 9):  
+
+1. Select which SAMPLE_STATE to include in dataset. The options present in the dataset will automatically show up. For more information see the Reference Tables Tab. Options include:  
     - Fresh Water                
     - Waste Water                 
     - HiVol                       
@@ -218,7 +237,7 @@ The Tidy Tab manual options for tidying the dataset include (Figure 6):
     - Marine Water                
     - Plant Tissue  
   
-2. Select SAMPLE_CLASS to include in dataset. The options present in the dataset will automatically show up. See the Reference Tables Tab for more information. Options include:  
+2. Select which SAMPLE_CLASS to include in dataset. The options present in the dataset will automatically show up. See the Reference Tables Tab for more information. Options include:  
     - Blank
     - Regular               
     - Replicate             
@@ -227,38 +246,14 @@ The Tidy Tab manual options for tidying the dataset include (Figure 6):
     - Replicate-Second          
     - Replicate - Paired  
     
-3. MDL Action gives an option what to do with data points below the detection limit. Options are converting result value to zero, half, MDL or NA to leave as is. Note – next versions of the app will have a maximum likelihood estimation censored data model to correctly statistically deal with data below detection limits.  
+3. Set values at or below detection limit gives an option what to do with data points below the detection limit. Options are converting result value to zero, half the detection limit, setting at the minimum detection limit or to set as NA. 
 
-4. Strict matching is an option to match exact parameter names to recognized parameter names. If this is not checked, the users’ dataset will include for example ‘Aluminum Dissolved’ and ‘Aluminum Total’, if the dataset from that EMS_ID includes both those parameters.  
 
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_8.png" width="100%">
-Figure 8. Tab 2 in ShinyRems. This tab is where the users raw data starts to be tidied and includes a few automatic and manual steps to customize the users dataset.
-
-The Tidy Tab does a few things automatically:  
-
-1. Standardizes EMS variables. It examines EMS parameter codes and converts all the same codes to the same variable name (Figure 7).  
-
-2. Standardizes units. Units are changed to what the aquatic life water quality guideline is reported in.  
-
-3. Columns are simplified to 15. The default columns retained are:  
-
-    - EMS_ID
-    - MONITORING_LOCATION (Renamed to "Station")
-    - COLLECTION_START (Renamed to "DateTime")
-    - PARAMETER (Renamed to "Variable")
-    - PARAMETER_CODE (Renamed to "Code")
-    - RESULT (Renamed to "Value")
-    - UNIT (Renamed to "Units")
-    - METHOD_DETECTION_LIMIT (Renamed to "DetectionLimit")
-    - RESULT_LETTER (Renamed to "ResultLetter")
-    - SAMPLE_STATE
-    - SAMPLE_CLASS
-    - SAMPLE_DESCRIPTOR
-
-4. The timezone is set to PST.  
+Figure 8. The Messages inset tab of the Tidy Tab. This shows what is happening automatically in the Tidy Tab. 
 
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_9.png" width="100%">
-Figure 9. The Messages inset tab of the Tidy Tab. This shows what is happening automatically in the Tidy Tab.
+Figure 9. Tab 2 in ShinyRems. This tab is where the users raw data starts to be tidied and includes a few automatic and manual steps to customize the users dataset. 
 
 ## Tab 3. Clean
 
