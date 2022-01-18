@@ -406,7 +406,6 @@ Figure 16. The Reference Tables tab which show all options for the various EMS c
 - [Water quality objectives](https://www2.gov.bc.ca/gov/content/environment/air-land-water/water/water-quality/water-quality-objectives) (can be entered into the app in the ‘set manually’ option)  
 
 - [Analyzing water quality data resources](https://www2.gov.bc.ca/assets/gov/environment/natural-resource-stewardship/nr-laws-policy/risc/guidlines_for_interpreting_water_quality_data.pdf)  
-
  
 - [EMS training and manual](https://gww.nrs.gov.bc.ca/env/emre/welcome-ems-training-homepage) (intranet)  
  
