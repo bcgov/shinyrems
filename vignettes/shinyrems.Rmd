@@ -257,15 +257,20 @@ Figure 9. Tab 2 in ShinyRems. This tab is where the users raw data starts to be 
 
 ## Tab 3. Clean
 
-The Clean Tab manual options for cleaning the dataset include (Figure 8):  
+This step does the following:
 
-1. Remove blanks ensures all SAMPLE_STATE = Blank are removed from the dataset.  
+- Checks that all variables in the Variable column can be recognized (see Parameters table in Reference Tables tab), and if necessary, replaces the variable name with a recognized one.
+- Removes negative values and standardizes units. Units are changed to what the aquatic life water quality guideline is reported in.
+- Calculates a summary value (max, mean or median) for replicates, which are defined as two or more readings for the same variable on the same date. Data can also be summarized by additional columns such as Station.
+- Replaces DateTime column with Date (YYYY-MM-DD)
 
-2. Summarize by columns retains columns in the dataset. For example, if the user is assessing lake data, retaining UPPER_DEPTH and LOWER_DEPTH columns will likely be important to view data collected on the same day but at different depths. If the user simply wants to plot and summarize data by EMS_ID, just retain the EMS_ID column.  
+The Clean Tab options for cleaning the dataset include (Figure 10):  
 
-3. Summarize by function gives an option of how the replicates can be summarized. Replicates are counted as two or more samples for the same variable on the same day. If the user has retained SAMPLE_CLASS = Replicate, these will be included with SAMPLE_CLASS = Regular in summarizing the same day samples. Options to summarize by ‘mean’, ‘median’, and ‘max’.  
+1. **Summarize by columns** retains columns in the dataset. For example, if the user is assessing lake data, retaining UPPER_DEPTH and LOWER_DEPTH columns will likely be important to view data collected on the same day but at different depths. If the user simply wants to plot and summarize data by EMS_ID, just retain the EMS_ID column.  
 
-4. Maximum CV is an option to specify the coefficient of variation between sample replicates. Replicates are counted as two or more samples for the same variable on the same day. Leave blank for the default value of infinity.  
+2. **Summarize by function** gives an option of how the replicates can be summarized. Replicates are counted as two or more samples for the same variable on the same day. If the user has retained SAMPLE_CLASS = Replicate, these will be included with SAMPLE_CLASS = Regular in summarizing the same day samples. Options to summarize by ‘mean’, ‘median’, and ‘max’.  
+
+3. **Maximum Coefficient of Variation for replicates** is an option to specify the coefficient of variation between sample replicates. Replicates are counted as two or more samples for the same variable on the same day. Leave blank for the default value of infinity.  
 
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_10.png" width="100%">
 Figure 10. The main screen of the Clean Tab. This is where various options exist for cleaning the users now tidy dataset.
