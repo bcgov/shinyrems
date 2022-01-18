@@ -390,12 +390,14 @@ Options also exist to decide which column to summarize the data by and how many 
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_15.png" width="100%">
 Figure 15. The summary table tab in the main Tab 5. Plot/Statistics.
 
-## Tab 6: Reference Tables
+### Tab 6: Reference Tables
 
-Tab 6 shows the various EMS reference tables. These include information for each EMS column and its respective options. These tables will be helpful in Tab 2, 3 and 5 as the dataset is refined and guidelines are calculated. 
+Tab 6 shows the various EMS reference tables. 
+These include information for each EMS column and its respective options. 
+These tables will be helpful in Tab 2, 3 and 5 as the dataset is refined and guidelines are calculated. 
 
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_17.png" width="100%">
-Figure 17. The Reference Tables tab which show all options for the various EMS columns. These show the EMS reference tables available from Data BC.
+Figure 16. The Reference Tables tab which show all options for the various EMS columns. These show the EMS reference tables available from Data BC.
 
 ## Resources
 
