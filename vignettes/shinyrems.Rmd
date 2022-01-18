@@ -305,50 +305,90 @@ Final clean data with outliers removed can be downloaded as a .csv (Figure 12).
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_12.png" width="100%">
 Figure 12. The main screen of the Outliers Tab showing the Final Data inset tab. This shows the final clean dataset with outliers removed.
 
-## Tab 5. Plots/Statistics
+### Tab 5. Plots/Statistics
 
 The Plots/Statistics tab allows for the initial visualization of the clean dataset with the addition of the aquatic life water quality guideline if desired, and a simple statistics summary.
 
-Figure 11 shows the main Plot tab, with options for customization:  
+#### Plot Tab
 
-1. Adjusting plot start and end date.  
-2. Plot type: scatter or boxplot with options to show lines and/or points.  
-3. Point size and line size.  
-4. Facet by Variable to have the various EMS_IDs show up on the same plot, or Facet by EMS_ID to show one plot each for each EMS_ID.  
-5. Colour by allows for options to colour by variable or EMS_ID.  
-6. Plot height allows the plot to get larger.  
- 
+Figure 13 shows the main Plot tab, with options for customization:  
+
+1. Adjusting plot **start and end date**.  
+2. **Plot type**: scatter or boxplot with options to show lines and/or points.  
+3. **Point size** and **line size**.  
+4. **Facet by** Variable to have the various EMS_IDs show up on the same plot, or Facet by EMS_ID to show one plot each for each EMS_ID.  
+5. **Colour by** allows for options to colour by variable or EMS_ID.  
+6. **Plot height** allows the plot to get larger.  
+7. **Palette** allows for colour customization.
+8. **Number of columns** allows for setting number of columns for faceting plots. 
+9. **Standardize Y-axis scales** allows user to specify whether you would like the y-axis scales to be standardized (i.e. “fixed”) or not (i.e. “free”).
+
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_13.png" width="100%">
 Figure 13. The main plot screen. Here the user can view the initial visualization of the clean dataset with outliers removed. Various options exist for customizing the plot and downloading it to the users computer.
 
-### Calculating aquatic life water quality guidelines
-The app can calculate 170 freshwater aquatic life water quality guidelines (Figure 12). All the aquatic life guidelines and their details can be found under the ‘Limits’ drop-down menu on the Reference Tables tab. All BC approved water quality guidelines are also available on the [ENV guidelines website](https://www2.gov.bc.ca/gov/content/environment/air-land-water/water/water-quality/water-quality-guidelines/approved-water-quality-guidelines) and [DataBC](https://catalogue.data.gov.bc.ca/dataset/water-quality-guidelines-of-b-c-/resource/6f32a85b-a3d9-44c3-9a14-15175eba25b6).  
+#### Guideline Tab
 
-Notes on using the guideline feature:  
+There are two options:
 
-- It’s best to refer to the Limits table in the Reference Tables tab to determine what guidelines the app calculates and if it corresponds to the variable the dataset includes.  
+##### Set manually
 
-- If the guideline is dependent on a parameter like chloride or hardness, the app first searches for any additional parameters required and then fetches all available data from EMS for that parameter within the timeframe/site that the user selected. All options selected by the user for cleaning/tidying the main dataset are reused for the dependent parameter data.  
+Any benchmark value may be entered here. 
+Examples include permit limits, water quality objectives, or water quality guidelines that are not calculated. 
+See Limits in the Reference Tables tab or visit the Water Quality Guideline look-up table).
 
-- Select Term is an option to specify which aquatic life guideline for a specific variable to view on the plot. The options are ‘short’, ‘long’, and ‘long-daily’. Short = acute, long = long-term chronic and long-daily = long-term chronic but only 1 sample is needed, not 5 samples in 30 days.  
+##### Calculate from data
 
-- Get modelled estimate models the guideline if there isn’t enough supporting information collected on the same day as the variable to calculate the guideline. If a guideline depends on another variable such as pH, Total Chloride, or Total Hardness, a parametric model is used to predict the pH, Total Chloride and Total Hardness for all dates with a value of any variable.  
+Calculates the approved water quality guidelines for aquatic life in British Columbia (Figure 14). 
+Only guidelines whose conditions are met are returned.
 
-- The function will fill in estimated values for dates for when Total Hardness, Total Chloride and pH haven't been collected but are required to determine the guideline. The model incorporates a seasonal element. If no concentration exists for the day of interest, then the dependent parameter concentration is assumed to be the average recorded value over 30 days. The model predicts the dependent variables and existing values are replaced. If there are less than 12 dependent variable values in all years of data, then an average value is taken. If there is only one year with 12 or more values, a simple seasonal smoother is used. If there is two years with 12 or more values, then a seasonal smoother with a trend is fitted. Otherwise a model with trend and a dynamic seasonal component is fitted.  
+The aquatic life guidelines and their details can be found under the ‘Limits’ drop-down menu on the Reference Tables tab. All BC approved water quality guidelines are also available on the [BC ambient water quality guidelines website](https://www2.gov.bc.ca/gov/content/environment/air-land-water/water/water-quality/water-quality-guidelines/approved-water-quality-guidelines) and [DataBC](https://catalogue.data.gov.bc.ca/dataset/water-quality-guidelines-of-b-c-/resource/6f32a85b-a3d9-44c3-9a14-15175eba25b6).
+Two options may be set by the user: 'Term' and 'Get modelled estimate'.
+
+##### Term:
+
+Term options include 'short', 'long' and 'long-daily'.
+
+For long-term limits there must be at least 5 values spanning 21 days. 
+As replicates are averaged prior to calculating the limits each of the 5 values must be on a separate day. 
+The first 30-day period begin at the date of the first reading while the next 30 day period starts at the date of the first reading after the previous period and so on. 
+The only exception to this is if the user provides dates in which case each period extends for 30 days or until a provided date is reached.
+It is important to note that the averaging of conditional variables, the 5 in 30 rule and the assignment of 30-day periods occurs independently for all combination of factor levels in the columns specified by by.
+
+'Long-daily' term uses long-term guidelines on daily values; 5 samples in 30 days is not required to calculate guideline.
+
+##### Get modelled estimate:
+
+A limit may depend on another variable such as pH, Total Chloride, or Total Hardness and in some cases no value was recorded for the date of interest.
+
+If the **'Get modelled estimate box' is unchecked**:
+
+The pH, Total Chloride or Total Hardness value is assumed to be the average recorded value over the 30 day period.
+
+If the **'Get modelled estimate box' is checked**:
+
+A parametric model is used to predict the pH, Total Chloride and Total Hardness for all dates with a value of any variable. 
+Existing values are replaced. 
+If, in every year, there are less then 12 pH/Total Chloride/Total Hardness then an average value is taken. 
+Otherwise, if there is only one year with 12 or more values a simple seasonal smoother is used. 
+If there is two years with 12 or more values then a seasonal smoother with a trend is fitted. 
+Otherwise, a model with trend and a dynamic seasonal component is fitted.
 
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_14.png" width="100%">
-Figure 14. The Guideline inset tab showing the options for calcuating the aquatic life guideline of the variable selected in the 1. Data tab.
+Figure 14. The Guideline inset tab showing the options for calculating the aquatic life guideline of the variable selected in the 1. Data tab.
 
-There is also an option to manually enter a value (Figure 13). This could be a permit limit, water quality objective, another water quality guideline or another benchmark. Both the ‘set manually’ and ‘calculate from data’ option appear as a dashed line on the plot.  
+#### Summary Table Tab
+
+The Summary Table options allow for calculation of a summary table which can be downloaded as a .csv. 
+The Summary Table gives a simple stats summary for each EMS_ID based on the clean dataset with outliers removed (Figure 15). 
+Columns include n (number of water samples), ncen (number of censored values), min (minimum water value), max (maximum water value), mean (mean water value), median (median water value), lowerQ, upperQ, sd, se, lower CL and upper CL. 
+
+Accounting for censored data (data at or below the detection limit) involves treating the value at face value when calculating the summary table or accounting for these non-detects using left-censored log-normal maximum-likelihood.
+
+An option to exclude missing values in the 'Value' column when summarizing data. 
+Options also exist to decide which column to summarize the data by and how many significant figures are wanted. 
 
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_15.png" width="100%">
-Figure 15. The Guideline inset tab showing the option to set the guideline manually.
-
-## Summary Statistics
-The Summary Statistics inset tab on the Tab 5. Plot/Statistics gives a simple stats summary for each EMS_ID based on the clean dataset with outliers removed (Figure 14). Options include ‘n’, ‘min’, ‘max, ‘mean’, ‘median’, ‘standard deviation’, and ‘standard error’. This table can be downloaded as a .csv.
-
-<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_16.png" width="100%">
-Figure 16. The inset Summary Statistics tab in the main Tab 5. Plot/Statistics. Each EMS_ID will represent a row.
+Figure 15. The summary table tab in the main Tab 5. Plot/Statistics.
 
 ## Tab 6: Reference Tables
 
