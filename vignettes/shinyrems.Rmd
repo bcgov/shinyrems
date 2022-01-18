@@ -125,7 +125,7 @@ In the left-hand menu, the options for choosing the raw EMS dataset are:
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_5.png" width="100%">
 *<font size="-1">Figure 5. Raw data can also be found by selecting monitoring site locations on the Site Map inset tab.</font>*
  
-One parameter can be chosen at a time for the site(s) selected.  
+One parameter can be chosen at a time for the site(s) selected.
 In ANY of selected sites means that the parameters could be in one or more of the sites, in ALL of selected sites, the parameter list updates to what parameters are found in all the sites.   
 
 A date range can be specified. 
@@ -133,7 +133,7 @@ Note this has bounds depending on the ‘2yr’, ‘4yr’ and/or ‘historic’
 
 The Get/Update Data button will need to be pushed if changes are made to the data input choices. 
 
-The raw data from EMS appears in the inset Data tab.  
+The raw data from EMS appears in the inset Data tab.
 Raw data is shown with a subset of 21 columns pertaining to water quality data:  
 
 ```
@@ -154,41 +154,47 @@ shinyrems::run_ems_app('upload')
 ```
 When the app opens, instructions pop up outlining the format the dataset must be in to upload to shinyrems:
 
-Instructions: Uploading a dataset
-
-Download a template for data entry with the 'Download Template' button in the sidebar. When your data is uploaded, the app will check that column names are valid and that constraints are met (e.g. Month must be a number between 1 and 12). Any columns in addition to those that are mandatory will simply be accepted and passed through the app.
-
-The following columns are **mandatory**:
-
-- Station
-  - Name of the station
-- Year
-  - Year of measurement
-- Month
-  - Month of measurement as number from 1 - 12
-- Day
-  - Day of measurement as number from 1 - 31
-- Variable
-  - Variable of measurement (e.g. parameter name)
-- Value
-  - Value of measurement as number
-- Units
-  - Unit of measurement
-
-The following columns are optional and can be used by the app:
-
-- DetectionLimit
-  - Detection limit as number
-- ResultLetter
-  - Result letter, e.g. (<)
-- EMS_ID
-  - EMS ID corresponding to Station
-- Hour
-  - Hour of measurement in 24-hour clock as number from 0 - 23
-- Minute
-  - Minute of measurement as number from 0 - 59
-- Second
-  - Second of measurement as number from 0 - 59
+> <font size="+1">Instructions</font>
+>
+> Uploading a dataset
+>
+> <font size="-2">Download a template for data entry with the 'Download Template' button in the sidebar.
+> When your data is uploaded, the app will check that column names are valid and that constraints are met (e.g. Month must be a number between 1 and 12).
+> Any columns in addition to those that are mandatory will simply be accepted and passed through the app.
+> 
+> The following columns are **mandatory**:
+> 
+> - **Station**
+>   - Name of the station
+> - **Year**
+>   - Year of measurement
+> - **Month**
+>   - Month of measurement as number from 1 - 12
+> - **Day**
+>   - Day of measurement as number from 1 - 31
+> - **Variable**
+>   - Variable of measurement (e.g. parameter name)
+> - **Value**
+>   - Value of measurement as number
+> - **Units**
+>   - Unit of measurement
+>
+> The following columns are **optional** and can be used by the app:
+>
+> - **DetectionLimit**
+>   - Detection limit as number
+> - **ResultLetter**
+>   - Result letter, e.g. (<)
+> - **EMS_ID**
+>   - EMS ID corresponding to Station
+> - **Hour**
+>   - Hour of measurement in 24-hour clock as number from 0 - 23
+> - **Minute**
+>   - Minute of measurement as number from 0 - 59
+> - **Second**
+>   - Second of measurement as number from 0 - 59
+>
+> </font>
 
 Figure 6 is the screen the user will see when the ‘upload’ version of shinyrems opens. 
 The user can download the template to view what format the data needs to be in (Figure 7). 
@@ -223,7 +229,7 @@ This step does two main things:
 
 The Tidy Tab manual options for tidying the dataset include (Figure 9):  
 
-1. Select which SAMPLE_STATE to include in dataset. The options present in the dataset will automatically show up. For more information see the Reference Tables Tab. Options include:  
+1. Select which **SAMPLE_STATE** to include in dataset. The options present in the dataset will automatically show up. For more information see the Reference Tables Tab. Options include:  
     - Fresh Water                
     - Waste Water                 
     - HiVol                       
@@ -238,7 +244,7 @@ The Tidy Tab manual options for tidying the dataset include (Figure 9):
     - Marine Water                
     - Plant Tissue  
   
-2. Select which SAMPLE_CLASS to include in dataset. The options present in the dataset will automatically show up. See the Reference Tables Tab for more information. Options include:  
+2. Select which **SAMPLE_CLASS** to include in dataset. The options present in the dataset will automatically show up. See the Reference Tables Tab for more information. Options include:  
     - Blank
     - Regular               
     - Replicate             
@@ -247,7 +253,7 @@ The Tidy Tab manual options for tidying the dataset include (Figure 9):
     - Replicate-Second          
     - Replicate - Paired  
     
-3. Set values at or below detection limit gives an option what to do with data points below the detection limit. Options are converting result value to zero, half the detection limit, setting at the minimum detection limit or to set as NA. 
+3. **Set values at or below detection limit** gives an option what to do with data points below the detection limit. Options are converting result value to zero, half the detection limit, setting at the minimum detection limit or to set as NA. 
 
 
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_8.png" width="100%">
@@ -288,15 +294,15 @@ Colour indicates outliers, Symbol indicates if observation is <MDL (i.e., True).
 
 3. **Large values only** is an option to select whether only values which exceed the specified number of expected standard deviations should be identified as outliers. For example, any values less than the mean by the selected number of standard deviations will not be considered outliers.  
 
-4. **Remove outliers from plot.** Choose whether to view the plot with or without outliers. Regardless, the outliers are removed from the dataset before moving onto the next tab.  
+4. **Remove outliers from plot**. Choose whether to view the plot with or without outliers. Regardless, the outliers are removed from the dataset before moving onto the next tab.  
 
-5. Plot customizations: **Point size and plot height.**  
+5. Plot customizations: **Point size and plot height**.  
 
-6. **Manual outlier removal:** Click and drag mouse over a data point on the plot to manually select and remove outliers. This will remove it from the dataset.  
+6. **Manual outlier removal**: Click and drag mouse over a data point on the plot to manually select and remove outliers. This will remove it from the dataset.  
 
-7.	**Number of columns:** Choose number of columns to ‘facet’ plots side by side. 1 column will put plots of top of each other, 2 will place plots side by side. 
+7.	**Number of columns**: Choose number of columns to ‘facet’ plots side by side. 1 column will put plots of top of each other, 2 will place plots side by side. 
 
-8. **Plot legend:** Outliers are identified by colour. Data are identified as Detected – True (above minimum detection limit) or Detected - False (below minimum detection limit; with a < in the Result Letter column).  
+8. **Plot legend**: Outliers are identified by colour. Data are identified as Detected – True (above minimum detection limit) or Detected - False (below minimum detection limit; with a < in the Result Letter column).  
 
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_11.png" width="100%">
 *<font size="-1">Figure 11. The main tab of the Outlier screen. Options here include customizing what constitutes an outlier for the dataset and removing them if desired.</font>*
@@ -345,7 +351,7 @@ Only guidelines whose conditions are met are returned.
 The aquatic life guidelines and their details can be found under the ‘Limits’ drop-down menu on the Reference Tables tab. All BC approved water quality guidelines are also available on the [BC ambient water quality guidelines website](https://www2.gov.bc.ca/gov/content/environment/air-land-water/water/water-quality/water-quality-guidelines/approved-water-quality-guidelines) and [DataBC](https://catalogue.data.gov.bc.ca/dataset/water-quality-guidelines-of-b-c-/resource/6f32a85b-a3d9-44c3-9a14-15175eba25b6).
 Two options may be set by the user: 'Term' and 'Get modelled estimate'.
 
-##### Term:
+**Term:**
 
 Term options include 'short', 'long' and 'long-daily'.
 
@@ -357,7 +363,7 @@ It is important to note that the averaging of conditional variables, the 5 in 30
 
 'Long-daily' term uses long-term guidelines on daily values; 5 samples in 30 days is not required to calculate guideline.
 
-##### Get modelled estimate:
+**Get modelled estimate:**
 
 A limit may depend on another variable such as pH, Total Chloride, or Total Hardness and in some cases no value was recorded for the date of interest.
 
