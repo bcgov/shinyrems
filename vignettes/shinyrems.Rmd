@@ -275,34 +275,32 @@ The Clean Tab options for cleaning the dataset include (Figure 10):
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_10.png" width="100%">
 Figure 10. The main screen of the Clean Tab. This is where various options exist for cleaning the users now tidy dataset.
  
-The Clean Tab does a few things automatically:
-1. Replaces DateTime column with Date (YYYY-MM-DD).  
+### Tab 4. Outliers
 
-2. General description columns are removed from dataset:  
-    - SAMPLE_STATE  
-    - SAMPLE_DESCRIPTOR, SAMPLE_CLASS  
-    - LOCATION_TYPE  
+This step calculates potential outliers. 
+Outliers can also be manually removed by clicking on the plot. 
+Colour indicates outliers, Symbol indicates if observation is <MDL (i.e., True).
 
-## Tab 4. Outliers
+1. **Standard deviations** is an option to specify the number of standard deviations above which a data point is considered an outlier.  
 
-1. Standard deviations is an option to specify the number of standard deviations above which a data point is considered an outlier.  
+2. **Ignore values below detection limit** is an option to specify whether to ignore data points below the detection limit when calculating the average deviation and calculating outliers.  
 
-2. Ignore values below detection limit is an option to specify whether to ignore data points below the detection limit when calculating the average deviation and calculating outliers.  
+3. **Large values only** is an option to select whether only values which exceed the specified number of expected standard deviations should be identified as outliers. For example, any values less than the mean by the selected number of standard deviations will not be considered outliers.  
 
-3. Large values only is an option to select whether only values which exceed the specified number of expected standard deviations should be identified as outliers. For example, any values less than the mean by the selected number of standard deviations will not be considered outliers.  
+4. **Remove outliers from plot.** Choose whether to view the plot with or without outliers. Regardless, the outliers are removed from the dataset before moving onto the next tab.  
 
-4. Remove outliers from plot. Choose whether to view the plot with or without outliers. Regardless, the outliers are removed from the dataset before moving onto the next tab.  
+5. Plot customizations: **Point size and plot height.**  
 
-5. Plot customizations: Point size and plot height.  
+6. **Manual outlier removal:** Click and drag mouse over a data point on the plot to manually select and remove outliers. This will remove it from the dataset.  
 
-6. Manual outlier removal: Click and drag mouse over a data point on the plot to manually select and remove outliers. This will remove it from the dataset.  
+7.	**Number of columns:** Choose number of columns to ‘facet’ plots side by side. 1 column will put plots of top of each other, 2 will place plots side by side. 
 
-7. Plot legend: Outliers are identified by colour. Data are identified as Detected – True (above minimum detection limit) or Detected - False (below minimum detection limit; with a < in the Result Letter column).  
+8. **Plot legend:** Outliers are identified by colour. Data are identified as Detected – True (above minimum detection limit) or Detected - False (below minimum detection limit; with a < in the Result Letter column).  
 
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_11.png" width="100%">
 Figure 11. The main tab of the Outlier screen. Options here include customizing what constitutes an outlier for the dataset and removing them if desired.
 
-Final clean data with outliers removed can be downloaded as a .csv (Figure 10). 
+Final clean data with outliers removed can be downloaded as a .csv (Figure 12). 
 
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_12.png" width="100%">
 Figure 12. The main screen of the Outliers Tab showing the Final Data inset tab. This shows the final clean dataset with outliers removed.
