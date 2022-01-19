@@ -66,10 +66,8 @@ File -> New File -> R Script (Figure 1).
 
 2. Contact Heather Thompson (heather.c.thompson@gov.bc.ca) or Karly Harker (karly.harker@gov.bc.ca) for existing R scripts containing the code in Figure 1 to launch the app.  
 
- <!---
+
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_1.png" width="100%">
---->
-<img src= "https://raw.githubusercontent.com/poissonconsulting/shinyrems/update_user_guide/vignettes/images/PRE_1.png" width="100%">
 *<font size="-1">Figure 1: R code script in the RStudio program. This is the code to run to open the shinyrems app.</font>*
 
 
@@ -99,24 +97,19 @@ shinyrems::run_ems_app('all')
 
 After running line 22 above, Figure 2 and Figure 3 show the questions asked in the RStudio console and require the users input. 
 When the text “Listening on http…”, this means the app has launched in the users’ internet browser. 
- <!---
+
+
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_2.png" width="100%">
---->
-<img src= "https://raw.githubusercontent.com/poissonconsulting/shinyrems/update_user_guide/vignettes/images/PRE_2.png" width="100%">
 *<font size="-1">Figure 2. A message to answer when the code to launch the app is run. The ‘2yr’ EMS dataset is updated every day.</font>*
- <!---
+
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_3.png" width="100%">
---->
-<img src= "https://raw.githubusercontent.com/poissonconsulting/shinyrems/update_user_guide/vignettes/images/PRE_3.png" width="100%">
 *<font size="-1">Figure 3. A message to answer when the code to launch the app is run. This message confirms a data look up table can be stored on the users’ computer.</font>*
 
 
 ## ShinyRems App Features
 ### Tab 1: Data
- <!---
+
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_4.png" width="100%">
---->
-<img src= "https://raw.githubusercontent.com/poissonconsulting/shinyrems/update_user_guide/vignettes/images/PRE_4.png" width="100%">
 *<font size="-1">Figure 4. The first screen seen when the app opens in the users web browser. The dataset chosen in the R code will be listed in the top left. Raw data can be chosen multiple ways, with options to view one parameter at a time and at a specific date range.</font>*
 
 #### Using 2yr, 4yr, historic or all options
@@ -129,10 +122,9 @@ In the left-hand menu, the options for choosing the raw EMS dataset are:
 2. By monitoring location or EMS ID. Multiple entries can be entered.  
 
 3. The Site Map inset tab (Figure 3) can be used to find a monitoring location. Clicking a marker will add the site to the users list of selected sites. An option to zoom to Freshwater Atlas watershed groups is available.  
- <!---
+
+
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_5.png" width="100%">
---->
-<img src= "https://raw.githubusercontent.com/poissonconsulting/shinyrems/update_user_guide/vignettes/images/PRE_5.png" width="100%">
 *<font size="-1">Figure 5. Raw data can also be found by selecting monitoring site locations on the Site Map inset tab.</font>*
  
 One parameter can be chosen at a time for the site(s) selected.
@@ -154,10 +146,8 @@ A download raw data button exists to keep track of the raw dataset.
 Make sure to name it something descriptive. 
 
 #### Using the upload data option
- <!---
+
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_6.png" width="100%">
---->
-<img src= "https://raw.githubusercontent.com/poissonconsulting/shinyrems/update_user_guide/vignettes/images/PRE_6.png" width="100%">
 *<font size="-1">Figure 6. The first screen the user will see when the app opens in the users web browser when the ‘upload’ option is chosen.</font>*
 
 If the user wants to upload a dataset not from EMS, choose the option ‘upload’:  
@@ -214,11 +204,9 @@ The user can download the template to view what format the data needs to be in (
 Data must be in a .csv file to upload into the app. 
 Excel workbooks formats are not accepted. 
 If the datafile is an excel file, export a worksheet to csv.
-<!---
-<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_7.png" width="100%">
---->
 
-<img src= "https://raw.githubusercontent.com/poissonconsulting/shinyrems/update_user_guide/vignettes/images/PRE_7.png" width="100%">
+
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_7.png" width="100%">
 *<font size="-1">Figure 7. Template of how the users’ data needs to be organized to upload into app.</font>*
 
 ### Tab 2. Tidy
@@ -270,18 +258,12 @@ The Tidy Tab manual options for tidying the dataset include (Figure 9):
     
 3. **Set values at or below detection limit** gives an option what to do with data points below the detection limit. Options are converting result value to zero, half the detection limit, setting at the minimum detection limit or to set as NA. 
 
- <!---
-<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_8.png" width="100%">
---->
 
-<img src= "https://raw.githubusercontent.com/poissonconsulting/shinyrems/update_user_guide/vignettes/images/PRE_8.png" width="100%">
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_8.png" width="100%">
 *<font size="-1">Figure 8. The Messages inset tab of the Tidy Tab. This shows what is happening automatically in the Tidy Tab.</font>*
 
- <!---
-<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_9.png" width="100%">
---->
 
-<img src= "https://raw.githubusercontent.com/poissonconsulting/shinyrems/update_user_guide/vignettes/images/PRE_9.png" width="100%">
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_9.png" width="100%">
 *<font size="-1">Figure 9. Tab 2 in ShinyRems. This tab is where the users raw data starts to be tidied and includes a few automatic and manual steps to customize the users dataset.</font>*
 
 ## Tab 3. Clean
@@ -301,11 +283,8 @@ The Clean Tab options for cleaning the dataset include (Figure 10):
 
 3. **Maximum Coefficient of Variation for replicates** is an option to specify the coefficient of variation between sample replicates. Replicates are counted as two or more samples for the same variable on the same day. Leave blank for the default value of infinity.  
 
- <!---
-<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_10.png" width="100%">
---->
 
-<img src= "https://raw.githubusercontent.com/poissonconsulting/shinyrems/update_user_guide/vignettes/images/PRE_10.png" width="100%">
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_10.png" width="100%">
 *<font size="-1">Figure 10. The main screen of the Clean Tab. This is where various options exist for cleaning the users now tidy dataset.</font>*
  
 ### Tab 4. Outliers
@@ -330,20 +309,14 @@ Colour indicates outliers, Symbol indicates if observation is <MDL (i.e., True).
 
 8. **Plot legend**: Outliers are identified by colour. Data are identified as Detected – True (above minimum detection limit) or Detected - False (below minimum detection limit; with a < in the Result Letter column).  
 
- <!---
-<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_11.png" width="100%">
---->
 
-<img src= "https://raw.githubusercontent.com/poissonconsulting/shinyrems/update_user_guide/vignettes/images/PRE_11.png" width="100%">
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_11.png" width="100%">
 *<font size="-1">Figure 11. The main tab of the Outlier screen. Options here include customizing what constitutes an outlier for the dataset and removing them if desired.</font>*
 
 Final clean data with outliers removed can be downloaded as a .csv (Figure 12). 
 
- <!---
-<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_12.png" width="100%">
---->
 
-<img src= "https://raw.githubusercontent.com/poissonconsulting/shinyrems/update_user_guide/vignettes/images/PRE_12.png" width="100%">
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_12.png" width="100%">
 *<font size="-1">Figure 12. The main screen of the Outliers Tab showing the Final Data inset tab. This shows the final clean dataset with outliers removed.</font>*
 
 ### Tab 5. Plots/Statistics
@@ -363,24 +336,22 @@ Figure 13 shows the main Plot tab, with options for customization:
 7. **Palette** allows for colour customization.
 8. **Number of columns** allows for setting number of columns for faceting plots. 
 9. **Standardize Y-axis scales** allows user to specify whether you would like the y-axis scales to be standardized (i.e. “fixed”) or not (i.e. “free”).
- <!---
-<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_13.png" width="100%">
---->
+ 
 
-<img src= "https://raw.githubusercontent.com/poissonconsulting/shinyrems/update_user_guide/vignettes/images/PRE_13.png" width="100%">
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_13.png" width="100%">
 *<font size="-1">Figure 13. The main plot screen. Here the user can view the initial visualization of the clean dataset with outliers removed. Various options exist for customizing the plot and downloading it to the users computer.</font>*
 
 #### Guideline Tab
 
 There are two options:
 
-##### Set manually
+**<ins>Set manually</ins>**
 
 Any benchmark value may be entered here. 
 Examples include permit limits, water quality objectives, or water quality guidelines that are not calculated. 
-See Limits in the Reference Tables tab or visit the Water Quality Guideline look-up table).
+See Limits in the Reference Tables tab or visit the [Water Quality Guideline look-up table](https://bcgov-env.shinyapps.io/bc_wqg/).
 
-##### Calculate from data
+**<ins>Calculate from data</ins>**
 
 Calculates the approved water quality guidelines for aquatic life in British Columbia (Figure 14). 
 Only guidelines whose conditions are met are returned.
@@ -396,7 +367,7 @@ For long-term limits there must be at least 5 values spanning 21 days.
 As replicates are averaged prior to calculating the limits each of the 5 values must be on a separate day. 
 The first 30-day period begin at the date of the first reading while the next 30 day period starts at the date of the first reading after the previous period and so on. 
 The only exception to this is if the user provides dates in which case each period extends for 30 days or until a provided date is reached.
-It is important to note that the averaging of conditional variables, the 5 in 30 rule and the assignment of 30-day periods occurs independently for all combination of factor levels in the columns specified by by.
+It is important to note that the averaging of conditional variables, the 5 in 30 rule and the assignment of 30-day periods occurs independently for all combination of factor levels in the columns specified by.
 
 'Long-daily' term uses long-term guidelines on daily values; 5 samples in 30 days is not required to calculate guideline.
 
@@ -404,11 +375,11 @@ It is important to note that the averaging of conditional variables, the 5 in 30
 
 A limit may depend on another variable such as pH, Total Chloride, or Total Hardness and in some cases no value was recorded for the date of interest.
 
-If the **'Get modelled estimate box' is unchecked**:
+If the 'Get modelled estimate box' is unchecked:
 
 The pH, Total Chloride or Total Hardness value is assumed to be the average recorded value over the 30 day period.
 
-If the **'Get modelled estimate box' is checked**:
+If the 'Get modelled estimate box' is checked:
 
 A parametric model is used to predict the pH, Total Chloride and Total Hardness for all dates with a value of any variable. 
 Existing values are replaced. 
@@ -417,11 +388,8 @@ Otherwise, if there is only one year with 12 or more values a simple seasonal sm
 If there is two years with 12 or more values then a seasonal smoother with a trend is fitted. 
 Otherwise, a model with trend and a dynamic seasonal component is fitted.
 
- <!---
-<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_14.png" width="100%">
---->
 
-<img src= "https://raw.githubusercontent.com/poissonconsulting/shinyrems/update_user_guide/vignettes/images/PRE_14.png" width="100%">
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_14.png" width="100%">
 *<font size="-1">Figure 14. The Guideline inset tab showing the options for calculating the aquatic life guideline of the variable selected in the 1. Data tab.</font>*
 
 #### Summary Table Tab
@@ -435,11 +403,8 @@ Accounting for censored data (data at or below the detection limit) involves tre
 An option to exclude missing values in the 'Value' column when summarizing data. 
 Options also exist to decide which column to summarize the data by and how many significant figures are wanted. 
 
- <!---
-<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_15.png" width="100%">
---->
 
-<img src= "https://raw.githubusercontent.com/poissonconsulting/shinyrems/update_user_guide/vignettes/images/PRE_15.png" width="100%">
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_15.png" width="100%">
 *<font size="-1">Figure 15. The summary table tab in the main Tab 5. Plot/Statistics.</font>*
 
 ### Tab 6: Reference Tables
@@ -448,11 +413,7 @@ Tab 6 shows the various EMS reference tables.
 These include information for each EMS column and its respective options. 
 These tables will be helpful in Tab 2, 3 and 5 as the dataset is refined and guidelines are calculated. 
 
- <!---
-<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_17.png" width="100%">
---->
-
-<img src= "https://raw.githubusercontent.com/poissonconsulting/shinyrems/update_user_guide/vignettes/images/PRE_16.png" width="100%">
+<img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_16.png" width="100%">
 *<font size="-1">Figure 16. The Reference Tables tab which show all options for the various EMS columns. These show the EMS reference tables available from Data BC.</font>*
 
 ## Resources
