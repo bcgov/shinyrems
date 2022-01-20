@@ -10,8 +10,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
-context("test-data")
-
 test_that("ems data functions work", {
   data <- ems_data_which("2yr")
   emsid <- c("0121580", "0200036")
