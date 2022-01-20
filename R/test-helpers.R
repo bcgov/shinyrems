@@ -12,12 +12,9 @@ expect_snapshot_data <- function(x, name) {
 }
 
 
-save_png <- function(x, width = 400, height = 400) {
+save_png <- function(x) {
   path <- tempfile(fileext = ".png")
-  grDevices::png(path, width = width, height = height)
-  on.exit(grDevices::dev.off())
-  print(x)
-
+  ggplot2::ggsave(path, plot = x)
   path
 }
 
