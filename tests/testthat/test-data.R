@@ -202,7 +202,7 @@ test_that("ems plot", {
 
   expect_s3_class(gp, "ggplot")
   expect_named(gp)
-  expect_snapshot_plot(gp)
+  expect_snapshot_plot(gp, "ems_plot")
 
 })
 
