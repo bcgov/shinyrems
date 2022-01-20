@@ -105,13 +105,6 @@ mod_results_ui <- function(id) {
           uiOutput(ns("ui_plot"))
         ),
         tabPanel(
-          title = "Summary Table",
-          br(),
-          dl_group("table", ns),
-          br2(), br(),
-          ems_table_output(ns("table"))
-        ),
-        tabPanel(
           title = "Guideline Data",
           br(),
           dl_group("final_table", ns),
@@ -122,6 +115,13 @@ mod_results_ui <- function(id) {
           ), br(),
           help_text("Only calculated guidelines are shown."),
           ems_table_output(ns("final_table"))
+        ),
+        tabPanel(
+          title = "Summary Table",
+          br(),
+          dl_group("table", ns),
+          br2(), br(),
+          ems_table_output(ns("table"))
         )
       ))
     )
