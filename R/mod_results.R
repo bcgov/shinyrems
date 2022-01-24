@@ -242,15 +242,6 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     plotOutput(ns("ems_plot"), height = input$plot_height)
   })
 
-  ### appears to not even be used anywhere
-  # output$ui_site_type <- renderUI({
-  #   data <- rv$data
-  #   x <- sort(intersect(names(data), c("Station", "EMS_ID")))
-  #   if(length(x) < 2) return()
-  #   radioButtons(ns("site_type"), label = "Label sites by",
-  #                choices = x, inline = TRUE)
-  # })
-
   output$ems_plot <- renderPlot({
     plot()
   })
@@ -348,10 +339,6 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
 
   observe({
     data <- outlier$data()
-    ### pretty sure this can be removed
-    # if("Station" %in% names(data)){
-    #   data$Station <- ordered(data$Station)
-    # }
     rv$data <- data
   })
 
