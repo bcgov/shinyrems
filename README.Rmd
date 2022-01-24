@@ -43,9 +43,9 @@ There are six possible run modes corresponding to different
 datasets:
 
 - **'demo'** - uses a demo dataset that requires no download of EMS data  
-- **'2yr'** - uses most recent 2 years of EMS data (from 2018-01-01 to present)
-- **'4yr'** - uses most recent 4 years of EMS data from 2016-01-01 to present)  
-- **'historic'** - uses historic EMS data (up to 2018-01-01)  
+- **'2yr'** - uses most recent 2 years of EMS data
+- **'4yr'** - uses most recent 4 years of EMS data 
+- **'historic'** - uses historic EMS data (1965 - (Current Year - 2 Years))
 - **'all'** - uses combined "2yr" and "historic" EMS data 
 - **'upload'** - allows user to upload their own data following correct format 
 
