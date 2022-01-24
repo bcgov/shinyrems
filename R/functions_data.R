@@ -248,3 +248,19 @@ tidy_names_to_raw <- function(x, names = raw_names) {
   }, USE.NAMES = FALSE)
   setNames(x, tmp)
 }
+
+
+set_emsid_from_station_levels <- function(data) {
+
+  if (all(c("Station", "EMS_ID") %in% names(data))) {
+    ems_order <- data %>%
+      dplyr::select(EMS_ID, Station) %>%
+      dplyr::distinct() %>%
+      dplyr::mutate(new_col = as.integer(Station)) %>%
+      dplyr::arrange(new_col)
+
+    data$EMS_ID <- factor(data$EMS_ID, levels = c(ems_order$EMS_ID))
+  }
+
+  data
+}

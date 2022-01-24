@@ -140,7 +140,8 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
   rv <- reactiveValues(
     data = NULL,
     guideline = NULL,
-    guideline_final = NULL
+    guideline_final = NULL,
+    station_order = NULL
   )
 
   observe({
@@ -166,13 +167,30 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
 
     data <- rv$data
 
-    data <- ems_plot_data(data = rv$data, date_range = input$date_range,
-                          timeframe = input$timeframe)
-    gp <- ems_plot_base(data, facet = input$facet, ncol = input$ncol, scales = input$scales) %>%
-      ems_plot_add_geom(plot_type = input$plot_type, geom = input$geom,
-                        point_size = input$point_size, line_size = input$line_size,
-                        colour = input$colour, timeframe = input$timeframe,
-                        palette = input$palette)
+    data <- ems_plot_data(
+      data = rv$data,
+      date_range = input$date_range,
+      timeframe = input$timeframe
+    )
+
+    data <- set_emsid_from_station_levels(data)
+
+    gp <-
+      ems_plot_base(
+        data,
+        facet = input$facet,
+        ncol = input$ncol,
+        scales = input$scales
+      ) %>%
+      ems_plot_add_geom(
+        plot_type = input$plot_type,
+        geom = input$geom,
+        point_size = input$point_size,
+        line_size = input$line_size,
+        colour = input$colour,
+        timeframe = input$timeframe,
+        palette = input$palette
+      )
 
     if(!is.null(rv$guideline) & input$plot_type != "boxplot"){
       x <- rv$guideline
@@ -224,13 +242,14 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     plotOutput(ns("ems_plot"), height = input$plot_height)
   })
 
-  output$ui_site_type <- renderUI({
-    data <- rv$data
-    x <- sort(intersect(names(data), c("Station", "EMS_ID")))
-    if(length(x) < 2) return()
-    radioButtons(ns("site_type"), label = "Label sites by",
-                 choices = x, inline = TRUE)
-  })
+  ### appears to not even be used anywhere
+  # output$ui_site_type <- renderUI({
+  #   data <- rv$data
+  #   x <- sort(intersect(names(data), c("Station", "EMS_ID")))
+  #   if(length(x) < 2) return()
+  #   radioButtons(ns("site_type"), label = "Label sites by",
+  #                choices = x, inline = TRUE)
+  # })
 
   output$ems_plot <- renderPlot({
     plot()
@@ -329,9 +348,10 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
 
   observe({
     data <- outlier$data()
-    if("Station" %in% names(data)){
-      data$Station <- ordered(data$Station)
-    }
+    ### pretty sure this can be removed
+    # if("Station" %in% names(data)){
+    #   data$Station <- ordered(data$Station)
+    # }
     rv$data <- data
   })
 
@@ -341,7 +361,11 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     data$Station <- as.character(data$Station)
     for (i in sites) {
       x <- input[[i]]
-      data$Station[data$Station == i] <- x
+      if (grepl("$^", x)) {
+        data$Station[data$Station == i] <- i
+      } else (
+        data$Station[data$Station == i] <- x
+      )
     }
     data$Station <- ordered(data$Station)
     removeModal()
@@ -366,16 +390,23 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     )
   })
 
+  observe({
+    data <- outlier$data()
+    rv$station_order <- as.character(unique(rv$data$Station))
+  })
+
   output$ui_order <- renderUI({
     if(!("Station" %in% outlier$by()))
       return(NULL)
-    stations <- levels(rv$data$Station)
-    shinyjqui::orderInput(ns("order"), label = "Drag stations in desired order",
-                          items = stations)
+    shinyjqui::orderInput(
+      ns("order_stations"),
+      label = "Drag stations in desired order",
+      items = rv$station_order
+    )
   })
 
-  observeEvent(input$order_order, {
-    rv$data$Station <- ordered(rv$data$Station, levels = input$order_order)
+  observeEvent(input$order_stations, {
+    rv$data$Station <- factor(rv$data$Station, levels = input$order_stations)
   })
 
   output$ui_by <- renderUI({
