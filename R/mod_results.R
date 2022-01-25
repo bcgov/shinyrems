@@ -40,18 +40,34 @@ mod_results_ui <- function(id) {
               uiOutput(ns("ui_facet")),
               uiOutput(ns("ui_colour"))
             ),
-            sliderInput(ns("plot_height"),
+            sliderInput(
+              ns("plot_height"),
               label = "Plot Height",
-              value = 500, min = 0, max = 1000, step = 100
+              value = 500,
+              min = 0,
+              max = 1000,
+              step = 100
             ),
-            selectInput(ns("palette"), label = "Palette",
-                        choices = c("Accent", "Dark2", "Paired", "Pastel1",
-                                    "Pastel2", "Set1", "Set2", "Set3")),
-            numericInput(ns("ncol"), "Number of columns",
-                         value = 1, min = 1, max = 20) %>%
-              helper("tab5_ncol"),
-            checkboxInput(ns("scales"), label = "Standardize Y-axis scales", value = TRUE) %>%
-              helper("tab5_scales"),
+            selectInput(
+              ns("palette"),
+              label = "Palette",
+              choices = c(
+                "Accent", "Dark2", "Paired", "Pastel1", "Pastel2", "Set1",
+                "Set2", "Set3"
+              )
+            ),
+            numericInput(
+              ns("ncol"),
+              "Number of columns",
+              value = 1,
+              min = 1,
+              max = 20
+            ) %>% helper("tab5_ncol"),
+            checkboxInput(
+              ns("scales"),
+              label = "Standardize Y-axis scales",
+              value = TRUE
+            ) %>% helper("tab5_scales"),
             uiOutput(ns("ui_order")),
             br(),
             uiOutput(ns("ui_button_rename"))
@@ -59,12 +75,22 @@ mod_results_ui <- function(id) {
           tabPanel(
             title = "Guideline",
             br(),
-            fillRow(actionButton(ns("add_manual"), "Add manual"),
-                    actionButton(ns("add_calculated"), "Add calculated"),
-                    height = "40px", width = 220, flex = c(1, 1)) %>% helper("tab5_guideline"),
-            shinyWidgets::colorSelectorInput(ns("guideline_colour"),
-                                             choices = c("black", "#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00", "#FFFF33", "#A65628", "#F781BF"),
-                                             label = "Guideline colour", selected = "black"),
+            fillRow(
+              actionButton(ns("add_manual"), "Add manual"),
+              actionButton(ns("add_calculated"), "Add calculated"),
+              height = "40px",
+              width = 220,
+              flex = c(1, 1))
+            %>% helper("tab5_guideline"),
+            shinyWidgets::colorSelectorInput(
+              ns("guideline_colour"),
+              choices = c(
+                "black", "#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00",
+                "#FFFF33", "#A65628", "#F781BF"
+              ),
+              label = "Guideline colour",
+              selected = "black"
+            ),
             br(),
             fluidRow(div(id = ns("empty"))),
           ),
@@ -195,7 +221,11 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     if(!is.null(rv$guideline) & input$plot_type != "boxplot"){
       x <- rv$guideline
       x <- x[c("Date", "Guideline", "Variable", "UpperLimit")]
-      gp <- gp %>% ems_plot_add_guideline(guideline = x, guideline_colour = input$guideline_colour)
+      gp <- gp %>%
+        ems_plot_add_guideline(
+          guideline = x,
+          guideline_colour = input$guideline_colour
+        )
     }
 
     gp
@@ -203,7 +233,8 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
 
   summary_table <- reactive({
     suppressWarnings(waiter::waiter_show())
-    x <- wqbc::summarise_wqdata(rv$data,
+    x <- wqbc::summarise_wqdata(
+      rv$data,
       by = input$by,
       censored = input$censored,
       na.rm = input$narm
@@ -214,7 +245,8 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
   })
 
   output$table <- DT::renderDT({
-    DT::datatable(summary_table(),
+    DT::datatable(
+      summary_table(),
       class = "cell-border stripe compact",
       rownames = FALSE,
       options = list(
@@ -227,14 +259,15 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
 
   output$final_table <- DT::renderDT({
     req(rv$guideline_final)
-    DT::datatable(rv$guideline_final,
-                  class = "cell-border stripe compact",
-                  rownames = FALSE,
-                  options = list(
-                    scrollX = TRUE,
-                    # dom = "t",
-                    ordering = FALSE
-                  )
+    DT::datatable(
+      rv$guideline_final,
+      class = "cell-border stripe compact",
+      rownames = FALSE,
+      options = list(
+        scrollX = TRUE,
+        # dom = "t",
+        ordering = FALSE
+      )
     )
   })
 
@@ -256,23 +289,28 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
       tags$label("Adjust plot start and end date"),
       help_text("This only changes the plot x-axis,
                 not the underlying data and summary table."),
-      dateRangeInput(ns("date_range"),
+      dateRangeInput(
+        ns("date_range"),
         label = NULL,
-        start = date_range[1], end = date_range[2]
+        start = date_range[1],
+        end = date_range[2]
       )
     )
   })
 
   output$ui_type <- renderUI({
     tagList(
-      radioButtons(ns("plot_type"),
+      radioButtons(
+        ns("plot_type"),
         label = "Plot type",
         choices = c("scatter", "boxplot"),
-        selected = "scatter", inline = TRUE
+        selected = "scatter",
+        inline = TRUE
       ),
       shinyjs::hidden(div(
         id = ns("div_geom"),
-        checkboxGroupInput(ns("geom"),
+        checkboxGroupInput(
+          ns("geom"),
           label = NULL,
           choices = c("show lines", "show points"),
           selected = c("show points"),
@@ -280,13 +318,19 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
         ),
         fillRow(
           height = 75,
-          numericInput(ns("point_size"),
-            label = "Point size", value = 1.5,
-            min = 0.1, max = 10
+          numericInput(
+            ns("point_size"),
+            label = "Point size",
+            value = 1.5,
+            min = 0.1,
+            max = 10
           ),
-          numericInput(ns("line_size"),
-            label = "Line size", value = 0.3,
-            min = 0.1, max = 10
+          numericInput(
+            ns("line_size"),
+            label = "Line size",
+            value = 0.3,
+            min = 0.1,
+            max = 10
           )
         )
       )),
@@ -302,7 +346,9 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
   })
 
   output$ui_facet <- renderUI({
-    selectInput(ns("facet"), "Facet by",
+    selectInput(
+      ns("facet"),
+      "Facet by",
       choices = outlier$by(),
       selected = "Variable"
     )
@@ -320,11 +366,14 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
       paste0(input$dl_file, ".png")
     },
     content = function(file) {
-      ggplot2::ggsave(file, plot(),
-                      width = input$dl_width,
-                      height = input$dl_height,
-                      dpi = input$dl_dpi,
-                      device = "png")
+      ggplot2::ggsave(
+        file,
+        plot(),
+        width = input$dl_width,
+        height = input$dl_height,
+        dpi = input$dl_dpi,
+        device = "png"
+      )
     }
   )
 
@@ -418,11 +467,20 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
       ui = tagList(
         subtitle(paste("Manual guideline", input$add_manual)),
         fillRow(
-          textInput(ns(paste0("manual_name_", input$add_manual)), label = NULL,
-                    placeholder = "guideline name ..."),
-          numericInput(ns(paste0("manual_", input$add_manual)),
-                       label = NULL, value = NULL),
-          actionButton(ns(paste0("add_manual_", input$add_manual)), "Add/update"),
+          textInput(
+            ns(paste0("manual_name_", input$add_manual)),
+            label = NULL,
+            placeholder = "guideline name ..."
+          ),
+          numericInput(
+            ns(paste0("manual_", input$add_manual)),
+            label = NULL,
+            value = NULL
+          ),
+          actionButton(
+            ns(paste0("add_manual_", input$add_manual)),
+            "Add/update"
+          ),
           flex = c(1.5, 1, 1),
           height = "40px"
         ),
@@ -439,19 +497,32 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
       ui = tagList(
         subtitle(paste("Calculated guideline", input$add_calculated)),
         fillRow(
-          textInput(ns(paste0("calculated_name_", input$add_calculated)), label = NULL,
-                    placeholder = "guideline name ..."),
-          selectInput(ns(paste0("term_", input$add_calculated)),
-                      label = NULL,
-                      choices = c("short term" = "short", "long term" = "long",
-                                  "long-daily term" = "long-daily"),
-                      selected = "short"),
-          actionButton(ns(paste0("add_calculated_", input$add_calculated)), "Add/update"),
+          textInput(
+            ns(paste0("calculated_name_", input$add_calculated)),
+            label = NULL,
+            placeholder = "guideline name ..."
+          ),
+          selectInput(
+            ns(paste0("term_", input$add_calculated)),
+            label = NULL,
+            choices = c(
+              "short term" = "short",
+              "long term" = "long",
+              "long-daily term" = "long-daily"
+            ),
+            selected = "short"
+          ),
+          actionButton(
+            ns(paste0("add_calculated_", input$add_calculated)),
+            "Add/update"
+          ),
           flex = c(1.5, 1, 1),
           height = "40px"
         ),
-        checkboxInput(ns(paste0("estimate_", input$add_calculated)), "Get modelled estimate",
-                      value = FALSE
+        checkboxInput(
+          ns(paste0("estimate_", input$add_calculated)),
+          "Get modelled estimate",
+          value = FALSE
         ),
       )
     )
@@ -460,28 +531,37 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
   observeEvent(input$add_manual_1, {
     req(input$manual_1)
     req(input$manual_name_1)
-    rv$guideline <- add_manual_guideline(rv$guideline, rv$data,
-                                         input$manual_1,
-                                         input$manual_name_1,
-                                         "manual_1")
+    rv$guideline <- add_manual_guideline(
+      rv$guideline,
+      rv$data,
+      input$manual_1,
+      input$manual_name_1,
+      "manual_1"
+    )
   })
 
   observeEvent(input$add_manual_2, {
     req(input$manual_2)
     req(input$manual_name_2)
-    rv$guideline <- add_manual_guideline(rv$guideline, rv$data,
-                                         input$manual_2,
-                                         input$manual_name_2,
-                                         "manual_2")
+    rv$guideline <- add_manual_guideline(
+      rv$guideline,
+      rv$data,
+      input$manual_2,
+      input$manual_name_2,
+      "manual_2"
+    )
   })
 
   observeEvent(input$add_manual_3, {
     req(input$manual_3)
     req(input$manual_name_3)
-    rv$guideline <- add_manual_guideline(rv$guideline, rv$data,
-                                         input$manual_3,
-                                         input$manual_name_3,
-                                         "manual_3")
+    rv$guideline <- add_manual_guideline(
+      rv$guideline,
+      rv$data,
+      input$manual_3,
+      input$manual_name_3,
+      "manual_3"
+    )
   })
 
   observeEvent(input$add_calculated_1, {
@@ -490,26 +570,28 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     req(input$guideline_sigfig)
     waiter::waiter_show(html = waiter_html("Calculating guideline ..."))
     id <- "calculated_1"
-    x <- try(add_calculated_guideline(data = outlier$data(),
-                             dataset = data$dataset(),
-                             all_data = data$all_data(),
-                             lookup = data$lookup(),
-                             name = input$calculated_name_1,
-                             id = id,
-                             term = input$term_1,
-                             estimate = input$estimate_1,
-                             sigfig = input$guideline_sigfig,
-                             from_date = data$date()[1],
-                             to_date = data$date()[2],
-                             mdl_action = tidy$mdl_action(),
-                             cols = data$cols(),
-                             strict = tidy$strict(),
-                             by = clean$by(),
-                             sds = outlier$sds(),
-                             ignore_undetected = outlier$ignore_undetected(),
-                             large_only = outlier$large_only(),
-                             max_cv = clean$max_cv(),
-                             fun = clean$fun()), silent = TRUE)
+    x <- try(add_calculated_guideline(
+      data = outlier$data(),
+      dataset = data$dataset(),
+      all_data = data$all_data(),
+      lookup = data$lookup(),
+      name = input$calculated_name_1,
+      id = id,
+      term = input$term_1,
+      estimate = input$estimate_1,
+      sigfig = input$guideline_sigfig,
+      from_date = data$date()[1],
+      to_date = data$date()[2],
+      mdl_action = tidy$mdl_action(),
+      cols = data$cols(),
+      strict = tidy$strict(),
+      by = clean$by(),
+      sds = outlier$sds(),
+      ignore_undetected = outlier$ignore_undetected(),
+      large_only = outlier$large_only(),
+      max_cv = clean$max_cv(),
+      fun = clean$fun()), silent = TRUE
+    )
     if(is_try_error(x)){
       waiter::waiter_hide()
       return(showModal(guideline_modal(x)))
@@ -526,26 +608,28 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     req(input$guideline_sigfig)
     waiter::waiter_show(html = waiter_html("Calculating guideline ..."))
     id <- "calculated_2"
-    x <- try(add_calculated_guideline(data = outlier$data(),
-                                      dataset = data$dataset(),
-                                      all_data = data$all_data(),
-                                      lookup = data$lookup(),
-                                      name = input$calculated_name_2,
-                                      id = id,
-                                      term = input$term_2,
-                                      estimate = input$estimate_2,
-                                      sigfig = input$guideline_sigfig,
-                                      from_date = data$date()[1],
-                                      to_date = data$date()[2],
-                                      mdl_action = tidy$mdl_action(),
-                                      cols = data$cols(),
-                                      strict = tidy$strict(),
-                                      by = clean$by(),
-                                      sds = outlier$sds(),
-                                      ignore_undetected = outlier$ignore_undetected(),
-                                      large_only = outlier$large_only(),
-                                      max_cv = clean$max_cv(),
-                                      fun = clean$fun()), silent = TRUE)
+    x <- try(add_calculated_guideline(
+      data = outlier$data(),
+      dataset = data$dataset(),
+      all_data = data$all_data(),
+      lookup = data$lookup(),
+      name = input$calculated_name_2,
+      id = id,
+      term = input$term_2,
+      estimate = input$estimate_2,
+      sigfig = input$guideline_sigfig,
+      from_date = data$date()[1],
+      to_date = data$date()[2],
+      mdl_action = tidy$mdl_action(),
+      cols = data$cols(),
+      strict = tidy$strict(),
+      by = clean$by(),
+      sds = outlier$sds(),
+      ignore_undetected = outlier$ignore_undetected(),
+      large_only = outlier$large_only(),
+      max_cv = clean$max_cv(),
+      fun = clean$fun()), silent = TRUE
+    )
     if(is_try_error(x)){
       waiter::waiter_hide()
       return(showModal(guideline_modal(x)))
@@ -562,26 +646,28 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     req(input$guideline_sigfig)
     waiter::waiter_show(html = waiter_html("Calculating guideline ..."))
     id <- "calculated_3"
-    x <- try(add_calculated_guideline(data = outlier$data(),
-                                      dataset = data$dataset(),
-                                      all_data = data$all_data(),
-                                      lookup = data$lookup(),
-                                      name = input$calculated_name_3,
-                                      id = id,
-                                      term = input$term_3,
-                                      estimate = input$estimate_3,
-                                      sigfig = input$guideline_sigfig,
-                                      from_date = data$date()[1],
-                                      to_date = data$date()[2],
-                                      mdl_action = tidy$mdl_action(),
-                                      cols = data$cols(),
-                                      strict = tidy$strict(),
-                                      by = clean$by(),
-                                      sds = outlier$sds(),
-                                      ignore_undetected = outlier$ignore_undetected(),
-                                      large_only = outlier$large_only(),
-                                      max_cv = clean$max_cv(),
-                                      fun = clean$fun()), silent = TRUE)
+    x <- try(add_calculated_guideline(
+      data = outlier$data(),
+      dataset = data$dataset(),
+      all_data = data$all_data(),
+      lookup = data$lookup(),
+      name = input$calculated_name_3,
+      id = id,
+      term = input$term_3,
+      estimate = input$estimate_3,
+      sigfig = input$guideline_sigfig,
+      from_date = data$date()[1],
+      to_date = data$date()[2],
+      mdl_action = tidy$mdl_action(),
+      cols = data$cols(),
+      strict = tidy$strict(),
+      by = clean$by(),
+      sds = outlier$sds(),
+      ignore_undetected = outlier$ignore_undetected(),
+      large_only = outlier$large_only(),
+      max_cv = clean$max_cv(),
+      fun = clean$fun()), silent = TRUE
+    )
     if(is_try_error(x)){
       waiter::waiter_hide()
       return(showModal(guideline_modal(x)))
