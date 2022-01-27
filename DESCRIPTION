@@ -36,7 +36,7 @@ Imports:
     sf,
     shinyjqui
 Suggests:
-    testthat (>= 2.1.0),
+    testthat (>= 3.0.0),
     usethis,
     knitr,
     rmarkdown
@@ -45,9 +45,10 @@ Remotes:
     bcgov/wqbc
 URL: https://github.com/poissonconsulting/shinyrems
 BugReports: https://github.com/poissonconsulting/shinyrems/issues
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Encoding: UTF-8
 LazyData: true
 Language: en-US
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
+Config/testthat/edition: 3

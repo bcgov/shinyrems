@@ -10,14 +10,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
-context("shiny tests")
-
 test_that("app ui", {
   ui <- app_ui()
-  expect_is(ui, "shiny.tag.list")
+  expect_s3_class(ui, "shiny.tag.list")
 })
 
 test_that("app server", {
   server <- app_server
-  expect_is(server, "function")
+  expect_match(class(server), "function")
 })
