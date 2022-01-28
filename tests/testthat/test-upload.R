@@ -1,6 +1,10 @@
 test_that("data upload works", {
-  data <- readr::read_csv(system.file("extdata/upload_data_cadmium.csv", package = "shinyrems"))
-  data_bad <- readr::read_csv(system.file("extdata/upload_example_bad.csv", package = "shinyrems"))
+  data <- suppressMessages(readr::read_csv(
+    system.file("extdata/upload_data_cadmium.csv", package = "shinyrems")
+  ))
+  data_bad <- suppressMessages(readr::read_csv(
+    system.file("extdata/upload_example_bad.csv", package = "shinyrems")
+  ))
 
   data$ResultLetter <- as.character(data$ResultLetter)
   expect_error(check_data_upload(data_bad))
@@ -20,20 +24,29 @@ test_that("data upload works", {
                         cols = character(0)
   )
   expect_identical(nrow(tidy_data), 611L)
+  expect_snapshot_data(tidy_data, "upload_tidy_data")
 
-  stand_data <- ems_standardize(data, TRUE)
+  stand_data <- suppressMessages(ems_standardize(data, TRUE))
   expect_identical(nrow(stand_data), 611L)
 
-  agg_data <- ems_aggregate(stand_data,
-                            by = "Station", remove_blanks = FALSE,
-                            max_cv = Inf, FUN = max
+  agg_data <- suppressMessages(
+    ems_aggregate(
+      stand_data,
+      by = "Station",
+      remove_blanks = FALSE,
+      max_cv = Inf,
+      FUN = max
+    )
   )
+
   expect_identical(nrow(agg_data), 611L)
+  expect_snapshot_data(agg_data, "upload_agg_data")
 
-  out_data <- ems_outlier(stand_data, by = "Station", max_cv = Inf, sds = 1, FUN = mean)
-  expect_identical(nrow(stand_data), 611L)
-
-  limits <- wqbc::limits
+  out_data <- suppressMessages(
+    ems_outlier(stand_data, by = "Station", max_cv = Inf, sds = 1, FUN = mean)
+  )
+  expect_identical(nrow(out_data), 611L)
+  expect_snapshot_data(out_data, "upload_out_data")
 
   #### test plot
   data <- out_data
@@ -54,7 +67,8 @@ test_that("data upload works", {
                       timeframe = "Year", palette = "Set1") %>%
     ems_plot_add_guideline(guideline = guideline, guideline_colour = "black")
 
-  expect_is(gp, "ggplot")
+  expect_s3_class(gp, "ggplot")
   expect_named(gp)
+  expect_snapshot_plot(gp, "upload_plot")
 
 })
