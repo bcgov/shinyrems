@@ -82,15 +82,6 @@ mod_results_ui <- function(id) {
               width = 220,
               flex = c(1, 1))
             %>% helper("tab5_guideline"),
-            shinyWidgets::colorSelectorInput(
-              ns("guideline_colour"),
-              choices = c(
-                "black", "#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00",
-                "#FFFF33", "#A65628", "#F781BF"
-              ),
-              label = "Guideline colour",
-              selected = "black"
-            ),
             br(),
             fluidRow(div(id = ns("empty"))),
           ),
@@ -222,10 +213,7 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
       x <- rv$guideline
       x <- x[c("Date", "Guideline", "Variable", "UpperLimit")]
       gp <- gp %>%
-        ems_plot_add_guideline(
-          guideline = x,
-          guideline_colour = input$guideline_colour
-        )
+        ems_plot_add_guideline(guideline = x)
     }
 
     gp
