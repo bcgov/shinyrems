@@ -105,7 +105,6 @@ add_calculated_guideline <- function(data, all_data, dataset,
     )
     combined_data <- rbind(data, data2)
   }
-
   x <- wqbc::calc_limits(combined_data,
                          clean = FALSE,
                          term = term,

@@ -556,7 +556,6 @@ mod_results_server <- function(input, output, session, data, tidy, clean, outlie
     req(input$calculated_name_1)
     req(input$term_1)
     req(input$guideline_sigfig)
-
     waiter::waiter_show(html = waiter_html("Calculating guideline ..."))
     id <- "calculated_1"
     x <- try(add_calculated_guideline(
