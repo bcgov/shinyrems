@@ -156,47 +156,48 @@ shinyrems::run_ems_app('upload')
 ```
 When the app opens, instructions pop up outlining the format the dataset must be in to upload to shinyrems:
 
-> <font size="+1">Instructions</font>
->
-> Uploading a dataset
->
-> <font size="-2">Download a template for data entry with the 'Download Template' button in the sidebar.
-> When your data is uploaded, the app will check that column names are valid and that constraints are met (e.g. Month must be a number between 1 and 12).
-> Any columns in addition to those that are mandatory will simply be accepted and passed through the app.
-> 
-> The following columns are **mandatory**:
-> 
-> - **Station**
->   - Name of the station
-> - **Year**
->   - Year of measurement
-> - **Month**
->   - Month of measurement as number from 1 - 12
-> - **Day**
->   - Day of measurement as number from 1 - 31
-> - **Variable**
->   - Variable of measurement (e.g. parameter name)
-> - **Value**
->   - Value of measurement as number
-> - **Units**
->   - Unit of measurement
->
-> The following columns are **optional** and can be used by the app:
->
-> - **DetectionLimit**
->   - Detection limit as number
-> - **ResultLetter**
->   - Result letter, e.g. (<)
-> - **EMS_ID**
->   - EMS ID corresponding to Station
-> - **Hour**
->   - Hour of measurement in 24-hour clock as number from 0 - 23
-> - **Minute**
->   - Minute of measurement as number from 0 - 59
-> - **Second**
->   - Second of measurement as number from 0 - 59
->
-> </font>
+
+
+Instructions
+
+Uploading a dataset
+ 
+Download a template for data entry with the 'Download Template' button in the sidebar.
+When your data is uploaded, the app will check that column names are valid and that constraints are met (e.g. Month must be a number between 1 and 12).
+Any columns in addition to those that are mandatory will simply be accepted and passed through the app.
+ 
+The following columns are **mandatory**:
+ 
+- **Station**
+  - Name of the station
+- **Year**
+  - Year of measurement
+- **Month**
+  - Month of measurement as number from 1 - 12
+- **Day**
+  - Day of measurement as number from 1 - 31
+- **Variable**
+  - Variable of measurement (e.g. parameter name)
+- **Value**
+  - Value of measurement as number
+- **Units**
+  - Unit of measurement
+
+The following columns are **optional** and can be used by the app:
+
+- **DetectionLimit**
+  - Detection limit as number
+- **ResultLetter**
+  - Result letter, e.g. (<)
+- **EMS_ID**
+  - EMS ID corresponding to Station
+- **Hour**
+  - Hour of measurement in 24-hour clock as number from 0 - 23
+- **Minute**
+  - Minute of measurement as number from 0 - 59
+- **Second**
+  - Second of measurement as number from 0 - 59
+
 
 Figure 6 is the screen the user will see when the ‘upload’ version of shinyrems opens. 
 The user can download the template to view what format the data needs to be in (Figure 7). 
@@ -266,7 +267,7 @@ The Tidy Tab manual options for tidying the dataset include (Figure 9):
 <img src= "https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_9.png" width="100%">
 *<font size="-1">Figure 9. Tab 2 in ShinyRems. This tab is where the users raw data starts to be tidied and includes a few automatic and manual steps to customize the users dataset.</font>*
 
-## Tab 3. Clean
+### Tab 3. Clean
 
 This step does the following:
 

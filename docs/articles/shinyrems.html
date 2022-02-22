@@ -156,10 +156,9 @@
 <p>If the user wants to upload a dataset not from EMS, choose the option ‘upload’:</p>
 <pre><code><span class="fu">shinyrems</span><span class="fu">::</span><span class="fu"><a href="../reference/run_ems_app.html">run_ems_app</a></span><span class="op">(</span><span class="st">'upload'</span><span class="op">)</span></code></pre>
 <p>When the app opens, instructions pop up outlining the format the dataset must be in to upload to shinyrems:</p>
-<blockquote>
-<p><font size="+1">Instructions</font></p>
+<p>Instructions</p>
 <p>Uploading a dataset</p>
-<p><font size="-2">Download a template for data entry with the ‘Download Template’ button in the sidebar. When your data is uploaded, the app will check that column names are valid and that constraints are met (e.g. Month must be a number between 1 and 12). Any columns in addition to those that are mandatory will simply be accepted and passed through the app.</font></p>
+<p>Download a template for data entry with the ‘Download Template’ button in the sidebar. When your data is uploaded, the app will check that column names are valid and that constraints are met (e.g. Month must be a number between 1 and 12). Any columns in addition to those that are mandatory will simply be accepted and passed through the app.</p>
 <p>The following columns are <strong>mandatory</strong>:</p>
 <ul>
 <li>
@@ -244,8 +243,6 @@
 </ul>
 </li>
 </ul>
-<p></p>
-</blockquote>
 <p>Figure 6 is the screen the user will see when the ‘upload’ version of shinyrems opens. The user can download the template to view what format the data needs to be in (Figure 7).</p>
 <p>Data must be in a .csv file to upload into the app. Excel workbooks formats are not accepted. If the datafile is an excel file, export a worksheet to csv.</p>
 <p><img src="https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_7.png" width="100%"><em><font size="-1">Figure 7. Template of how the users’ data needs to be organized to upload into app.</font></em></p>
@@ -331,10 +328,9 @@
 <p><img src="https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_8.png" width="100%"><em><font size="-1">Figure 8. The Messages inset tab of the Tidy Tab. This shows what is happening automatically in the Tidy Tab.</font></em></p>
 <p><img src="https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_9.png" width="100%"><em><font size="-1">Figure 9. Tab 2 in ShinyRems. This tab is where the users raw data starts to be tidied and includes a few automatic and manual steps to customize the users dataset.</font></em></p>
 </div>
-</div>
-<div class="section level2">
-<h2 id="tab-3--clean">Tab 3. Clean<a class="anchor" aria-label="anchor" href="#tab-3--clean"></a>
-</h2>
+<div class="section level3">
+<h3 id="tab-3--clean">Tab 3. Clean<a class="anchor" aria-label="anchor" href="#tab-3--clean"></a>
+</h3>
 <p>This step does the following:</p>
 <ul>
 <li>Checks that all variables in the Variable column can be recognized (see Parameters table in Reference Tables tab), and if necessary, replaces the variable name with a recognized one.</li>
@@ -349,6 +345,7 @@
 <li><p><strong>Maximum Coefficient of Variation for replicates</strong> is an option to specify the coefficient of variation between sample replicates. Replicates are counted as two or more samples for the same variable on the same day. Leave blank for the default value of infinity.</p></li>
 </ol>
 <p><img src="https://raw.githubusercontent.com/bcgov/shinyrems/master/vignettes/images/PRE_10.png" width="100%"><em><font size="-1">Figure 10. The main screen of the Clean Tab. This is where various options exist for cleaning the users now tidy dataset.</font></em></p>
+</div>
 <div class="section level3">
 <h3 id="tab-4--outliers">Tab 4. Outliers<a class="anchor" aria-label="anchor" href="#tab-4--outliers"></a>
 </h3>
