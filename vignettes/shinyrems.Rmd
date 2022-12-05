@@ -397,7 +397,7 @@ Otherwise, a model with trend and a dynamic seasonal component is fitted.
 
 The Summary Table options allow for calculation of a summary table which can be downloaded as a .csv. 
 The Summary Table gives a simple stats summary for each EMS_ID based on the clean dataset with outliers removed (Figure 15). 
-Columns include n (number of water samples), ncen (number of censored values), min (minimum water value), max (maximum water value), mean (mean water value), median (median water value), lowerQ, upperQ, sd, se, lower CL and upper CL. 
+Columns include n (number of water samples), ncen (number of censored values), min (minimum water value), max (maximum water value), mean (mean water value), median (median water value), lowerQ (25%), upperQ (75%), sd, se, lower CL and upper CL. 
 
 Accounting for censored data (data at or below the detection limit) involves treating the value at face value when calculating the summary table or accounting for these non-detects using left-censored log-normal maximum-likelihood.
 
