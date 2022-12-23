@@ -25,7 +25,6 @@ Imports:
     glue,
     magrittr,
     wqbc,
-    shinyWidgets,
     dttr2,
     waiter,
     shinycssloaders,
