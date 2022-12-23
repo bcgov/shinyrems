@@ -33,8 +33,11 @@ ems_plot_data <- function(data, date_range, timeframe){
 }
 
 ems_plot_base <- function(data, facet, ncol, scales){
+  Date <- rlang::sym("Date")
+  Value <- rlang::sym("Value")
+
   scales <- ifelse(scales, "fixed", "free")
-  gp <- ggplot2::ggplot(data, ggplot2::aes_string(x = "Date", y = "Value")) +
+  gp <- ggplot2::ggplot(data, ggplot2::aes(x = Date, y = Value)) +
     # ggplot2::scale_color_discrete(drop = FALSE) +
     ggplot2::expand_limits(y = 0) +
     ggplot2::facet_wrap(facet,
@@ -47,11 +50,14 @@ ems_plot_base <- function(data, facet, ncol, scales){
 }
 
 ems_plot_add_guideline <- function(gp, guideline){
+  UpperLimit <- rlang::sym("UpperLimit")
+  Date <- rlang::sym("Date")
+  Guideline <- rlang::sym("Guideline")
 
   gp <- gp +
     ggplot2::geom_line(
       data = guideline,
-      ggplot2::aes_string(x = "Date", y = "UpperLimit", linetype = "Guideline"),
+      ggplot2::aes(x = Date, y = UpperLimit, linetype = Guideline),
       linewidth = 0.8,
       color = "black"
     ) +
@@ -64,13 +70,16 @@ ems_plot_add_guideline <- function(gp, guideline){
 ems_plot_add_geom <- function(gp, plot_type, geom,
                               point_size, line_size,
                               colour, timeframe, palette){
+  Detected <- rlang::sym("Detected")
+  colour <- rlang::sym(colour)
+
   if (plot_type == "scatter") {
     if ("show points" %in% geom) {
       gp <- gp + ggplot2::geom_point(
         size = point_size,
-        ggplot2::aes_string(
-          shape = "Detected",
-          color = colour
+        ggplot2::aes(
+          shape = Detected,
+          color = !!colour
         )
       ) +
         ggplot2::scale_colour_brewer(palette = palette)
@@ -78,17 +87,20 @@ ems_plot_add_geom <- function(gp, plot_type, geom,
     if ("show lines" %in% geom) {
       gp <- gp + ggplot2::geom_line(
         size = line_size,
-        ggplot2::aes_string(color = colour)
+        ggplot2::aes(color = !!colour)
       ) +
         ggplot2::scale_colour_brewer(palette = palette)
     }
   }
 
   if (plot_type == "boxplot") {
-    gp <- gp + ggplot2::geom_boxplot(ggplot2::aes_string(
-      x = "Timeframe",
-      y = "Value",
-      fill = colour
+    Timeframe <- rlang::sym("Timeframe")
+    Value <- rlang::sym("Value")
+
+    gp <- gp + ggplot2::geom_boxplot(ggplot2::aes(
+      x = Timeframe,
+      y = Value,
+      fill = !!colour
     )) +
       ggplot2::xlab(timeframe) +
       ggplot2::scale_fill_brewer(palette = palette)
@@ -97,16 +109,21 @@ ems_plot_add_geom <- function(gp, plot_type, geom,
 }
 
 plot_outlier <- function(data, by, point_size, ncol) {
+  Date <- rlang::sym("Date")
+  Value <- rlang::sym("Value")
+  Outlier <- rlang::sym("Outlier")
+  Detected <- rlang::sym("Detected")
+
   data$Detected <- detected(data$Value, data$DetectionLimit)
   data$Detected %<>% factor(levels = c(TRUE, FALSE))
   data$Outlier %<>% factor(levels = c(TRUE, FALSE))
-  gp <- ggplot2::ggplot(data, ggplot2::aes_string(
-    x = "Date",
-    y = "Value",
-    color = "Outlier",
-    shape = "Detected"
+  gp <- ggplot2::ggplot(data, ggplot2::aes(
+    x = Date,
+    y = Value,
+    color = Outlier,
+    shape = Detected
   )) +
-    ggplot2::geom_point(ggplot2::aes_string(),
+    ggplot2::geom_point(ggplot2::aes(),
       size = point_size
     ) +
     ggplot2::scale_color_discrete(drop = FALSE) +
