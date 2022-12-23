@@ -32,13 +32,13 @@ Imports:
     rlang,
     err,
     shinyhelper,
-    png,
     sf,
     shinyjqui
 Suggests:
     testthat (>= 3.0.0),
     usethis,
     knitr,
+    png,
     rmarkdown
 Remotes: 
     bcgov/rems,
