@@ -254,10 +254,10 @@ set_emsid_from_station_levels <- function(data) {
 
   if (all(c("Station", "EMS_ID") %in% names(data))) {
     ems_order <- data %>%
-      dplyr::select(EMS_ID, Station) %>%
+      dplyr::select(.data$EMS_ID, .data$Station) %>%
       dplyr::distinct() %>%
-      dplyr::mutate(new_col = as.integer(Station)) %>%
-      dplyr::arrange(new_col)
+      dplyr::mutate(new_col = as.integer(.data$Station)) %>%
+      dplyr::arrange(.data$new_col)
 
     data$EMS_ID <- factor(data$EMS_ID, levels = c(ems_order$EMS_ID))
   }

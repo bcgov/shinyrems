@@ -65,7 +65,7 @@ test_that("data upload works", {
     ems_plot_add_geom(plot_type = "scatter", geom = c("show points"),
                       point_size = 1, line_size = 1, colour = "Station",
                       timeframe = "Year", palette = "Set1") %>%
-    ems_plot_add_guideline(guideline = guideline, guideline_colour = "black")
+    ems_plot_add_guideline(guideline = guideline)
 
   expect_s3_class(gp, "ggplot")
   expect_named(gp)

@@ -70,13 +70,21 @@ ems_data_parameter <- function(data, all_data, dataset, lookup,
 
 add_manual_guideline <- function(x, data, limit, name, id){
   x <- x[x$id != id,]
-  dplyr::bind_rows(x, data.frame(UpperLimit = rep(limit, 2),
-                      id = id,
-                      calculated = FALSE,
-                      Guideline = rep(name, 2),
-                      Variable = unique(data$Variable),
-                      Date = c(rep(min(data$Date), 2),
-                               rep(max(data$Date), 2))))
+  x <- dplyr::bind_rows(
+         x,
+         data.frame(
+           UpperLimit = rep(limit, 2),
+           id = id,
+           calculated = FALSE,
+           Guideline = rep(name, 2),
+           Variable = unique(data$Variable),
+           Date = c(
+             rep(min(data$Date), 2),
+             rep(max(data$Date), 2)
+           )
+         )
+       )
+  x
 }
 
 add_calculated_guideline <- function(data, all_data, dataset,

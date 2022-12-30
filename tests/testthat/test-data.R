@@ -198,7 +198,7 @@ test_that("ems plot", {
       timeframe = "Year",
       palette = "Set1"
     ) %>%
-    ems_plot_add_guideline(guideline = guideline, guideline_colour = "black")
+    ems_plot_add_guideline(guideline = guideline)
 
   expect_s3_class(gp, "ggplot")
   expect_named(gp)

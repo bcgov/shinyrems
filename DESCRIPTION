@@ -13,7 +13,6 @@ Depends:
     R (>= 2.10)
 Imports: 
     shiny,
-    htmltools,
     rems,
     dplyr,
     ggplot2,
@@ -25,27 +24,26 @@ Imports:
     glue,
     magrittr,
     wqbc,
-    shinyWidgets,
     dttr2,
     waiter,
     shinycssloaders,
     rlang,
     err,
     shinyhelper,
-    png,
     sf,
     shinyjqui
 Suggests:
     testthat (>= 3.0.0),
     usethis,
     knitr,
+    png,
     rmarkdown
 Remotes: 
     bcgov/rems,
     bcgov/wqbc
 URL: https://github.com/poissonconsulting/shinyrems
 BugReports: https://github.com/poissonconsulting/shinyrems/issues
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 Encoding: UTF-8
 LazyData: true
 Language: en-US
