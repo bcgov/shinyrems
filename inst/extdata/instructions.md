@@ -22,16 +22,17 @@ The following columns are **mandatory**:
 - **Units**
   - Unit of measurement
   
-The following columns are **optional** and can be used by the app: 
-* **DetectionLimit**
+The following columns are **optional** and can be used by the app:
+
+- **DetectionLimit**
   - Detection limit as number
-1. **ResultLetter**
+- **ResultLetter**
   - Result letter, e.g. (<)
-1. **EMS_ID**
+- **EMS_ID**
   - EMS ID corresponding to Station
-1. **Hour**
+- **Hour**
   - Hour of measurement in 24-hour clock as number from 0 - 23
-1. **Minute**
+- **Minute**
   - Minute of measurement as number from 0 - 59
-1. **Second**
+- **Second**
   - Second of measurement as number from 0 - 59
