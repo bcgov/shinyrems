@@ -6,20 +6,21 @@ Download a template for data entry with the 'Download Template' button in the si
 
 
 The following columns are **mandatory**:
-* **Station**
+ 
+- **Station**
   - Name of the station
-1. **Year**
+- **Year**
   - Year of measurement
-1. **Month**
+- **Month**
   - Month of measurement as number from 1 - 12
-1. **Day**
+- **Day**
   - Day of measurement as number from 1 - 31
-1. **Variable**
+- **Variable**
   - Variable of measurement (e.g. parameter name)
-1. **Value**
+- **Value**
   - Value of measurement as number
-1. **Units**
-  - Unit of measurement 
+- **Units**
+  - Unit of measurement
   
 The following columns are **optional** and can be used by the app: 
 * **DetectionLimit**
