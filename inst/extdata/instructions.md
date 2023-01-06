@@ -36,3 +36,4 @@ The following columns are **optional** and can be used by the app:
   - Minute of measurement as number from 0 - 59
 - **Second**
   - Second of measurement as number from 0 - 59
+
