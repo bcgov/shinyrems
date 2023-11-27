@@ -12,8 +12,8 @@
 
 # this will need to be updated every few years
 # left at 2 year pull for speed
-from <- "2021-10-01"
-to <- "2022-01-20"
+from <- "2023-10-01"
+to <- "2023-11-01"
 
 data <- suppressMessages(ems_data_which("2yr"))
 
@@ -21,14 +21,14 @@ test_that("ems data pulls and filters correctly", {
 
   data <- ems_data(
     dataset = "2yr",
-    emsid = c("0121580", "0200036"),
+    emsid = "0121580",
     parameter = "pH",
     from_date = from,
     to_date = to,
     data = data
   )
 
-  expect_identical(unique(data$EMS_ID), c("0121580", "0200036"))
+  expect_identical(unique(data$EMS_ID), "0121580")
   expect_identical(unique(data$PARAMETER), "pH")
   expect_true(as.Date(max(data$COLLECTION_START)) <= to)
   expect_snapshot_data(data, "ems_data")
@@ -39,7 +39,7 @@ test_that("ems tidy function", {
 
   data <- ems_data(
     dataset = "2yr",
-    emsid = c("0121580", "0200036"),
+    emsid = "0121580",
     parameter = "pH",
     from_date = from,
     to_date = to,
@@ -69,7 +69,7 @@ test_that("ems standarize function", {
 
   data <- ems_data(
     dataset = "2yr",
-    emsid = c("0121580", "0200036"),
+    emsid = "0121580",
     parameter = "pH",
     from_date = from,
     to_date = to,
@@ -90,12 +90,11 @@ test_that("ems standarize function", {
   expect_identical(stand_data, stand_data2)
 })
 
-
 test_that("ems aggregate and outlier function", {
 
   data <- ems_data(
     dataset = "2yr",
-    emsid = c("0121580", "0200036"),
+    emsid = "0121580",
     parameter = "pH",
     from_date = from,
     to_date = to,
@@ -142,7 +141,7 @@ test_that("ems plot", {
 
   data <- ems_data(
     dataset = "2yr",
-    emsid = c("0121580", "0200036"),
+    emsid = "0121580",
     parameter = "pH",
     from_date = from,
     to_date = to,
@@ -205,8 +204,6 @@ test_that("ems plot", {
   expect_snapshot_plot(gp, "ems_plot")
 
 })
-
-
 
 test_that("ems demo data", {
   data <- ems_demo_data

@@ -31,7 +31,7 @@ site_col <- function(site_type) {
 
 filter_sites <- function(permits, wsgroup, lookup, site_type) {
   x <- site_col(site_type)
-  if (!is.null(permits) && permits != "") {
+  if (!is.null(permits) && all(permits != "")) {
     lookup <- lookup[which(lookup$PERMIT %in% permits),]
   }
   if (!is.null(wsgroup) && wsgroup != "") {
